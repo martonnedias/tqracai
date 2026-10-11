@@ -58,6 +58,12 @@ form.card{background:var(--card);border:1px solid var(--line);border-radius:18px
 .secret{word-break:break-all;font-family:ui-monospace,monospace;font-size:.85rem;color:var(--gold-light);text-align:center}
 .banner{background:rgba(232,190,98,.12);border:1px solid var(--gold);border-radius:14px;padding:12px 14px;margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between}
 .hist{display:grid;gap:2px;font-size:.85rem;color:var(--muted);padding-left:4px}
+dialog#dlg{background:var(--card);color:var(--text);border:1px solid var(--gold);border-radius:18px;padding:22px;max-width:min(420px,92vw);width:100%}
+dialog#dlg::backdrop{background:rgba(0,0,0,.65)}
+dialog#dlg h3{margin-bottom:8px;font-size:1.1rem}
+dialog#dlg .de{display:grid;gap:4px;margin:10px 0 16px;color:var(--muted);font-size:.95rem}
+dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.sitelink{display:block;text-align:center;margin-top:4px}
 #toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--gold);color:#2a0838;font-weight:700;padding:12px 18px;border-radius:12px;z-index:20;max-width:90vw}
 #toast.err{background:#ff6b6b}
 </style>
@@ -72,6 +78,7 @@ form.card{background:var(--card);border:1px solid var(--line);border-radius:18px
     <label class="fld">Senha<input type="password" id="lPass" autocomplete="current-password" required></label>
     <button class="btn go" type="submit">Entrar</button>
     <p class="muted" id="lMsg" role="alert"></p>
+    <a class="sitelink" href="../">← Ir para o site</a>
   </form>
 </section>
 
@@ -117,6 +124,7 @@ form.card{background:var(--card);border:1px solid var(--line);border-radius:18px
 <div id="app" hidden>
   <header><div class="wrap">
     <div class="bar"><img src="../img/rotulo.webp" alt=""><b>Painel TQR Açaí</b><span class="sp"></span>
+      <a class="btn sm" href="../" target="_blank" rel="noopener" id="btnSite">Abrir site</a>
       <button class="btn sm" id="btnAlert" type="button" aria-pressed="false">🔔 Avisos: desligados</button>
       <button class="btn sm" id="btnSeg" type="button">Segurança</button>
       <button class="btn sm" id="btnRefresh" type="button">Atualizar</button>
@@ -166,6 +174,11 @@ form.card{background:var(--card);border:1px solid var(--line);border-radius:18px
     </section>
   </main>
 </div>
+<dialog id="dlg" aria-labelledby="dlgT">
+  <h3 id="dlgT"></h3>
+  <div class="de" id="dlgB"></div>
+  <div class="da"><button class="btn" type="button" id="dlgNo">Voltar</button><button class="btn go" type="button" id="dlgYes">Confirmar</button></div>
+</dialog>
 <div id="toast" role="status" hidden></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
@@ -186,6 +199,18 @@ form.card{background:var(--card);border:1px solid var(--line);border-radius:18px
   function fone(w){var d=String(w||'');return d.length>=12?'('+d.slice(2,4)+') '+d.slice(4,d.length-4)+'-'+d.slice(-4):d;}
   function first(n){return String(n||'').trim().split(/\s+/)[0]||'';}
   function toast(msg,err){var t=$('#toast');t.textContent=msg;t.className=err?'err':'';t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){t.hidden=true;},3500);}
+  // Popup de confirmação (substitui window.confirm). linhas: lista de textos curtos.
+  function confirmar(titulo,linhas,sim,perigo){
+    var d=$('#dlg');
+    if(!d.showModal){return Promise.resolve(window.confirm(titulo+'\n'+(linhas||[]).join('\n')));}
+    $('#dlgT').textContent=titulo;var b=$('#dlgB');b.textContent='';(linhas||[]).forEach(function(t){b.appendChild(el('span',null,t));});
+    var y=$('#dlgYes');y.textContent=sim||'Confirmar';y.className='btn '+(perigo?'danger':'go');
+    return new Promise(function(res){
+      function fim(v){y.onclick=n.onclick=null;d.onclose=null;if(d.open)d.close();res(v);}
+      var n=$('#dlgNo');y.onclick=function(){fim(true);};n.onclick=function(){fim(false);};d.onclose=function(){fim(false);};
+      d.showModal();n.focus();
+    });
+  }
   function show(id){['viewLogin','viewMfa','viewSeg','viewDenied','app'].forEach(function(v){$('#'+v).hidden=(v!==id);});}
 
   // ===== Login =====
@@ -271,8 +296,8 @@ form.card{background:var(--card);border:1px solid var(--line);border-radius:18px
     if(p.observacao)n.appendChild(el('span','muted','Obs.: '+p.observacao));
     n.appendChild(el('span','muted',hora(p.criado_em)+(p.origem==='manual'?' · pedido manual':'')));
     var a=el('div','acts');
-    if(NEXT[p.status]){var b=el('button','btn sm go','Marcar como '+LABEL[NEXT[p.status]].toLowerCase());b.type='button';b.addEventListener('click',function(){mudar(p,NEXT[p.status],b);});a.appendChild(b);}
-    if(p.status!=='cancelado'&&p.status!=='entregue'){var x=el('button','btn sm danger','Cancelar');x.type='button';x.addEventListener('click',function(){if(confirm('Cancelar o pedido '+p.codigo+'?'))mudar(p,'cancelado',x);});a.appendChild(x);}
+    if(NEXT[p.status]){var b=el('button','btn sm go','Marcar como '+LABEL[NEXT[p.status]].toLowerCase());b.type='button';b.addEventListener('click',function(){confirmar('Alterar status do pedido?',[p.codigo+' · '+(c.nome||'Cliente'),LABEL[p.status]+'  →  '+LABEL[NEXT[p.status]]],'Sim, alterar').then(function(ok){if(ok)mudar(p,NEXT[p.status],b);});});a.appendChild(b);}
+    if(p.status!=='cancelado'&&p.status!=='entregue'){var x=el('button','btn sm danger','Cancelar');x.type='button';x.addEventListener('click',function(){confirmar('Cancelar o pedido?',[p.codigo+' · '+(c.nome||'Cliente'),LABEL[p.status]+'  →  '+LABEL.cancelado],'Sim, cancelar',true).then(function(ok){if(ok)mudar(p,'cancelado',x);});});a.appendChild(x);}
     if(c.whatsapp){var w=el('a','btn sm wa','WhatsApp');w.target='_blank';w.rel='noopener';
       w.href='https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent('Olá, '+first(c.nome)+'! Aqui é da TQR Açaí 💜 Sobre o seu pedido '+p.codigo+'.');a.appendChild(w);}
     var hb=el('button','btn sm','Histórico');hb.type='button';
@@ -418,10 +443,12 @@ form.card{background:var(--card);border:1px solid var(--line);border-radius:18px
     });
   });
   $('#segRemove').addEventListener('click',function(){
-    if(!confirm('Desativar a verificação em duas etapas?'))return;
+    confirmar('Desativar a verificação em duas etapas?',['A conta ficará protegida só pela senha.'],'Desativar',true).then(function(ok){
+    if(!ok)return;
     fatorTotp().then(function(f){return f&&sb.auth.mfa.unenroll({factorId:f.id});}).then(function(r){
       if(r&&r.error){$('#segMsg').textContent='Não consegui desativar. Entre de novo com o código e tente.';return;}
       toast('Verificação em duas etapas desativada.');start();
+    });
     });
   });
   $('#btnSeg').addEventListener('click',abrirSeg);$('#mfaGo').addEventListener('click',abrirSeg);

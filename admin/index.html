@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Painel TQR Açaí</title>
+<link rel="icon" href="../img/rotulo.webp">
+<style>
+:root{--bg:#16051f;--bg2:#1f0a2c;--card:#2b1040;--gold:#e8be62;--gold-light:#fbe2a0;--text:#f6eefa;--muted:#cdb9d8;--wa:#0f7a40;--red:#e0262b;--line:rgba(232,190,98,.18)}
+*{box-sizing:border-box;margin:0}
+body{font:400 1rem/1.5 Poppins,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--gold-light)}
+:focus-visible{outline:2px solid var(--gold-light);outline-offset:2px}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+header{position:sticky;top:0;z-index:5;background:rgba(22,5,31,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:12px;padding:10px 0}
+.bar img{width:40px;height:40px;border-radius:50%}
+.bar b{font-size:1.05rem}.bar .sp{flex:1}
+nav{display:flex;gap:6px;overflow-x:auto;padding:0 0 10px}
+nav button{white-space:nowrap}
+.btn{min-height:44px;padding:10px 16px;border-radius:999px;border:1.5px solid var(--gold);background:transparent;color:var(--gold-light);font-weight:600;cursor:pointer}
+.btn:hover{background:rgba(232,190,98,.1)}
+.btn.on{background:var(--gold);color:#2a0838}
+.btn.go{background:var(--gold);color:#2a0838;border-color:var(--gold)}
+.btn.wa{background:var(--wa);border-color:var(--wa);color:#fff;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.btn.danger{border-color:#ff6b6b;color:#ff9b9b}
+.btn.sm{min-height:44px;padding:8px 14px;font-size:.9rem}
+main{padding:18px 0 80px}
+h2{font-size:1.2rem;margin:4px 0 12px}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+@media(min-width:760px){.cards{grid-template-columns:repeat(4,1fr)}}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.stat small{color:var(--muted);display:block;font-size:.8rem}
+.stat b{font-size:1.4rem;color:var(--gold-light)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center}
+.filters input,.filters select,.fld input,.fld select,.fld textarea{background:#1a0724;border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:11px 12px;min-height:44px}
+.filters input[type=search]{flex:1;min-width:150px}
+.list{display:grid;gap:12px}
+@media(min-width:900px){.list{grid-template-columns:repeat(2,1fr)}}
+.ped{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;gap:8px}
+.ped .top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.cod{font-weight:800;color:var(--gold-light)}
+.tag{font-size:.78rem;font-weight:700;border-radius:999px;padding:3px 10px;border:1px solid var(--line);white-space:nowrap}
+.tag.pendente{color:#fbe2a0;border-color:#e8be62}.tag.confirmado{color:#a8c8ff;border-color:#a8c8ff}.tag.pago{color:#7cf0a8;border-color:#7cf0a8}
+.tag.saiu_entrega{color:#ffd29a;border-color:#ffd29a}.tag.entregue{color:var(--muted)}.tag.cancelado{color:#ff9b9b;border-color:#ff9b9b}
+.muted{color:var(--muted);font-size:.9rem}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.fld{display:grid;gap:6px;font-weight:600;font-size:.88rem;color:var(--muted)}
+.fld input,.fld select,.fld textarea{width:100%;color:#fff}
+form.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;gap:12px;max-width:560px}
+.login{max-width:380px;margin:12vh auto;padding:0 16px}
+.login form{display:grid;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
+.empty{padding:30px 10px;text-align:center;color:var(--muted)}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--gold);color:#2a0838;font-weight:700;padding:12px 18px;border-radius:12px;z-index:20;max-width:90vw}
+#toast.err{background:#ff6b6b}
+</style>
+</head>
+<body>
+<noscript><p style="padding:20px">Ative o JavaScript para usar o painel.</p></noscript>
+
+<section class="login" id="viewLogin" hidden>
+  <form id="loginForm">
+    <h2>Painel TQR Açaí</h2>
+    <label class="fld">E-mail<input type="email" id="lEmail" autocomplete="username" required></label>
+    <label class="fld">Senha<input type="password" id="lPass" autocomplete="current-password" required></label>
+    <button class="btn go" type="submit">Entrar</button>
+    <p class="muted" id="lMsg" role="alert"></p>
+  </form>
+</section>
+
+<section class="login" id="viewDenied" hidden>
+  <form onsubmit="return false">
+    <h2>Sem permissão</h2>
+    <p class="muted">Esta conta não tem acesso ao painel.</p>
+    <button class="btn" type="button" id="deniedOut">Sair</button>
+  </form>
+</section>
+
+<div id="app" hidden>
+  <header><div class="wrap">
+    <div class="bar"><img src="../img/rotulo.webp" alt=""><b>Painel TQR Açaí</b><span class="sp"></span>
+      <button class="btn sm" id="btnRefresh" type="button">Atualizar</button>
+      <button class="btn sm" id="btnOut" type="button">Sair</button></div>
+    <nav id="tabs">
+      <button class="btn sm on" data-tab="pedidos" type="button">Pedidos</button>
+      <button class="btn sm" data-tab="novo" type="button">Novo pedido</button>
+      <button class="btn sm" data-tab="clientes" type="button">Clientes</button>
+    </nav>
+  </div></header>
+
+  <main class="wrap">
+    <section id="tab-pedidos">
+      <div class="cards" id="stats"></div>
+      <div class="filters">
+        <select id="fStatus" aria-label="Status"></select>
+        <input type="date" id="fDia" aria-label="Dia">
+        <select id="fPag" aria-label="Pagamento"><option value="">Pagamento: todos</option><option value="pix">Pix</option><option value="cartao">Cartão</option></select>
+        <input type="search" id="fBusca" placeholder="Buscar nome, bairro ou código" aria-label="Buscar">
+      </div>
+      <div class="list" id="listPed"></div>
+    </section>
+
+    <section id="tab-novo" hidden>
+      <h2>Novo pedido manual</h2>
+      <form class="card" id="formNovo">
+        <label class="fld">WhatsApp do cliente<input id="nWhats" type="tel" inputmode="tel" required placeholder="(86) 99999-9999"></label>
+        <label class="fld">Nome <small>(só para cliente novo)</small><input id="nNome" type="text" placeholder="Nome do cliente"></label>
+        <label class="fld">Quantidade<input id="nQtd" type="number" min="1" max="100" value="3" required></label>
+        <label class="fld">Pagamento<select id="nPag"><option value="">A definir</option><option value="pix">Pix</option><option value="cartao">Cartão</option></select></label>
+        <label class="fld">Rua e número<input id="nEnd" type="text"></label>
+        <label class="fld">Bairro<input id="nBairro" type="text"></label>
+        <label class="fld">Observações<textarea id="nObs" rows="2"></textarea></label>
+        <button class="btn go" type="submit" id="nGo">Criar pedido</button>
+      </form>
+    </section>
+
+    <section id="tab-clientes" hidden>
+      <h2>Clientes</h2>
+      <div class="filters">
+        <input type="search" id="cBusca" placeholder="Buscar nome ou WhatsApp" aria-label="Buscar cliente">
+        <button class="btn sm" type="button" id="cInativos">Sem pedido há 30 dias</button>
+      </div>
+      <div class="list" id="listCli"></div>
+    </section>
+  </main>
+</div>
+<div id="toast" role="status" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
+<script>
+(function(){
+  var URL_='https://elaczoriyaejkixkubxn.supabase.co', KEY='sb_publishable_NscsoGdrovVNuBol72Rh3Q_ov8i8lGv', TZ='America/Fortaleza';
+  var sb=supabase.createClient(URL_,KEY,{auth:{persistSession:true,autoRefreshToken:true}});
+  var $=function(s){return document.querySelector(s);};
+  var LABEL={pendente:'Pendente',confirmado:'Confirmado',pago:'Pago',saiu_entrega:'Saiu para entrega',entregue:'Entregue',cancelado:'Cancelado'};
+  var NEXT={pendente:'confirmado',confirmado:'pago',pago:'saiu_entrega',saiu_entrega:'entregue'};
+  var ABERTOS=['pendente','confirmado','pago','saiu_entrega'];
+  var pedidos=[],clientes=[],soInativos=false,timer;
+
+  function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;}
+  function brl(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
+  function dia(iso){return new Date(iso).toLocaleDateString('en-CA',{timeZone:TZ});}
+  function hora(iso){return new Date(iso).toLocaleString('pt-BR',{timeZone:TZ,day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});}
+  function fone(w){var d=String(w||'');return d.length>=12?'('+d.slice(2,4)+') '+d.slice(4,d.length-4)+'-'+d.slice(-4):d;}
+  function first(n){return String(n||'').trim().split(/\s+/)[0]||'';}
+  function toast(msg,err){var t=$('#toast');t.textContent=msg;t.className=err?'err':'';t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){t.hidden=true;},3500);}
+  function show(id){['viewLogin','viewDenied','app'].forEach(function(v){$('#'+v).hidden=(v!==id);});}
+
+  // ===== Login =====
+  $('#loginForm').addEventListener('submit',function(e){
+    e.preventDefault();$('#lMsg').textContent='Entrando…';
+    sb.auth.signInWithPassword({email:$('#lEmail').value.trim(),password:$('#lPass').value}).then(function(r){
+      if(r.error){$('#lMsg').textContent='E-mail ou senha incorretos.';return;}
+      $('#lPass').value='';$('#lMsg').textContent='';start();
+    });
+  });
+  function out(){clearInterval(timer);sb.auth.signOut().then(function(){show('viewLogin');});}
+  $('#btnOut').addEventListener('click',out);$('#deniedOut').addEventListener('click',out);
+
+  function start(){
+    sb.auth.getSession().then(function(r){
+      if(!r.data.session){show('viewLogin');return;}
+      sb.from('admins').select('user_id').maybeSingle().then(function(a){
+        if(a.error||!a.data){show('viewDenied');return;}
+        show('app');loadAll();clearInterval(timer);
+        timer=setInterval(function(){if(!document.hidden&&!$('#tab-pedidos').hidden)loadPedidos();},30000);
+      });
+    });
+  }
+
+  // ===== Abas =====
+  $('#tabs').addEventListener('click',function(e){
+    var b=e.target.closest('button[data-tab]');if(!b)return;
+    document.querySelectorAll('#tabs button').forEach(function(x){x.classList.toggle('on',x===b);});
+    ['pedidos','novo','clientes'].forEach(function(t){$('#tab-'+t).hidden=(t!==b.dataset.tab);});
+    if(b.dataset.tab==='clientes')loadClientes();
+  });
+  $('#btnRefresh').addEventListener('click',loadAll);
+  function loadAll(){loadPedidos();loadResumo();if(!$('#tab-clientes').hidden)loadClientes();}
+
+  // ===== Resumo =====
+  function loadResumo(){
+    sb.from('v_resumo_dia').select('*').eq('dia',dia(new Date().toISOString())).maybeSingle().then(function(r){
+      var d=r.data||{pedidos:0,garrafas:0,faturamento:0,a_receber:0},box=$('#stats');box.textContent='';
+      [['Pedidos hoje',d.pedidos],['Garrafas hoje',d.garrafas],['Faturamento (pago)',brl(d.faturamento)],['A receber',brl(d.a_receber)]].forEach(function(x){
+        var s=el('div','stat');s.appendChild(el('small',null,x[0]));s.appendChild(el('b',null,String(x[1])));box.appendChild(s);});
+    });
+  }
+
+  // ===== Pedidos =====
+  (function(){var s=$('#fStatus');[['abertos','Em aberto'],['todos','Todos']].concat(Object.keys(LABEL).map(function(k){return [k,LABEL[k]];})).forEach(function(o){var op=el('option',null,o[1]);op.value=o[0];s.appendChild(op);});})();
+  ['fStatus','fDia','fPag'].forEach(function(i){$('#'+i).addEventListener('change',renderPedidos);});
+  $('#fBusca').addEventListener('input',renderPedidos);
+
+  function loadPedidos(){
+    sb.from('pedidos').select('id,codigo,status,total,forma_pagamento,endereco,bairro,observacao,origem,criado_em,clientes(nome,whatsapp),itens_pedido(quantidade)')
+      .order('criado_em',{ascending:false}).limit(300).then(function(r){
+        if(r.error){toast('Não consegui carregar os pedidos.',true);return;}
+        pedidos=r.data||[];renderPedidos();
+      });
+  }
+  function renderPedidos(){
+    var st=$('#fStatus').value,d=$('#fDia').value,pg=$('#fPag').value,q=$('#fBusca').value.trim().toLowerCase(),box=$('#listPed');
+    var rows=pedidos.filter(function(p){
+      if(st==='abertos'&&ABERTOS.indexOf(p.status)<0)return false;
+      if(st!=='abertos'&&st!=='todos'&&p.status!==st)return false;
+      if(d&&dia(p.criado_em)!==d)return false;
+      if(pg&&p.forma_pagamento!==pg)return false;
+      if(q){var h=[p.codigo,p.bairro,p.clientes&&p.clientes.nome,p.clientes&&p.clientes.whatsapp].join(' ').toLowerCase();if(h.indexOf(q)<0)return false;}
+      return true;
+    });
+    box.textContent='';
+    if(!rows.length){box.appendChild(el('p','empty','Nenhum pedido com esses filtros.'));return;}
+    rows.forEach(function(p){box.appendChild(card(p));});
+  }
+  function card(p){
+    var c=p.clientes||{},qtd=(p.itens_pedido||[]).reduce(function(a,i){return a+i.quantidade;},0),n=el('article','ped');
+    var top=el('div','top');top.appendChild(el('span','cod',p.codigo));top.appendChild(el('span','tag '+p.status,LABEL[p.status]));n.appendChild(top);
+    n.appendChild(el('b',null,(c.nome||'Cliente')+' · '+fone(c.whatsapp)));
+    n.appendChild(el('span',null,qtd+' garrafa'+(qtd>1?'s':'')+' · '+brl(p.total)+(p.forma_pagamento?' · '+(p.forma_pagamento==='pix'?'Pix':'Cartão'):'')));
+    if(p.endereco||p.bairro)n.appendChild(el('span','muted',[p.endereco,p.bairro].filter(Boolean).join(' – ')));
+    if(p.observacao)n.appendChild(el('span','muted','Obs.: '+p.observacao));
+    n.appendChild(el('span','muted',hora(p.criado_em)+(p.origem==='manual'?' · pedido manual':'')));
+    var a=el('div','acts');
+    if(NEXT[p.status]){var b=el('button','btn sm go','Marcar como '+LABEL[NEXT[p.status]].toLowerCase());b.type='button';b.addEventListener('click',function(){mudar(p,NEXT[p.status],b);});a.appendChild(b);}
+    if(p.status!=='cancelado'&&p.status!=='entregue'){var x=el('button','btn sm danger','Cancelar');x.type='button';x.addEventListener('click',function(){if(confirm('Cancelar o pedido '+p.codigo+'?'))mudar(p,'cancelado',x);});a.appendChild(x);}
+    if(c.whatsapp){var w=el('a','btn sm wa','WhatsApp');w.target='_blank';w.rel='noopener';
+      w.href='https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent('Olá, '+first(c.nome)+'! Aqui é da TQR Açaí 💜 Sobre o seu pedido '+p.codigo+'.');a.appendChild(w);}
+    n.appendChild(a);return n;
+  }
+  function mudar(p,status,btn){
+    btn.disabled=true;
+    sb.from('pedidos').update({status:status}).eq('id',p.id).then(function(r){
+      btn.disabled=false;
+      if(r.error){toast('Não consegui atualizar o pedido.',true);return;}
+      toast(p.codigo+': '+LABEL[status]);loadPedidos();loadResumo();
+    });
+  }
+
+  // ===== Pedido manual =====
+  $('#formNovo').addEventListener('submit',function(e){
+    e.preventDefault();var b=$('#nGo');b.disabled=true;
+    sb.rpc('admin_criar_pedido',{p_whatsapp:$('#nWhats').value,p_quantidade:parseInt($('#nQtd').value,10),
+      p_nome:$('#nNome').value.trim()||null,p_forma_pagamento:$('#nPag').value||null,
+      p_endereco:$('#nEnd').value.trim()||null,p_bairro:$('#nBairro').value.trim()||null,p_observacao:$('#nObs').value.trim()||null})
+    .then(function(r){
+      b.disabled=false;
+      if(r.error){var m=r.error.message||'';toast(m.indexOf('nome_obrigatorio')>=0?'Cliente novo: informe o nome.':(m.indexOf('whatsapp_invalido')>=0?'WhatsApp inválido.':'Não consegui criar o pedido.'),true);return;}
+      var row=r.data&&r.data[0];toast('Pedido '+(row?row.pedido_codigo+' criado: '+brl(row.pedido_total):'criado'));
+      $('#formNovo').reset();$('#nQtd').value=3;loadAll();
+    });
+  });
+
+  // ===== Clientes =====
+  $('#cBusca').addEventListener('input',renderClientes);
+  $('#cInativos').addEventListener('click',function(){soInativos=!soInativos;this.classList.toggle('on',soInativos);renderClientes();});
+  function loadClientes(){
+    sb.from('v_clientes_resumo').select('*').order('ultimo_pedido',{ascending:false,nullsFirst:false}).limit(500).then(function(r){
+      if(r.error){toast('Não consegui carregar os clientes.',true);return;}clientes=r.data||[];renderClientes();});
+  }
+  function renderClientes(){
+    var q=$('#cBusca').value.trim().toLowerCase(),lim=Date.now()-30*864e5,box=$('#listCli');box.textContent='';
+    var rows=clientes.filter(function(c){
+      if(soInativos&&!(c.ultimo_pedido&&new Date(c.ultimo_pedido).getTime()<lim))return false;
+      return !q||(c.nome+' '+c.whatsapp).toLowerCase().indexOf(q)>=0;});
+    if(!rows.length){box.appendChild(el('p','empty','Nenhum cliente encontrado.'));return;}
+    rows.forEach(function(c){
+      var n=el('article','ped');n.appendChild(el('b',null,c.nome+' · '+fone(c.whatsapp)));
+      n.appendChild(el('span',null,c.total_pedidos+' pedido'+(c.total_pedidos===1?'':'s')+' · '+brl(c.gasto_total)+' pagos'));
+      n.appendChild(el('span','muted',c.ultimo_pedido?'Último pedido: '+hora(c.ultimo_pedido):'Ainda sem pedidos'));
+      var a=el('div','acts'),w=el('a','btn sm wa','WhatsApp');w.target='_blank';w.rel='noopener';
+      w.href='https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent('Olá, '+first(c.nome)+'! Aqui é da TQR Açaí 💜 Tudo bem? Quer garantir suas garrafas geladas hoje?');
+      a.appendChild(w);n.appendChild(a);box.appendChild(n);});
+  }
+
+  sb.auth.onAuthStateChange(function(ev){if(ev==='SIGNED_OUT')show('viewLogin');});
+  start();
+})();
+</script>
+</body>
+</html>

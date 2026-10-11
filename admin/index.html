@@ -64,6 +64,9 @@ dialog#dlg h3{margin-bottom:8px;font-size:1.1rem}
 dialog#dlg .de{display:grid;gap:4px;margin:10px 0 16px;color:var(--muted);font-size:.95rem}
 dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
 .sitelink{display:block;text-align:center;margin-top:4px}
+.row{display:flex;gap:8px}.row input{flex:1}
+.perms{display:grid;gap:6px}.perms label{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--text)}
+.perms input{width:auto;min-height:0}
 #toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--gold);color:#2a0838;font-weight:700;padding:12px 18px;border-radius:12px;z-index:20;max-width:90vw}
 #toast.err{background:#ff6b6b}
 </style>
@@ -123,21 +126,22 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
 
 <div id="app" hidden>
   <header><div class="wrap">
-    <div class="bar"><img src="../img/rotulo.webp" alt=""><b>Painel TQR Açaí</b><span class="sp"></span>
+    <div class="bar"><img src="../img/rotulo.webp" alt=""><b>Painel TQR Açaí</b><span class="sp"></span><span class="muted" id="userTag"></span>
       <a class="btn sm" href="../" target="_blank" rel="noopener" id="btnSite">Abrir site</a>
       <button class="btn sm" id="btnAlert" type="button" aria-pressed="false">🔔 Avisos: desligados</button>
       <button class="btn sm" id="btnSeg" type="button">Segurança</button>
       <button class="btn sm" id="btnRefresh" type="button">Atualizar</button>
       <button class="btn sm" id="btnOut" type="button">Sair</button></div>
     <nav id="tabs">
-      <button class="btn sm on" data-tab="pedidos" type="button">Pedidos</button>
-      <button class="btn sm" data-tab="novo" type="button">Novo pedido</button>
-      <button class="btn sm" data-tab="clientes" type="button">Clientes</button>
+      <button class="btn sm" data-tab="pedidos" data-perm="pedidos.ver" type="button">Pedidos</button>
+      <button class="btn sm" data-tab="novo" data-perm="pedidos.criar" type="button">Novo pedido</button>
+      <button class="btn sm" data-tab="clientes" data-perm="clientes.ver" type="button">Clientes</button>
+      <button class="btn sm" data-tab="usuarios" data-perm="*" type="button">Usuários</button>
     </nav>
   </div></header>
 
   <main class="wrap">
-    <section id="tab-pedidos">
+    <section id="tab-pedidos" hidden>
       <div class="banner" id="mfaBanner" hidden><span>Ative a verificação em duas etapas para proteger o painel.</span><button class="btn sm go" type="button" id="mfaGo">Ativar agora</button></div>
       <div class="cards" id="stats"></div>
       <div class="filters">
@@ -172,6 +176,30 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
       </div>
       <div class="list" id="listCli"></div>
     </section>
+
+    <section id="tab-usuarios" hidden>
+      <h2>Usuários do painel</h2>
+      <div class="list" id="listUsr"></div>
+      <h2 style="margin-top:22px">Novo usuário</h2>
+      <form class="card" id="formUsr" autocomplete="off">
+        <label class="fld">Nome<input id="uNome" type="text" required minlength="2" maxlength="80"></label>
+        <label class="fld">E-mail<input id="uEmail" type="email" required autocomplete="off"></label>
+        <label class="fld">Perfil<select id="uPerfil" required></select></label>
+        <label class="fld">Senha temporária <small>(mín. 10 caracteres; a pessoa deve ativar a verificação em duas etapas)</small>
+          <span class="row"><input id="uSenha" type="text" required minlength="10" maxlength="72" autocomplete="off"><button class="btn sm" type="button" id="uGera">Gerar</button></span></label>
+        <button class="btn go" type="submit" id="uGo">Criar usuário</button>
+      </form>
+      <h2 style="margin-top:22px">Perfis de acesso</h2>
+      <div class="list" id="listPerfis"></div>
+      <form class="card" id="formPerfil" autocomplete="off" style="margin-top:12px">
+        <b>Novo perfil personalizado</b>
+        <label class="fld">Código <small>(letras minúsculas, ex.: caixa)</small><input id="pId" type="text" required pattern="[a-z][a-z0-9_]{1,30}" maxlength="31"></label>
+        <label class="fld">Nome<input id="pNome" type="text" required maxlength="40"></label>
+        <label class="fld">Descrição<input id="pDesc" type="text" maxlength="200"></label>
+        <div class="perms" id="pPerms"></div>
+        <button class="btn go" type="submit">Salvar perfil</button>
+      </form>
+    </section>
   </main>
 </div>
 <dialog id="dlg" aria-labelledby="dlgT">
@@ -190,7 +218,7 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
   var LABEL={pendente:'Pendente',confirmado:'Confirmado',pago:'Pago',saiu_entrega:'Saiu para entrega',entregue:'Entregue',cancelado:'Cancelado'};
   var NEXT={pendente:'confirmado',confirmado:'pago',pago:'saiu_entrega',saiu_entrega:'entregue'};
   var ABERTOS=['pendente','confirmado','pago','saiu_entrega'];
-  var pedidos=[],visiveis=[],clientes=[],soInativos=false,timer,vistos=null;
+  var perms=[],pedidos=[],visiveis=[],clientes=[],soInativos=false,timer,vistos=null;
 
   function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;}
   function brl(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
@@ -211,6 +239,7 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
       d.showModal();n.focus();
     });
   }
+  function can(p){return perms.indexOf('*')>=0||perms.indexOf(p)>=0;}
   function show(id){['viewLogin','viewMfa','viewSeg','viewDenied','app'].forEach(function(v){$('#'+v).hidden=(v!==id);});}
 
   // ===== Login =====
@@ -234,29 +263,36 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
     });
   }
   function entrar(){
-    sb.from('admins').select('user_id').maybeSingle().then(function(a){
-      if(a.error||!a.data){show('viewDenied');return;}
-      show('app');loadAll();clearInterval(timer);
-      timer=setInterval(loadPedidos,30000);
+    sb.rpc('minhas_permissoes').then(function(r){
+      var m=r.data;
+      if(r.error||!m){show('viewDenied');return;}
+      perms=m.permissoes||[];
+      $('#userTag').textContent=(m.nome||'')+(m.perfil?' · '+m.perfil:'');
+      document.querySelectorAll('#tabs button').forEach(function(b){b.hidden=!can(b.dataset.perm);});
+      show('app');clearInterval(timer);
+      var primeira=document.querySelector('#tabs button:not([hidden])');
+      if(primeira)abrirAba(primeira.dataset.tab);
+      if(can('pedidos.ver')){loadAll();timer=setInterval(loadPedidos,30000);}
       mfaStatus().then(function(on){$('#mfaBanner').hidden=on;});
     });
   }
 
   // ===== Abas =====
-  $('#tabs').addEventListener('click',function(e){
-    var b=e.target.closest('button[data-tab]');if(!b)return;
-    document.querySelectorAll('#tabs button').forEach(function(x){x.classList.toggle('on',x===b);});
-    ['pedidos','novo','clientes'].forEach(function(t){$('#tab-'+t).hidden=(t!==b.dataset.tab);});
-    if(b.dataset.tab==='clientes')loadClientes();
-  });
+  function abrirAba(t){
+    document.querySelectorAll('#tabs button').forEach(function(x){x.classList.toggle('on',x.dataset.tab===t);});
+    document.querySelectorAll('main > section[id^=tab-]').forEach(function(x){x.hidden=(x.id!=='tab-'+t);});
+    if(t==='clientes')loadClientes();
+    if(t==='usuarios')loadUsuarios();
+  }
+  $('#tabs').addEventListener('click',function(e){var b=e.target.closest('button[data-tab]');if(b)abrirAba(b.dataset.tab);});
   $('#btnRefresh').addEventListener('click',loadAll);
-  function loadAll(){loadPedidos();loadResumo();if(!$('#tab-clientes').hidden)loadClientes();}
+  function loadAll(){if(can('pedidos.ver')){loadPedidos();loadResumo();}if(!$('#tab-clientes').hidden)loadClientes();}
 
   // ===== Resumo =====
   function loadResumo(){
     sb.from('v_resumo_dia').select('*').eq('dia',dia(new Date().toISOString())).maybeSingle().then(function(r){
       var d=r.data||{pedidos:0,garrafas:0,faturamento:0,a_receber:0},box=$('#stats');box.textContent='';
-      [['Pedidos hoje',d.pedidos],['Garrafas hoje',d.garrafas],['Faturamento (pago)',brl(d.faturamento)],['A receber',brl(d.a_receber)]].forEach(function(x){
+      [['Pedidos hoje',d.pedidos],['Garrafas hoje',d.garrafas],['Faturamento (pago)',d.faturamento==null?'—':brl(d.faturamento)],['A receber',d.a_receber==null?'—':brl(d.a_receber)]].forEach(function(x){
         var s=el('div','stat');s.appendChild(el('small',null,x[0]));s.appendChild(el('b',null,String(x[1])));box.appendChild(s);});
     });
   }
@@ -296,8 +332,9 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
     if(p.observacao)n.appendChild(el('span','muted','Obs.: '+p.observacao));
     n.appendChild(el('span','muted',hora(p.criado_em)+(p.origem==='manual'?' · pedido manual':'')));
     var a=el('div','acts');
-    if(NEXT[p.status]){var b=el('button','btn sm go','Marcar como '+LABEL[NEXT[p.status]].toLowerCase());b.type='button';b.addEventListener('click',function(){confirmar('Alterar status do pedido?',[p.codigo+' · '+(c.nome||'Cliente'),LABEL[p.status]+'  →  '+LABEL[NEXT[p.status]]],'Sim, alterar').then(function(ok){if(ok)mudar(p,NEXT[p.status],b);});});a.appendChild(b);}
-    if(p.status!=='cancelado'&&p.status!=='entregue'){var x=el('button','btn sm danger','Cancelar');x.type='button';x.addEventListener('click',function(){confirmar('Cancelar o pedido?',[p.codigo+' · '+(c.nome||'Cliente'),LABEL[p.status]+'  →  '+LABEL.cancelado],'Sim, cancelar',true).then(function(ok){if(ok)mudar(p,'cancelado',x);});});a.appendChild(x);}
+    var nx=NEXT[p.status],okSt=nx&&(can('pedidos.status')||(can('pedidos.status_entrega')&&(nx==='saiu_entrega'||nx==='entregue')));
+    if(okSt){var b=el('button','btn sm go','Marcar como '+LABEL[NEXT[p.status]].toLowerCase());b.type='button';b.addEventListener('click',function(){confirmar('Alterar status do pedido?',[p.codigo+' · '+(c.nome||'Cliente'),LABEL[p.status]+'  →  '+LABEL[NEXT[p.status]]],'Sim, alterar').then(function(ok){if(ok)mudar(p,NEXT[p.status],b);});});a.appendChild(b);}
+    if(can('pedidos.cancelar')&&p.status!=='cancelado'&&p.status!=='entregue'){var x=el('button','btn sm danger','Cancelar');x.type='button';x.addEventListener('click',function(){confirmar('Cancelar o pedido?',[p.codigo+' · '+(c.nome||'Cliente'),LABEL[p.status]+'  →  '+LABEL.cancelado],'Sim, cancelar',true).then(function(ok){if(ok)mudar(p,'cancelado',x);});});a.appendChild(x);}
     if(c.whatsapp){var w=el('a','btn sm wa','WhatsApp');w.target='_blank';w.rel='noopener';
       w.href='https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent('Olá, '+first(c.nome)+'! Aqui é da TQR Açaí 💜 Sobre o seu pedido '+p.codigo+'.');a.appendChild(w);}
     var hb=el('button','btn sm','Histórico');hb.type='button';
@@ -352,12 +389,86 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
     if(!rows.length){box.appendChild(el('p','empty','Nenhum cliente encontrado.'));return;}
     rows.forEach(function(c){
       var n=el('article','ped');n.appendChild(el('b',null,c.nome+' · '+fone(c.whatsapp)));
-      n.appendChild(el('span',null,c.total_pedidos+' pedido'+(c.total_pedidos===1?'':'s')+' · '+brl(c.gasto_total)+' pagos'));
+      n.appendChild(el('span',null,c.total_pedidos+' pedido'+(c.total_pedidos===1?'':'s')+' · '+(c.gasto_total==null?'—':brl(c.gasto_total)+' pagos')));
       n.appendChild(el('span','muted',c.ultimo_pedido?'Último pedido: '+hora(c.ultimo_pedido):'Ainda sem pedidos'));
       var a=el('div','acts'),w=el('a','btn sm wa','WhatsApp');w.target='_blank';w.rel='noopener';
       w.href='https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent('Olá, '+first(c.nome)+'! Aqui é da TQR Açaí 💜 Tudo bem? Quer garantir suas garrafas geladas hoje?');
       a.appendChild(w);n.appendChild(a);box.appendChild(n);});
   }
+
+  // ===== Usuários e perfis (só o dono; tudo passa pela função de borda admin-usuarios) =====
+  var PERM_ROT={'pedidos.ver':'Ver pedidos','pedidos.criar':'Criar pedido manual','pedidos.status':'Mudar status (confirmar, pago, saiu, entregue)',
+    'pedidos.status_entrega':'Só marcar saiu para entrega / entregue','pedidos.cancelar':'Cancelar pedidos','pedidos.editar':'Editar dados do pedido',
+    'clientes.ver':'Ver clientes','clientes.editar':'Editar clientes','produtos.gerir':'Produtos e preços','promocoes.gerir':'Promoções',
+    'config.gerir':'Configurações do site','financeiro.ver':'Ver valores e financeiro'};
+  var usrDados={usuarios:[],perfis:[],permissoes:[]};
+  function chamarUsr(corpo){
+    return sb.functions.invoke('admin-usuarios',{body:corpo}).then(function(r){
+      if(!r.error)return r.data;
+      var ctx=r.error.context;   // Response da função com { erro: "codigo" }
+      return (ctx&&ctx.json?ctx.json():Promise.resolve({})).catch(function(){return {};}).then(function(j){throw new Error((j&&j.erro)||'falha');});
+    });
+  }
+  var ERRO_USR={email_ja_cadastrado:'Este e-mail já está cadastrado.',precisa_de_um_dono:'Precisa existir pelo menos um dono ativo.',nao_pode_em_si_mesmo:'Você não pode fazer isso na sua própria conta.',
+    perfil_em_uso:'Há usuários com este perfil.',perfil_de_sistema:'Perfis do sistema não podem ser alterados.',mfa_necessario:'Entre com o código de verificação em duas etapas.'};
+  function msgUsr(e){var m=String(e&&e.message||'');return ERRO_USR[m]||(m.indexOf('invalido')===0?'Confira os campos informados.':'Não consegui concluir. Tente de novo.');}
+  function loadUsuarios(){
+    chamarUsr({acao:'listar'}).then(function(d){usrDados=d;renderUsuarios();}).catch(function(e){toast(msgUsr(e),true);});
+  }
+  function perfilNome(id){var f=usrDados.perfis.filter(function(x){return x.id===id;})[0];return f?f.nome:id;}
+  function renderUsuarios(){
+    var box=$('#listUsr');box.textContent='';
+    usrDados.usuarios.forEach(function(u){
+      var n=el('article','ped'),top=el('div','top');top.appendChild(el('b',null,u.nome||u.email));top.appendChild(el('span','tag '+(u.ativo?'pago':'cancelado'),u.ativo?'Ativo':'Inativo'));n.appendChild(top);
+      n.appendChild(el('span','muted',u.email));
+      var a=el('div','acts'),sel=el('select');sel.setAttribute('aria-label','Perfil de '+(u.nome||u.email));
+      usrDados.perfis.forEach(function(f){var o=el('option',null,f.nome);o.value=f.id;if(f.id===u.perfil_id)o.selected=true;sel.appendChild(o);});
+      a.appendChild(sel);
+      var sv=el('button','btn sm','Salvar perfil');sv.type='button';
+      sv.addEventListener('click',function(){if(sel.value===u.perfil_id)return;confirmar('Alterar perfil?',[u.nome||u.email,perfilNome(u.perfil_id)+'  →  '+perfilNome(sel.value)],'Sim, alterar').then(function(ok){
+        if(!ok){sel.value=u.perfil_id;return;}chamarUsr({acao:'atualizar',user_id:u.user_id,perfil_id:sel.value}).then(function(){toast('Perfil atualizado.');loadUsuarios();}).catch(function(e){toast(msgUsr(e),true);sel.value=u.perfil_id;});});});
+      a.appendChild(sv);
+      var at=el('button','btn sm '+(u.ativo?'danger':'go'),u.ativo?'Desativar':'Reativar');at.type='button';
+      at.addEventListener('click',function(){confirmar((u.ativo?'Desativar':'Reativar')+' usuário?',[u.nome||u.email],'Sim',u.ativo).then(function(ok){
+        if(ok)chamarUsr({acao:'atualizar',user_id:u.user_id,ativo:!u.ativo}).then(function(){toast('Usuário atualizado.');loadUsuarios();}).catch(function(e){toast(msgUsr(e),true);});});});
+      a.appendChild(at);
+      var pw=el('button','btn sm','Nova senha');pw.type='button';
+      pw.addEventListener('click',function(){var np=gerarSenha();confirmar('Redefinir a senha?',[u.nome||u.email,'Nova senha temporária: '+np,'Anote e envie à pessoa; ela não será mostrada de novo.'],'Redefinir').then(function(ok){
+        if(ok)chamarUsr({acao:'redefinir_senha',user_id:u.user_id,senha:np}).then(function(){toast('Senha redefinida.');}).catch(function(e){toast(msgUsr(e),true);});});});
+      a.appendChild(pw);n.appendChild(a);box.appendChild(n);
+    });
+    var up=$('#uPerfil');up.textContent='';usrDados.perfis.forEach(function(f){var o=el('option',null,f.nome);o.value=f.id;if(f.id==='atendente')o.selected=true;up.appendChild(o);});
+    var pb=$('#listPerfis');pb.textContent='';
+    usrDados.perfis.forEach(function(f){
+      var n=el('article','ped');n.appendChild(el('b',null,f.nome+(f.sistema?' (do sistema)':'')));
+      if(f.descricao)n.appendChild(el('span','muted',f.descricao));
+      n.appendChild(el('span','muted',f.permissoes.indexOf('*')>=0?'Acesso total':f.permissoes.map(function(p){return PERM_ROT[p]||p;}).join(' · ')));
+      if(!f.sistema){var a=el('div','acts'),x=el('button','btn sm danger','Excluir perfil');x.type='button';
+        x.addEventListener('click',function(){confirmar('Excluir perfil?',[f.nome],'Excluir',true).then(function(ok){if(ok)chamarUsr({acao:'perfil_excluir',id:f.id}).then(function(){toast('Perfil excluído.');loadUsuarios();}).catch(function(e){toast(msgUsr(e),true);});});});
+        a.appendChild(x);n.appendChild(a);}
+      pb.appendChild(n);
+    });
+    var pp=$('#pPerms');pp.textContent='';
+    usrDados.permissoes.forEach(function(p){var l=el('label'),c=document.createElement('input');c.type='checkbox';c.value=p;l.appendChild(c);l.appendChild(el('span',null,PERM_ROT[p]||p));pp.appendChild(l);});
+  }
+  function gerarSenha(){
+    var cs='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789',b=new Uint32Array(14),o='';
+    (window.crypto||window.msCrypto).getRandomValues(b);for(var i=0;i<b.length;i++)o+=cs[b[i]%cs.length];return o;
+  }
+  $('#uGera').addEventListener('click',function(){$('#uSenha').value=gerarSenha();});
+  $('#formUsr').addEventListener('submit',function(e){
+    e.preventDefault();var b=$('#uGo');b.disabled=true;
+    chamarUsr({acao:'criar',nome:$('#uNome').value,email:$('#uEmail').value,perfil_id:$('#uPerfil').value,senha:$('#uSenha').value}).then(function(){
+      b.disabled=false;toast('Usuário criado. Envie o e-mail e a senha temporária à pessoa.');$('#formUsr').reset();loadUsuarios();
+    }).catch(function(er){b.disabled=false;toast(msgUsr(er),true);});
+  });
+  $('#formPerfil').addEventListener('submit',function(e){
+    e.preventDefault();
+    var ps=[].slice.call(document.querySelectorAll('#pPerms input:checked')).map(function(c){return c.value;});
+    if(!ps.length){toast('Marque ao menos uma permissão.',true);return;}
+    chamarUsr({acao:'perfil_salvar',id:$('#pId').value,nome:$('#pNome').value,descricao:$('#pDesc').value,permissoes:ps}).then(function(){
+      toast('Perfil salvo.');$('#formPerfil').reset();loadUsuarios();}).catch(function(er){toast(msgUsr(er),true);});
+  });
 
   // ===== Aviso de pedido novo =====
   var alertaOn=false;try{alertaOn=localStorage.getItem('tqr_alerta')==='1';}catch(e){}

@@ -1,5 +1,5 @@
 // Função de borda: verifica o Cloudflare Turnstile e só então cria o pedido.
-// Entrada: { token, args } onde args são os parâmetros de public.criar_pedido.
+// Entrada: { token, versao?, args } onde args são os parâmetros de public.criar_pedido (versao 1) ou criar_pedido_v2 (versao 2).
 // Segredos (supabase secrets set): TURNSTILE_SECRET. SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY já vêm no ambiente.
 // Publicar com: supabase functions deploy criar-pedido --no-verify-jwt
 import { createClient } from "npm:@supabase/supabase-js@2.45.0";
@@ -17,9 +17,14 @@ function cors(req: Request) {
   };
 }
 
-const CAMPOS = [
+// versao 1: criar_pedido (só quantidade, telas antigas); versao 2: criar_pedido_v2 (vários itens, bairro, cupom)
+const CAMPOS_V1 = [
   "p_whatsapp", "p_quantidade", "p_nome", "p_data_nascimento", "p_email",
   "p_aceite_lgpd", "p_forma_pagamento", "p_endereco", "p_bairro", "p_observacao",
+];
+const CAMPOS_V2 = [
+  "p_whatsapp", "p_itens", "p_nome", "p_data_nascimento", "p_email", "p_aceite_lgpd", "p_forma_pagamento",
+  "p_endereco", "p_bairro", "p_bairro_id", "p_modalidade", "p_cupom", "p_observacao",
 ];
 
 Deno.serve(async (req) => {
@@ -27,7 +32,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: h });
   if (req.method !== "POST") return new Response("{}", { status: 405, headers: h });
 
-  let corpo: { token?: string; args?: Record<string, unknown> };
+  let corpo: { token?: string; versao?: number; args?: Record<string, unknown> };
   try { corpo = await req.json(); } catch { return new Response('{"erro":"json"}', { status: 400, headers: h }); }
   if (!corpo.token || !corpo.args) return new Response('{"erro":"dados"}', { status: 400, headers: h });
 
@@ -42,10 +47,11 @@ Deno.serve(async (req) => {
 
   // Repassa só os campos conhecidos de criar_pedido.
   const args: Record<string, unknown> = {};
-  for (const k of CAMPOS) if (k in corpo.args) args[k] = corpo.args[k];
+  const v2 = corpo.versao === 2;
+  for (const k of (v2 ? CAMPOS_V2 : CAMPOS_V1)) if (k in corpo.args) args[k] = corpo.args[k];
 
   const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-  const { data, error } = await sb.rpc("criar_pedido", args);
+  const { data, error } = await sb.rpc(v2 ? "criar_pedido_v2" : "criar_pedido", args);
   if (error) return new Response(JSON.stringify({ erro: error.message }), { status: 422, headers: h });
   return new Response(JSON.stringify(data), { status: 200, headers: h });
 });

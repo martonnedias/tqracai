@@ -194,7 +194,6 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
           <label class="fld">Mínimo de garrafas por pedido<input data-chave="pedido_min" type="number" min="1" max="999" required></label>
           <label class="fld">Máximo de garrafas por pedido<input data-chave="pedido_max" type="number" min="1" max="999" required></label>
         </div>
-        <label class="fld">Entrega grátis a partir de (garrafas)<input data-chave="frete_gratis_qtd" type="number" min="1" max="999" required></label>
         <b>Contador "garrafas vendidas" do site</b>
         <p class="muted">Exibido = base + garrafas dos pedidos pagos + ajuste. Agora o site mostra: <b id="cntAtual">…</b></p>
         <div class="row2">
@@ -452,7 +451,7 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
   // ===== Configurações (formas de pagamento, bairros e chaves do site) =====
   var cfgOriginal={};
   var CFG_ROT={whatsapp_pedidos:'WhatsApp dos pedidos',horario_abre:'Abre às',horario_fecha:'Fecha às',aviso_site:'Texto do aviso',aviso_ativo:'Aviso no site',
-    pedido_min:'Mínimo por pedido',pedido_max:'Máximo por pedido',frete_gratis_qtd:'Entrega grátis a partir de',contador_base:'Base do contador',
+    pedido_min:'Mínimo por pedido',pedido_max:'Máximo por pedido',contador_base:'Base do contador',
     contador_ajuste:'Ajuste do contador',pontos_por_real:'Pontos por R$ 1',pontos_por_brinde:'Pontos por brinde'};
   function loadConfig(){
     sb.from('configuracoes').select('chave,valor').then(function(r){

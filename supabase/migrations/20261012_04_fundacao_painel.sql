@@ -97,19 +97,18 @@ insert into public.configuracoes (chave, valor, descricao) values
  ('aviso_ativo','false','Mostrar o aviso no topo do site (true/false)'),
  ('aviso_site','','Texto do aviso no topo do site'),
  ('pedido_min','1','Mínimo de garrafas por pedido'),
- ('pedido_max','99','Máximo de garrafas por pedido'),
- ('frete_gratis_qtd','5','Garrafas para entrega grátis')
+ ('pedido_max','99','Máximo de garrafas por pedido')
 on conflict (chave) do nothing;
 
 create function app_private.validar_config() returns trigger
 language plpgsql set search_path = '' as $$
 begin
   if new.chave in ('preco_unitario','preco_combo3','preco_5mais','pontos_por_real','pontos_por_brinde',
-                   'contador_base','contador_ajuste','pedido_min','pedido_max','frete_gratis_qtd')
+                   'contador_base','contador_ajuste','pedido_min','pedido_max')
      and new.valor !~ '^-?[0-9]+(\.[0-9]+)?$' then
     raise exception 'valor_invalido:%', new.chave using errcode = '22023';
   end if;
-  if new.chave in ('preco_unitario','preco_combo3','preco_5mais','pedido_min','pedido_max','frete_gratis_qtd')
+  if new.chave in ('preco_unitario','preco_combo3','preco_5mais','pedido_min','pedido_max')
      and new.valor::numeric < 0 then
     raise exception 'valor_invalido:%', new.chave using errcode = '22023';
   end if;
@@ -158,7 +157,6 @@ language sql stable security definer set search_path = '' as $$
                   then nullif(trim((select valor from public.configuracoes where chave = 'aviso_site')), '') end,
     'pedido_min', (select valor::int from public.configuracoes where chave = 'pedido_min'),
     'pedido_max', (select valor::int from public.configuracoes where chave = 'pedido_max'),
-    'frete_gratis_qtd', (select valor::int from public.configuracoes where chave = 'frete_gratis_qtd'),
     'contador', public.obter_contador(),
     'formas_pagamento', coalesce((select jsonb_agg(jsonb_build_object('id', f.id, 'nome', f.nome, 'instrucoes', f.instrucoes) order by f.ordem, f.nome)
                                   from public.formas_pagamento f where f.ativo), '[]'::jsonb),

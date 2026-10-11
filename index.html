@@ -6,11 +6,14 @@
 <title>#TQR Açaí | Açaí na garrafa em Teresina · Peça no WhatsApp</title>
 <meta name="description" content="Açaí tradicional cremoso na garrafa de 300 ml por R$ 16,99. Combo 3 por R$ 42. Delivery em toda Teresina das 8h às 2h. Peça pelo WhatsApp.">
 <meta name="theme-color" content="#1a0624">
-<!-- Troque pelo endereço final do site quando publicar -->
+<!-- Ao trocar para o domínio próprio, atualize BASE nestas 4 linhas e no sitemap.xml/robots.txt -->
+<link rel="canonical" href="https://martonnedias.github.io/tqracai/">
+<meta property="og:url" content="https://martonnedias.github.io/tqracai/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="#TQR Açaí · Açaí cremoso pronto na garrafa">
 <meta property="og:description" content="300 ml por R$ 16,99 · Combo 3 por R$ 42 · Delivery em toda Teresina das 8h às 2h.">
-<meta property="og:image" content="img/og-image.jpg">
+<meta property="og:image" content="https://martonnedias.github.io/tqracai/img/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="img/rotulo.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,7 +24,10 @@
   Ex.: ga4:'G-ABC123XYZ', metaPixel:'123456789012345'  -->
 <script>window.TQR_TRACKING={ga4:'',metaPixel:''};
 /* Número que recebe os pedidos (só dígitos, com 55). TEMPORÁRIO: número de teste. Original: 5586995884770 */
-window.TQR_FONE='5586994144709';</script>
+window.TQR_FONE='5586994144709';
+/* Proteção contra robôs (Cloudflare Turnstile). Vazio = desligado e o pedido vai direto ao banco.
+   Preencher só depois de publicar a função supabase/functions/criar-pedido (veja o README dela). */
+window.TQR_TURNSTILE='';</script>
 
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FoodEstablishment","name":"#TQR Açaí","servesCuisine":"Açaí","telephone":"+55-86-99588-4770","priceRange":"R$ 14–17","address":{"@type":"PostalAddress","addressLocality":"Teresina","addressRegion":"PI","addressCountry":"BR"},"areaServed":"Teresina","openingHours":"Mo-Su 08:00-02:00","paymentAccepted":"Pix, Cartão","taxID":"59.270.529/0001-78","sameAs":["https://instagram.com/tqracai"],"image":"img/og-image.jpg"}
@@ -445,6 +451,8 @@ footer a{color:var(--gold2);text-decoration:none}
 .qchips button{border:1px solid var(--line);background:rgba(232,190,98,.06);color:var(--gold2);border-radius:999px;padding:8px 14px;font:600 .85rem Poppins,sans-serif;cursor:pointer}
 .qchips button.on{background:var(--gold-grad);color:#2a0838;border-color:transparent}
 [hidden]{display:none!important}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+#tsBox{min-height:0;margin-top:12px}
 .loyal{border:1px dashed rgba(232,190,98,.35);border-radius:12px;padding:12px 14px}
 .loyal summary{cursor:pointer;color:var(--gold-light);font-weight:600;font-size:.9rem}
 .loyal summary small{color:var(--muted);font-weight:400}
@@ -934,6 +942,8 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
         <div class="sum-line"><span>Entrega</span><b id="sumShip">taxa do app</b></div>
         <div class="sum-total"><span>Total</span><b id="sumTotal">R$ 42,00</b></div>
         <p class="sum-note" id="sumNote">A taxa de entrega é a do aplicativo e é confirmada no WhatsApp.</p>
+        <div class="hp" aria-hidden="true"><label>Deixe em branco<input type="text" name="site_url" tabindex="-1" autocomplete="off"></label></div>
+        <div id="tsBox"></div>
         <button type="submit" class="btn btn-wa"><svg><use href="#wa"/></svg>Enviar pedido pelo WhatsApp</button>
         <p class="sum-safe">Nada é cobrado aqui. Você confirma tudo na conversa.<br>Ao enviar, você concorda com os <a href="politicas/termos.html">Termos</a> e a <a href="politicas/privacidade.html">Política de Privacidade</a>.</p>
       </aside>
@@ -1066,9 +1076,11 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
     var UN=16.99, C3=42, U5=14;
     var qty=f.querySelector('#qty'), addr=document.getElementById('addrBox');
     function brl(v){return 'R$ '+v.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
+    function rs(v){return brl(v).replace(',00','');}  // "R$ 14" ou "R$ 16,99"
+    function econ(){return brl(3*UN-C3);}
     function calc(q){
       var full=q*UN, total, label;
-      if(q>=5){total=q*U5;label='R$ 14 cada + entrega grátis';}
+      if(q>=5){total=q*U5;label=rs(U5)+' cada + entrega grátis';}
       else{var c=Math.floor(q/3),r=q%3;total=c*C3+r*UN;label=c?(c+'× combo 3'+(r?' + '+r+' avulsa'+(r>1?'s':''):'')):'preço unitário';}
       return {full:full,total:Math.round(total*100)/100,label:label,free:q>=5};
     }
@@ -1084,7 +1096,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
       document.getElementById('sumTotal').textContent=brl(c.total);
       document.getElementById('sumNote').textContent=!ent?'Combine o horário e o local de retirada no WhatsApp.':(c.free?'Entrega grátis em pedidos de 5 garrafas ou mais.':'A taxa de entrega é a do aplicativo e é confirmada no WhatsApp.');
       var h=document.getElementById('qtyHint');
-      h.textContent= q>=5?'Você ganhou R$ 14 por garrafa e entrega grátis.':(q===4?'Leve 5 e pague R$ 14 cada, com entrega grátis.':(q<3?'Leve 3 por R$ 42 e economize R$ 8,97.':'Combo 3 aplicado: R$ 14 cada.'));
+      h.textContent= q>=5?'Você ganhou '+rs(U5)+' por garrafa e entrega grátis.':(q===4?'Leve 5 e pague '+rs(U5)+' cada, com entrega grátis.':(q<3?'Leve 3 por '+rs(C3)+' e economize '+econ()+'.':'Combo 3 aplicado: '+rs(C3/3)+' cada.'));
       f.querySelectorAll('.qchips button').forEach(function(b){var v=+b.dataset.set;b.classList.toggle('on',v===5?q>=5:q===v);});
       addr.hidden=!ent; addr.querySelectorAll('input[required],input[data-req]').forEach(function(i){if(ent){i.required=true;}else{i.dataset.req=1;i.required=false;}});
       return c;
@@ -1100,6 +1112,32 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
       return fetch(SB.url+'/rest/v1/rpc/'+fn,{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json'},body:JSON.stringify(args),signal:ac?ac.signal:undefined})
         .then(function(r){clearTimeout(t);if(!r.ok)throw new Error('http'+r.status);return r.json();},function(e){clearTimeout(t);throw e;});
     }
+    function post(path,body,ms){
+      var ac=window.AbortController?new AbortController():null, t=ac&&setTimeout(function(){ac.abort();},ms||7000);
+      return fetch(SB.url+path,{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json'},body:JSON.stringify(body),signal:ac?ac.signal:undefined})
+        .then(function(r){clearTimeout(t);if(!r.ok)throw new Error('http'+r.status);return r.json();},function(e){clearTimeout(t);throw e;});
+    }
+    // ===== Proteção contra robôs (Cloudflare Turnstile), carregada só quando a pessoa começa a preencher =====
+    var tsToken=null, tsId=null, tsLoading=false, tsBox=document.getElementById('tsBox');
+    function tsRender(){
+      if(tsId!==null||!window.turnstile)return;
+      tsId=turnstile.render(tsBox,{sitekey:window.TQR_TURNSTILE,language:'pt-br',theme:'dark',
+        callback:function(t){tsToken=t;},'expired-callback':function(){tsToken=null;},'error-callback':function(){tsToken=null;}});
+    }
+    function tsLoad(){
+      if(!window.TQR_TURNSTILE||tsLoading)return; tsLoading=true;
+      var sc=document.createElement('script');sc.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';sc.async=true;sc.onload=tsRender;document.head.appendChild(sc);
+    }
+    function resetTs(){tsToken=null;try{if(tsId!==null)turnstile.reset(tsId);}catch(e){}}
+    f.addEventListener('focusin',tsLoad,{once:true});
+    // Preços: o banco (configuracoes) é a fonte de verdade. Os valores acima são só o padrão se a leitura falhar.
+    // Os textos fixos do HTML (ofertas, SEO) continuam manuais: ao mudar preço, atualize também o HTML.
+    function precosOk(p){return p&&+p.unitario>0&&+p.combo3>0&&+p.mais5>0;}
+    rpc('obter_precos',{},4000).then(function(p){
+      if(!precosOk(p)||(+p.unitario===UN&&+p.combo3===C3&&+p.mais5===U5))return;
+      UN=+p.unitario;C3=+p.combo3;U5=+p.mais5;
+      update(); if(typeof qset==='function')qset(qq.value);
+    }).catch(function(){});
     var wf=f.elements.whats, nomeFld=document.getElementById('nomeFld'), waNote=document.getElementById('waNote'), loyal=document.getElementById('loyalBox'), tmr;
     function digits(){return wf.value.replace(/\D/g,'');}
     function setKnown(k){known=k;nomeFld.hidden=k;f.elements.nome.required=!k;waNote.hidden=!k;waNote.textContent=k?'Cadastro encontrado. Não precisa informar o nome.':'';loyal.hidden=k;}
@@ -1124,7 +1162,8 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
       if(!known&&nm.length<3){var nw=f.elements.nome.closest('.fld');nw.classList.add('err');var nmm=document.createElement('span');nmm.className='msg';nmm.textContent='Informe seu nome';nw.appendChild(nmm);f.elements.nome.focus();return;}
       var pagv=f.querySelector('input[name=pag]:checked').value, btn=f.querySelector('button[type=submit]'), lbl=btn.innerHTML;
       btn.disabled=true; btn.textContent='Registrando pedido…';
-      function go(code){
+      function go(code,srvTotal){
+        if(srvTotal>0&&Math.abs(srvTotal-c.total)>0.009)c=Object.assign({},c,{total:srvTotal});
         var L=['Olá, TQR Açaí! 💜 Quero fazer um pedido pelo site:',''];
         if(code)L.push('🔖 *Pedido:* '+code);
         L.push('🥤 *Quantidade:* '+q+' garrafa'+(q>1?'s':'')+' de 300 ml',
@@ -1143,20 +1182,28 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
         btn.disabled=false; btn.innerHTML=lbl;
         var w=window.open(url,'_blank'); if(w){try{w.opener=null;}catch(e){}} else {location.href=url;}
       }
-      rpc('criar_pedido',{
+      var args={
         p_whatsapp:dg,p_quantidade:q,p_nome:nm||null,
         p_data_nascimento:known?null:(v('nasc')||null),p_email:known?null:(v('email')||null),
         p_aceite_lgpd:true,p_forma_pagamento:pagv==='Pix'?'pix':'cartao',
         p_endereco:ent?(v('rua')+(v('comp')?', '+v('comp'):'')):null,p_bairro:ent?v('bairro'):null,
         p_observacao:[ent?'':'Retirada',ent&&v('ref')?'Ref.: '+v('ref'):'',v('obs')].filter(Boolean).join(' | ')||null
-      }).then(function(r){go(r&&r[0]&&r[0].pedido_codigo);}).catch(function(){go(null);});
+      };
+      // Robô preencheu o campo-isca: não grava nada. Quem é gente nunca vê esse campo.
+      if(f.elements.site_url.value){go(null);return;}
+      // Com Turnstile ligado, só grava com token válido. Sem token (bloqueador, falha de rede) o WhatsApp abre
+      // do mesmo jeito, sem código: a venda nunca se perde.
+      var req=window.TQR_TURNSTILE
+        ? (tsToken?post('/functions/v1/criar-pedido',{token:tsToken,args:args},9000):Promise.reject(new Error('sem_token')))
+        : rpc('criar_pedido',args);
+      req.then(function(r){go(r&&r[0]&&r[0].pedido_codigo,r&&r[0]&&+r[0].pedido_total);}).catch(function(){go(null);}).then(resetTs);
     });
 
     // ===== Pedido rápido no topo =====
     var qq=document.getElementById('qQty');
     if(qq){
       var qset=function(n){n=Math.max(1,Math.min(99,parseInt(n,10)||1));qq.value=n;qty.value=n;var c=update();document.getElementById('qTotal').textContent=brl(c.total);
-        document.getElementById('qHint').textContent=n>=5?'R$ 14 cada + entrega grátis':(n===4?'Leve 5 e ganhe entrega grátis':(n===3?'Combo 3 aplicado: R$ 14 cada':'Leve 3 por R$ 42 e economize R$ 8,97'));};
+        document.getElementById('qHint').textContent=n>=5?rs(U5)+' cada + entrega grátis':(n===4?'Leve 5 e ganhe entrega grátis':(n===3?'Combo 3 aplicado: '+rs(C3/3)+' cada':'Leve 3 por '+rs(C3)+' e economize '+econ()));};
       document.querySelectorAll('[data-qstep]').forEach(function(b){b.addEventListener('click',function(){qset((parseInt(qq.value,10)||1)+(+b.dataset.qstep));});});
       qq.addEventListener('input',function(){if(qq.value!=='')qset(qq.value);});
       qq.addEventListener('blur',function(){qset(qq.value);});

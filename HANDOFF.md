@@ -76,12 +76,12 @@ Detalhes de segurança já aplicados: texto vindo do público é sempre inserido
 
 ### 5.2 Código a fazer (fase 1 e endurecimento)
 
-- [ ] **Proteção contra robôs** no pedido (ex.: Cloudflare Turnstile ou função de borda com verificação) antes de divulgar. Hoje alguém pode enviar pedidos falsos em volume e testar números pelo `cliente_cadastrado` (existe só o limite de 5 pedidos por hora por cliente).
-- [ ] **MFA no painel**: fluxo de inscrição e verificação de fator TOTP com a API de MFA do supabase-js.
+- [x] **Proteção contra robôs** no pedido (ex.: Cloudflare Turnstile ou função de borda com verificação) antes de divulgar. Hoje alguém pode enviar pedidos falsos em volume e testar números pelo `cliente_cadastrado` (existe só o limite de 5 pedidos por hora por cliente). *(Código pronto em 11/10: campo-isca no formulário + Cloudflare Turnstile com função de borda em `supabase/functions/criar-pedido`. Desligado até o dono criar o site no Cloudflare e publicar a função; passos em `supabase/functions/criar-pedido/README.md`. `cliente_cadastrado` ainda permite testar números.)*
+- [x] **MFA no painel**: fluxo de inscrição e verificação de fator TOTP com a API de MFA do supabase-js. *(Pronto: tela de cadastro por QR code, desafio no login, botão Segurança. Para exigir no banco: `supabase/opcional/exigir_mfa_no_painel.sql`, só depois do dono cadastrar o fator.)*
 - [ ] Testar o painel no navegador real com o login de verdade (os testes automáticos usaram respostas simuladas; a biblioteca vem da jsDelivr e nunca foi carregada de lá em teste). Se a CDN for um problema, hospedar o arquivo da biblioteca na pasta do site.
-- [ ] Preços estão duplicados: no JS do site (`UN=16.99, C3=42, U5=14`) e na tabela `configuracoes`. O banco é a fonte de verdade para o total gravado, mas a mensagem do WhatsApp usa o total do JS. Fazer o site ler os preços do banco (função pública de leitura) ou garantir os dois em sincronia ao mudar preço.
-- [ ] Painel: alerta de pedido novo (som ou notificação), histórico de status do pedido (tabela `pedido_eventos` já existe), editar observações do cliente, exportar para planilha.
-- [ ] `admin/` fora do Google: já tem `noindex`; acrescentar `Disallow: /admin/` no `robots.txt` e não listar no sitemap.
+- [x] Preços estão duplicados: no JS do site (`UN=16.99, C3=42, U5=14`) e na tabela `configuracoes`. O banco é a fonte de verdade para o total gravado, mas a mensagem do WhatsApp usa o total do JS. Fazer o site ler os preços do banco (função pública de leitura) ou garantir os dois em sincronia ao mudar preço. *(Pronto no código: `obter_precos()` na migração `20261011_03_obter_precos.sql` — precisa ser aplicada no Supabase — e a mensagem do WhatsApp usa o total devolvido pelo servidor. Os textos fixos de oferta no HTML continuam manuais.)*
+- [x] Painel: alerta de pedido novo (som ou notificação), histórico de status do pedido (tabela `pedido_eventos` já existe), editar observações do cliente, exportar para planilha. *(Pronto: aviso sonoro/notificação, histórico por pedido, exportar CSV. Falta: editar observações do cliente.)*
+- [x] `admin/` fora do Google: já tem `noindex`; acrescentar `Disallow: /admin/` no `robots.txt` e não listar no sitemap. *(`robots.txt` e `sitemap.xml` criados; no GitHub Pages de projeto o robots.txt só vale com domínio próprio.)*
 - [ ] Opcional: página ou seção de cadastro de fidelidade separada, usando `cadastrar_cliente` (a função já existe e exige nome, nascimento, e-mail e aceite).
 
 ### 5.3 Fase 2 — Financeiro e pontos
@@ -112,7 +112,7 @@ Brinde de aniversário, mensagens automáticas (exige API oficial do WhatsApp co
 
 - [ ] URL do feed do Instagram (Behold) no lugar de `INSTAGRAM_FEED_URL`.
 - [ ] IDs de GA4 e Meta Pixel em `window.TQR_TRACKING` (o aviso de cookies só aparece quando há ID).
-- [ ] SEO: `og:image` com URL absoluta, canonical, `sitemap.xml` e `robots.txt` no domínio final; Google Business Profile.
+- [x] SEO: `og:image` com URL absoluta, canonical, `sitemap.xml` e `robots.txt` no domínio final; Google Business Profile. *(og:image absoluto, canonical, og:url e twitter:card feitos com a URL do GitHub Pages; trocar quando houver domínio próprio. Google Business Profile é com o dono.)*
 - [ ] Domínio próprio (tqracai.com.br) e ajuste das URLs.
 - [ ] Comprimir os JPGs restantes em `img/`.
 - [ ] Corrigir o rótulo "CONGEADO" no material do produto; conferir avisos de alérgenos e lactose.

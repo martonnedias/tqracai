@@ -1,0 +1,7 @@
+# Atenção: o robots.txt só vale na raiz do domínio. No GitHub Pages de projeto (/tqracai/) os buscadores
+# ignoram este arquivo; ele passa a funcionar com o domínio próprio. O painel já tem noindex.
+User-agent: *
+Disallow: /admin/
+Disallow: /tqracai/admin/
+
+Sitemap: https://martonnedias.github.io/tqracai/sitemap.xml

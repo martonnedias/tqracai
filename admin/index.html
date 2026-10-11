@@ -54,6 +54,10 @@ form.card{background:var(--card);border:1px solid var(--line);border-radius:18px
 .login{max-width:380px;margin:12vh auto;padding:0 16px}
 .login form{display:grid;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
 .empty{padding:30px 10px;text-align:center;color:var(--muted)}
+.qr{display:block;width:200px;height:200px;background:#fff;border-radius:12px;padding:8px;margin:0 auto}
+.secret{word-break:break-all;font-family:ui-monospace,monospace;font-size:.85rem;color:var(--gold-light);text-align:center}
+.banner{background:rgba(232,190,98,.12);border:1px solid var(--gold);border-radius:14px;padding:12px 14px;margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.hist{display:grid;gap:2px;font-size:.85rem;color:var(--muted);padding-left:4px}
 #toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--gold);color:#2a0838;font-weight:700;padding:12px 18px;border-radius:12px;z-index:20;max-width:90vw}
 #toast.err{background:#ff6b6b}
 </style>
@@ -71,6 +75,37 @@ form.card{background:var(--card);border:1px solid var(--line);border-radius:18px
   </form>
 </section>
 
+<section class="login" id="viewMfa" hidden>
+  <form id="mfaForm">
+    <h2>Verificação em duas etapas</h2>
+    <p class="muted">Digite o código de 6 dígitos do aplicativo autenticador.</p>
+    <label class="fld">Código<input id="mfaCode" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></label>
+    <button class="btn go" type="submit">Confirmar</button>
+    <button class="btn" type="button" id="mfaOut">Sair</button>
+    <p class="muted" id="mfaMsg" role="alert"></p>
+  </form>
+</section>
+
+<section class="login" id="viewSeg" hidden>
+  <form id="segForm">
+    <h2>Segurança da conta</h2>
+    <div id="segOn" hidden>
+      <p>Verificação em duas etapas: <b>ativada</b>.</p>
+      <p class="muted">Se trocar de celular, remova e cadastre de novo (precisa estar logado com o código).</p>
+      <button class="btn danger" type="button" id="segRemove">Desativar</button>
+    </div>
+    <div id="segOff" hidden>
+      <p class="muted">1. Instale um aplicativo autenticador (Google Authenticator, Microsoft Authenticator, Authy).<br>2. Leia o QR code, ou digite a chave.<br>3. Informe o código de 6 dígitos para confirmar.</p>
+      <img class="qr" id="segQr" alt="QR code para o aplicativo autenticador">
+      <p class="secret" id="segSecret"></p>
+      <label class="fld">Código<input id="segCode" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6"></label>
+      <button class="btn go" type="submit">Ativar</button>
+    </div>
+    <button class="btn" type="button" id="segBack">Voltar ao painel</button>
+    <p class="muted" id="segMsg" role="alert"></p>
+  </form>
+</section>
+
 <section class="login" id="viewDenied" hidden>
   <form onsubmit="return false">
     <h2>Sem permissão</h2>
@@ -82,6 +117,8 @@ form.card{background:var(--card);border:1px solid var(--line);border-radius:18px
 <div id="app" hidden>
   <header><div class="wrap">
     <div class="bar"><img src="../img/rotulo.webp" alt=""><b>Painel TQR Açaí</b><span class="sp"></span>
+      <button class="btn sm" id="btnAlert" type="button" aria-pressed="false">🔔 Avisos: desligados</button>
+      <button class="btn sm" id="btnSeg" type="button">Segurança</button>
       <button class="btn sm" id="btnRefresh" type="button">Atualizar</button>
       <button class="btn sm" id="btnOut" type="button">Sair</button></div>
     <nav id="tabs">
@@ -93,12 +130,14 @@ form.card{background:var(--card);border:1px solid var(--line);border-radius:18px
 
   <main class="wrap">
     <section id="tab-pedidos">
+      <div class="banner" id="mfaBanner" hidden><span>Ative a verificação em duas etapas para proteger o painel.</span><button class="btn sm go" type="button" id="mfaGo">Ativar agora</button></div>
       <div class="cards" id="stats"></div>
       <div class="filters">
         <select id="fStatus" aria-label="Status"></select>
         <input type="date" id="fDia" aria-label="Dia">
         <select id="fPag" aria-label="Pagamento"><option value="">Pagamento: todos</option><option value="pix">Pix</option><option value="cartao">Cartão</option></select>
         <input type="search" id="fBusca" placeholder="Buscar nome, bairro ou código" aria-label="Buscar">
+        <button class="btn sm" type="button" id="fCsv">Exportar CSV</button>
       </div>
       <div class="list" id="listPed"></div>
     </section>
@@ -138,7 +177,7 @@ form.card{background:var(--card);border:1px solid var(--line);border-radius:18px
   var LABEL={pendente:'Pendente',confirmado:'Confirmado',pago:'Pago',saiu_entrega:'Saiu para entrega',entregue:'Entregue',cancelado:'Cancelado'};
   var NEXT={pendente:'confirmado',confirmado:'pago',pago:'saiu_entrega',saiu_entrega:'entregue'};
   var ABERTOS=['pendente','confirmado','pago','saiu_entrega'];
-  var pedidos=[],clientes=[],soInativos=false,timer;
+  var pedidos=[],visiveis=[],clientes=[],soInativos=false,timer,vistos=null;
 
   function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;}
   function brl(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
@@ -147,7 +186,7 @@ form.card{background:var(--card);border:1px solid var(--line);border-radius:18px
   function fone(w){var d=String(w||'');return d.length>=12?'('+d.slice(2,4)+') '+d.slice(4,d.length-4)+'-'+d.slice(-4):d;}
   function first(n){return String(n||'').trim().split(/\s+/)[0]||'';}
   function toast(msg,err){var t=$('#toast');t.textContent=msg;t.className=err?'err':'';t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){t.hidden=true;},3500);}
-  function show(id){['viewLogin','viewDenied','app'].forEach(function(v){$('#'+v).hidden=(v!==id);});}
+  function show(id){['viewLogin','viewMfa','viewSeg','viewDenied','app'].forEach(function(v){$('#'+v).hidden=(v!==id);});}
 
   // ===== Login =====
   $('#loginForm').addEventListener('submit',function(e){
@@ -163,11 +202,18 @@ form.card{background:var(--card);border:1px solid var(--line);border-radius:18px
   function start(){
     sb.auth.getSession().then(function(r){
       if(!r.data.session){show('viewLogin');return;}
-      sb.from('admins').select('user_id').maybeSingle().then(function(a){
-        if(a.error||!a.data){show('viewDenied');return;}
-        show('app');loadAll();clearInterval(timer);
-        timer=setInterval(function(){if(!document.hidden&&!$('#tab-pedidos').hidden)loadPedidos();},30000);
+      sb.auth.mfa.getAuthenticatorAssuranceLevel().then(function(a){
+        if(a.data&&a.data.nextLevel==='aal2'&&a.data.currentLevel!=='aal2'){show('viewMfa');$('#mfaCode').focus();return;}
+        entrar();
       });
+    });
+  }
+  function entrar(){
+    sb.from('admins').select('user_id').maybeSingle().then(function(a){
+      if(a.error||!a.data){show('viewDenied');return;}
+      show('app');loadAll();clearInterval(timer);
+      timer=setInterval(loadPedidos,30000);
+      mfaStatus().then(function(on){$('#mfaBanner').hidden=on;});
     });
   }
 
@@ -199,7 +245,7 @@ form.card{background:var(--card);border:1px solid var(--line);border-radius:18px
     sb.from('pedidos').select('id,codigo,status,total,forma_pagamento,endereco,bairro,observacao,origem,criado_em,clientes(nome,whatsapp),itens_pedido(quantidade)')
       .order('criado_em',{ascending:false}).limit(300).then(function(r){
         if(r.error){toast('Não consegui carregar os pedidos.',true);return;}
-        pedidos=r.data||[];renderPedidos();
+        avisar(r.data||[]);pedidos=r.data||[];renderPedidos();
       });
   }
   function renderPedidos(){
@@ -212,7 +258,7 @@ form.card{background:var(--card);border:1px solid var(--line);border-radius:18px
       if(q){var h=[p.codigo,p.bairro,p.clientes&&p.clientes.nome,p.clientes&&p.clientes.whatsapp].join(' ').toLowerCase();if(h.indexOf(q)<0)return false;}
       return true;
     });
-    box.textContent='';
+    visiveis=rows;box.textContent='';
     if(!rows.length){box.appendChild(el('p','empty','Nenhum pedido com esses filtros.'));return;}
     rows.forEach(function(p){box.appendChild(card(p));});
   }
@@ -229,7 +275,19 @@ form.card{background:var(--card);border:1px solid var(--line);border-radius:18px
     if(p.status!=='cancelado'&&p.status!=='entregue'){var x=el('button','btn sm danger','Cancelar');x.type='button';x.addEventListener('click',function(){if(confirm('Cancelar o pedido '+p.codigo+'?'))mudar(p,'cancelado',x);});a.appendChild(x);}
     if(c.whatsapp){var w=el('a','btn sm wa','WhatsApp');w.target='_blank';w.rel='noopener';
       w.href='https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent('Olá, '+first(c.nome)+'! Aqui é da TQR Açaí 💜 Sobre o seu pedido '+p.codigo+'.');a.appendChild(w);}
-    n.appendChild(a);return n;
+    var hb=el('button','btn sm','Histórico');hb.type='button';
+    var hl=el('div','hist');hl.hidden=true;
+    hb.addEventListener('click',function(){
+      if(!hl.hidden){hl.hidden=true;return;}
+      sb.from('pedido_eventos').select('status,em').eq('pedido_id',p.id).order('em').then(function(r){
+        hl.textContent='';
+        if(r.error){toast('Não consegui carregar o histórico.',true);return;}
+        (r.data||[]).forEach(function(ev){hl.appendChild(el('span',null,hora(ev.em)+' · '+(LABEL[ev.status]||ev.status)));});
+        hl.hidden=false;
+      });
+    });
+    a.appendChild(hb);
+    n.appendChild(a);n.appendChild(hl);return n;
   }
   function mudar(p,status,btn){
     btn.disabled=true;
@@ -275,6 +333,99 @@ form.card{background:var(--card);border:1px solid var(--line);border-radius:18px
       w.href='https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent('Olá, '+first(c.nome)+'! Aqui é da TQR Açaí 💜 Tudo bem? Quer garantir suas garrafas geladas hoje?');
       a.appendChild(w);n.appendChild(a);box.appendChild(n);});
   }
+
+  // ===== Aviso de pedido novo =====
+  var alertaOn=false;try{alertaOn=localStorage.getItem('tqr_alerta')==='1';}catch(e){}
+  function pintaAlerta(){var b=$('#btnAlert');b.textContent='🔔 Avisos: '+(alertaOn?'ligados':'desligados');b.setAttribute('aria-pressed',alertaOn);b.classList.toggle('on',alertaOn);}
+  pintaAlerta();
+  var ctx=null;
+  function bip(){
+    try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();var o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);o.frequency.value=880;g.gain.setValueAtTime(.2,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.6);o.start();o.stop(ctx.currentTime+.6);}catch(e){}
+  }
+  $('#btnAlert').addEventListener('click',function(){
+    alertaOn=!alertaOn;try{localStorage.setItem('tqr_alerta',alertaOn?'1':'0');}catch(e){}
+    pintaAlerta();
+    if(alertaOn){bip();if(window.Notification&&Notification.permission==='default')Notification.requestPermission();}
+  });
+  function avisar(novos){
+    var ids=novos.map(function(p){return p.id;});
+    if(vistos&&alertaOn){
+      var fresh=novos.filter(function(p){return p.status==='pendente'&&vistos.indexOf(p.id)<0;});
+      if(fresh.length){
+        bip();toast(fresh.length===1?'Novo pedido: '+fresh[0].codigo:fresh.length+' novos pedidos');
+        try{if(window.Notification&&Notification.permission==='granted')new Notification('TQR Açaí',{body:fresh.length===1?'Novo pedido '+fresh[0].codigo:fresh.length+' novos pedidos'});}catch(e){}
+      }
+    }
+    vistos=ids;
+  }
+
+  // ===== Exportar CSV (pedidos filtrados na tela) =====
+  function cel(v){
+    var t=String(v==null?'':v);
+    if(/^[=+\-@\t\r]/.test(t))t="'"+t;           // evita fórmula ao abrir na planilha
+    return '"'+t.replace(/"/g,'""')+'"';
+  }
+  $('#fCsv').addEventListener('click',function(){
+    if(!visiveis.length){toast('Nada para exportar.',true);return;}
+    var linhas=[['Código','Data','Status','Cliente','WhatsApp','Garrafas','Total','Pagamento','Endereço','Bairro','Observação','Origem']];
+    visiveis.forEach(function(p){var c=p.clientes||{};
+      linhas.push([p.codigo,hora(p.criado_em),LABEL[p.status],c.nome,c.whatsapp,(p.itens_pedido||[]).reduce(function(a,i){return a+i.quantidade;},0),
+        Number(p.total).toFixed(2).replace('.',','),p.forma_pagamento||'',p.endereco,p.bairro,p.observacao,p.origem]);});
+    var csv='\ufeff'+linhas.map(function(l){return l.map(cel).join(';');}).join('\r\n');
+    var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+    a.download='pedidos-tqr-'+dia(new Date().toISOString())+'.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href);},1000);
+  });
+
+  // ===== Verificação em duas etapas (TOTP) =====
+  function fatorTotp(){return sb.auth.mfa.listFactors().then(function(r){return r.data&&r.data.totp&&r.data.totp[0]||null;});}
+  function mfaStatus(){return fatorTotp().then(function(f){return !!f;});}
+  $('#mfaForm').addEventListener('submit',function(e){
+    e.preventDefault();$('#mfaMsg').textContent='Verificando…';
+    fatorTotp().then(function(f){
+      if(!f){$('#mfaMsg').textContent='Nenhum fator cadastrado.';return;}
+      return sb.auth.mfa.challengeAndVerify({factorId:f.id,code:$('#mfaCode').value.trim()}).then(function(r){
+        if(r.error){$('#mfaMsg').textContent='Código incorreto ou expirado.';return;}
+        $('#mfaCode').value='';$('#mfaMsg').textContent='';start();
+      });
+    });
+  });
+  $('#mfaOut').addEventListener('click',out);
+  function abrirSeg(){
+    show('viewSeg');$('#segMsg').textContent='';$('#segCode').value='';
+    $('#segOn').hidden=true;$('#segOff').hidden=true;
+    sb.auth.mfa.listFactors().then(function(r){
+      var d=r.data||{},ver=(d.totp||[])[0];
+      if(ver){$('#segOn').hidden=false;return;}
+      // fatores antigos não confirmados atrapalham um novo cadastro: remove antes
+      var velhos=(d.all||[]).filter(function(f){return f.status!=='verified';});
+      return Promise.all(velhos.map(function(f){return sb.auth.mfa.unenroll({factorId:f.id});})).then(function(){
+        return sb.auth.mfa.enroll({factorType:'totp',friendlyName:'Celular '+Date.now()});
+      }).then(function(en){
+        if(en.error){$('#segMsg').textContent='Não consegui gerar o QR code.';return;}
+        var qr=String(en.data.totp.qr_code||'');
+        if(qr.indexOf('data:image/')===0)$('#segQr').src=qr;
+        $('#segSecret').textContent=en.data.totp.secret;segFactor=en.data.id;$('#segOff').hidden=false;
+      });
+    });
+  }
+  var segFactor=null;
+  $('#segForm').addEventListener('submit',function(e){
+    e.preventDefault();if(!segFactor)return;
+    sb.auth.mfa.challengeAndVerify({factorId:segFactor,code:$('#segCode').value.trim()}).then(function(r){
+      if(r.error){$('#segMsg').textContent='Código incorreto. Confira a hora do celular e tente de novo.';return;}
+      toast('Verificação em duas etapas ativada.');segFactor=null;start();
+    });
+  });
+  $('#segRemove').addEventListener('click',function(){
+    if(!confirm('Desativar a verificação em duas etapas?'))return;
+    fatorTotp().then(function(f){return f&&sb.auth.mfa.unenroll({factorId:f.id});}).then(function(r){
+      if(r&&r.error){$('#segMsg').textContent='Não consegui desativar. Entre de novo com o código e tente.';return;}
+      toast('Verificação em duas etapas desativada.');start();
+    });
+  });
+  $('#btnSeg').addEventListener('click',abrirSeg);$('#mfaGo').addEventListener('click',abrirSeg);
+  $('#segBack').addEventListener('click',start);
 
   sb.auth.onAuthStateChange(function(ev){if(ev==='SIGNED_OUT')show('viewLogin');});
   start();

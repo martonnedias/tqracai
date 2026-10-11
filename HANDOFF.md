@@ -162,6 +162,20 @@ Pontos de atenção:
 - Promoção e preço nunca vêm do navegador: só `calcular_pedido` calcula; o site apenas exibe.
 - Contador: se a base de 1.000 deixar de ser real, ajustar o texto; hoje é real segundo o dono.
 
+Status em 12/10/2026 (código pronto na branch `claude/bold-lovelace-25ml91`, **ainda não aplicado nem publicado**; ordem e passos em `supabase/LEIA-ME.md`):
+
+- [x] Etapa 1: popup de confirmação de status (inclui cancelar), botão "Abrir site" no painel e link "Ir para o site" no login.
+- [x] Etapa 2: migração 04 (perfis dono/gerente/atendente/entregador, formas de pagamento, bairros, configurações, contador, RLS por permissão).
+- [x] Etapa 3: módulo Usuários no painel + função de borda `admin-usuarios`; interface do painel respeita as permissões.
+- [x] Etapa 4: aba Configurações (loja, horário, aviso, limites, contador, pontos, formas de pagamento, bairros); o site lê tudo do banco.
+- [x] Etapa 5: migração 05 (promoções de 8 tipos, motor `motor_pedido`, `simular_pedido`, `criar_pedido_v2`, fotos no Storage); abas Produtos e Promoções; pedido manual com itens, bairro e cupom; o site monta ofertas, extras, bairro com taxa, cupom e total a partir do servidor.
+- [x] Etapa 6: migração 06 (código de verificação, sessão do cliente, `enderecos_cliente`); site com "Usar um endereço salvo"; painel com códigos pendentes (botão de WhatsApp) e endereços na ficha do cliente.
+- [ ] Etapa 7 (fase 2: pontos e financeiro) e etapa 8 (fases 3 e 4): não iniciadas. A verificação por código já serve de base para o saldo de pontos.
+
+Regras do motor de preço: uma promoção por pedido (a mais vantajosa para o cliente); cupom só vale digitado; desempate por prioridade; frete grátis de uma promoção só vale quando a regra dela se aplica; brinde conta como benefício e não entra no contador de vendidos; limite de usos é reservado com trava na criação do pedido.
+
+Pendências conhecidas desta rodada: textos fixos de marketing no HTML (hero, textos de SEO, mensagens de WhatsApp dos botões "Combo"/"Kit") ainda citam R$ 16,99/R$ 42/R$ 14 e não mudam sozinhos; entrega por aplicativo não tem taxa no sistema (combinada no WhatsApp); o código de verificação é enviado manualmente pelo dono (guardado em texto por até 10 min no banco, ver comentário da migração 06); `cliente_cadastrado` continua permitindo testar números.
+
 ## 6. Especificação resumida das fases (modelo de dados completo)
 
 A especificação completa está no documento "TQR Açaí — Especificação do sistema de gestão e fidelidade" (Claude Docs, no projeto do dono). Tabelas planejadas além das da fase 1: `livro_pontos`, `lancamentos`, `insumos`, `compras_insumo`, `ficha_tecnica`, `codigos_verificacao` (a criar). `configuracoes` guarda regras editáveis: `preco_unitario`, `preco_combo3`, `preco_5mais`, `pontos_por_real`, `pontos_por_brinde`, `whatsapp_loja`.

@@ -64,6 +64,7 @@ dialog#dlg h3{margin-bottom:8px;font-size:1.1rem}
 dialog#dlg .de{display:grid;gap:4px;margin:10px 0 16px;color:var(--muted);font-size:.95rem}
 dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
 .sitelink{display:block;text-align:center;margin-top:4px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.chk{display:flex;gap:8px;align-items:center}.chk input{width:auto;min-height:0}
 .row{display:flex;gap:8px}.row input{flex:1}
 .perms{display:grid;gap:6px}.perms label{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--text)}
 .perms input{width:auto;min-height:0}
@@ -136,6 +137,7 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
       <button class="btn sm" data-tab="pedidos" data-perm="pedidos.ver" type="button">Pedidos</button>
       <button class="btn sm" data-tab="novo" data-perm="pedidos.criar" type="button">Novo pedido</button>
       <button class="btn sm" data-tab="clientes" data-perm="clientes.ver" type="button">Clientes</button>
+      <button class="btn sm" data-tab="config" data-perm="config.gerir" type="button">Configurações</button>
       <button class="btn sm" data-tab="usuarios" data-perm="*" type="button">Usuários</button>
     </nav>
   </div></header>
@@ -175,6 +177,56 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
         <button class="btn sm" type="button" id="cInativos">Sem pedido há 30 dias</button>
       </div>
       <div class="list" id="listCli"></div>
+    </section>
+
+    <section id="tab-config" hidden>
+      <h2>Configurações do site</h2>
+      <form class="card" id="formCfg" autocomplete="off">
+        <b>Loja</b>
+        <label class="fld">WhatsApp que recebe os pedidos <small>(com 55 e DDD, só números)</small><input data-chave="whatsapp_pedidos" type="tel" inputmode="numeric" pattern="55[0-9]{10,11}" required></label>
+        <div class="row2">
+          <label class="fld">Abre às<input data-chave="horario_abre" type="time" required></label>
+          <label class="fld">Fecha às<input data-chave="horario_fecha" type="time" required></label>
+        </div>
+        <label class="fld">Aviso no topo do site<input data-chave="aviso_site" type="text" maxlength="160" placeholder="Ex.: Hoje fechamos às 22h"></label>
+        <label class="chk"><input data-chave="aviso_ativo" data-bool="1" type="checkbox"><span>Mostrar o aviso no site</span></label>
+        <div class="row2">
+          <label class="fld">Mínimo de garrafas por pedido<input data-chave="pedido_min" type="number" min="1" max="999" required></label>
+          <label class="fld">Máximo de garrafas por pedido<input data-chave="pedido_max" type="number" min="1" max="999" required></label>
+        </div>
+        <label class="fld">Entrega grátis a partir de (garrafas)<input data-chave="frete_gratis_qtd" type="number" min="1" max="999" required></label>
+        <b>Contador "garrafas vendidas" do site</b>
+        <p class="muted">Exibido = base + garrafas dos pedidos pagos + ajuste. Agora o site mostra: <b id="cntAtual">…</b></p>
+        <div class="row2">
+          <label class="fld">Base (vendas antes do sistema)<input data-chave="contador_base" type="number" min="0" required></label>
+          <label class="fld">Ajuste manual <small>(pode ser negativo)</small><input data-chave="contador_ajuste" type="number" required></label>
+        </div>
+        <b>Programa de pontos</b>
+        <div class="row2">
+          <label class="fld">Pontos por R$ 1 pago<input data-chave="pontos_por_real" type="number" min="0" step="0.01" required></label>
+          <label class="fld">Pontos para 1 garrafa grátis<input data-chave="pontos_por_brinde" type="number" min="1" required></label>
+        </div>
+        <button class="btn go" type="submit" id="cfgGo">Salvar configurações</button>
+      </form>
+
+      <h2 style="margin-top:22px">Formas de pagamento</h2>
+      <div class="list" id="listPag"></div>
+      <form class="card" id="formPag" autocomplete="off" style="margin-top:12px">
+        <b>Nova forma de pagamento</b>
+        <label class="fld">Código <small>(minúsculas, ex.: dinheiro)</small><input id="fpId" type="text" required pattern="[a-z][a-z0-9_]{1,30}" maxlength="31"></label>
+        <label class="fld">Nome<input id="fpNome" type="text" required maxlength="40"></label>
+        <button class="btn go" type="submit">Adicionar</button>
+      </form>
+
+      <h2 style="margin-top:22px">Entrega por bairro</h2>
+      <p class="muted">Cada bairro tem uma taxa fixa. "Entrega por aplicativo" (o cliente chama pelo app dele) não tem taxa aqui.</p>
+      <div class="list" id="listBai"></div>
+      <form class="card" id="formBai" autocomplete="off" style="margin-top:12px">
+        <b>Novo bairro</b>
+        <label class="fld">Nome<input id="bNome" type="text" required minlength="2" maxlength="60"></label>
+        <label class="fld">Taxa (R$)<input id="bTaxa" type="number" min="0" step="0.01" value="0" required></label>
+        <button class="btn go" type="submit">Adicionar</button>
+      </form>
     </section>
 
     <section id="tab-usuarios" hidden>
@@ -283,6 +335,7 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
     document.querySelectorAll('main > section[id^=tab-]').forEach(function(x){x.hidden=(x.id!=='tab-'+t);});
     if(t==='clientes')loadClientes();
     if(t==='usuarios')loadUsuarios();
+    if(t==='config')loadConfig();
   }
   $('#tabs').addEventListener('click',function(e){var b=e.target.closest('button[data-tab]');if(b)abrirAba(b.dataset.tab);});
   $('#btnRefresh').addEventListener('click',loadAll);
@@ -395,6 +448,97 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
       w.href='https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent('Olá, '+first(c.nome)+'! Aqui é da TQR Açaí 💜 Tudo bem? Quer garantir suas garrafas geladas hoje?');
       a.appendChild(w);n.appendChild(a);box.appendChild(n);});
   }
+
+  // ===== Configurações (formas de pagamento, bairros e chaves do site) =====
+  var cfgOriginal={};
+  var CFG_ROT={whatsapp_pedidos:'WhatsApp dos pedidos',horario_abre:'Abre às',horario_fecha:'Fecha às',aviso_site:'Texto do aviso',aviso_ativo:'Aviso no site',
+    pedido_min:'Mínimo por pedido',pedido_max:'Máximo por pedido',frete_gratis_qtd:'Entrega grátis a partir de',contador_base:'Base do contador',
+    contador_ajuste:'Ajuste do contador',pontos_por_real:'Pontos por R$ 1',pontos_por_brinde:'Pontos por brinde'};
+  function loadConfig(){
+    sb.from('configuracoes').select('chave,valor').then(function(r){
+      if(r.error){toast('Não consegui carregar as configurações.',true);return;}
+      cfgOriginal={};(r.data||[]).forEach(function(x){cfgOriginal[x.chave]=x.valor;});
+      document.querySelectorAll('#formCfg [data-chave]').forEach(function(i){
+        var v=cfgOriginal[i.dataset.chave];if(v==null)return;
+        if(i.dataset.bool)i.checked=(v==='true');else i.value=v;
+      });
+    });
+    sb.rpc('obter_contador').then(function(r){$('#cntAtual').textContent=r.data==null?'—':Number(r.data).toLocaleString('pt-BR');});
+    loadPagamentos();loadBairros();
+  }
+  $('#formCfg').addEventListener('submit',function(e){
+    e.preventDefault();
+    var mud=[];
+    document.querySelectorAll('#formCfg [data-chave]').forEach(function(i){
+      var k=i.dataset.chave,v=i.dataset.bool?String(i.checked):String(i.value).trim();
+      if(cfgOriginal[k]!==undefined&&cfgOriginal[k]!==v)mud.push({chave:k,valor:v,antes:cfgOriginal[k]});
+    });
+    if(!mud.length){toast('Nada mudou.');return;}
+    confirmar('Salvar configurações?',mud.map(function(m){return (CFG_ROT[m.chave]||m.chave)+': '+(m.antes||'(vazio)')+'  →  '+(m.valor||'(vazio)');}),'Salvar').then(function(ok){
+      if(!ok)return;
+      $('#cfgGo').disabled=true;
+      Promise.all(mud.map(function(m){return sb.from('configuracoes').update({valor:m.valor}).eq('chave',m.chave);})).then(function(rs){
+        $('#cfgGo').disabled=false;
+        var bad=rs.filter(function(r){return r.error;});
+        if(bad.length){toast('Algum valor foi recusado. Confira os campos.',true);}else toast('Configurações salvas.');
+        loadConfig();
+      });
+    });
+  });
+  function campo(rot,tipo,val,extra){
+    var l=el('label','fld',rot),i=document.createElement('input');i.type=tipo;i.value=val==null?'':val;
+    if(extra)Object.keys(extra).forEach(function(k){i.setAttribute(k,extra[k]);});l.appendChild(i);return [l,i];
+  }
+  function loadPagamentos(){
+    sb.from('formas_pagamento').select('*').order('ordem').order('nome').then(function(r){
+      var box=$('#listPag');box.textContent='';
+      if(r.error){toast('Não consegui carregar as formas de pagamento.',true);return;}
+      (r.data||[]).forEach(function(f){
+        var n=el('article','ped');n.appendChild(el('b',null,f.nome+' ('+f.id+')'));
+        var a=campo('Nome','text',f.nome,{maxlength:40,required:''}),t=campo('Taxa %','number',f.taxa_percentual,{min:0,max:100,step:'0.01'}),
+            tf=campo('Taxa fixa R$','number',f.taxa_fixa,{min:0,step:'0.01'}),o=campo('Ordem','number',f.ordem,{step:1}),ins=campo('Instruções no WhatsApp','text',f.instrucoes,{maxlength:200});
+        var ck=el('label','chk'),cb=document.createElement('input');cb.type='checkbox';cb.checked=f.ativo;ck.appendChild(cb);ck.appendChild(el('span',null,'Ativa no site'));
+        [a[0],ins[0]].forEach(function(x){n.appendChild(x);});
+        var g=el('div','row2');[t[0],tf[0]].forEach(function(x){g.appendChild(x);});n.appendChild(g);
+        var g2=el('div','row2');g2.appendChild(o[0]);g2.appendChild(ck);n.appendChild(g2);
+        var ac=el('div','acts'),sv=el('button','btn sm go','Salvar');sv.type='button';
+        sv.addEventListener('click',function(){
+          sb.from('formas_pagamento').update({nome:a[1].value.trim(),taxa_percentual:+t[1].value||0,taxa_fixa:+tf[1].value||0,ordem:parseInt(o[1].value,10)||0,instrucoes:ins[1].value.trim()||null,ativo:cb.checked}).eq('id',f.id).then(function(x){
+            if(x.error){toast('Não consegui salvar.',true);return;}toast('Forma de pagamento salva.');loadPagamentos();});});
+        ac.appendChild(sv);n.appendChild(ac);box.appendChild(n);
+      });
+    });
+  }
+  $('#formPag').addEventListener('submit',function(e){
+    e.preventDefault();
+    sb.from('formas_pagamento').insert({id:$('#fpId').value.trim(),nome:$('#fpNome').value.trim()}).then(function(r){
+      if(r.error){toast(r.error.code==='23505'?'Já existe uma forma com esse código.':'Não consegui adicionar.',true);return;}
+      toast('Forma de pagamento adicionada.');$('#formPag').reset();loadPagamentos();});
+  });
+  function loadBairros(){
+    sb.from('bairros_entrega').select('*').order('ordem').order('nome').then(function(r){
+      var box=$('#listBai');box.textContent='';
+      if(r.error){toast('Não consegui carregar os bairros.',true);return;}
+      if(!(r.data||[]).length)box.appendChild(el('p','empty','Nenhum bairro cadastrado ainda.'));
+      (r.data||[]).forEach(function(b){
+        var n=el('article','ped'),a=campo('Bairro','text',b.nome,{maxlength:60,required:''}),t=campo('Taxa R$','number',b.taxa,{min:0,step:'0.01'});
+        var ck=el('label','chk'),cb=document.createElement('input');cb.type='checkbox';cb.checked=b.ativo;ck.appendChild(cb);ck.appendChild(el('span',null,'Atendido'));
+        n.appendChild(a[0]);var g=el('div','row2');g.appendChild(t[0]);g.appendChild(ck);n.appendChild(g);
+        var ac=el('div','acts'),sv=el('button','btn sm go','Salvar'),dl=el('button','btn sm danger','Remover');sv.type=dl.type='button';
+        sv.addEventListener('click',function(){sb.from('bairros_entrega').update({nome:a[1].value.trim(),taxa:+t[1].value||0,ativo:cb.checked}).eq('id',b.id).then(function(x){
+          if(x.error){toast(x.error.code==='23505'?'Já existe esse bairro.':'Não consegui salvar.',true);return;}toast('Bairro salvo.');loadBairros();});});
+        dl.addEventListener('click',function(){confirmar('Remover bairro?',[b.nome],'Remover',true).then(function(ok){if(ok)sb.from('bairros_entrega').delete().eq('id',b.id).then(function(x){
+          if(x.error){toast('Não consegui remover.',true);return;}toast('Bairro removido.');loadBairros();});});});
+        ac.appendChild(sv);ac.appendChild(dl);n.appendChild(ac);box.appendChild(n);
+      });
+    });
+  }
+  $('#formBai').addEventListener('submit',function(e){
+    e.preventDefault();
+    sb.from('bairros_entrega').insert({nome:$('#bNome').value.trim(),taxa:+$('#bTaxa').value||0}).then(function(r){
+      if(r.error){toast(r.error.code==='23505'?'Já existe esse bairro.':'Não consegui adicionar.',true);return;}
+      toast('Bairro adicionado.');$('#formBai').reset();$('#bTaxa').value=0;loadBairros();});
+  });
 
   // ===== Usuários e perfis (só o dono; tudo passa pela função de borda admin-usuarios) =====
   var PERM_ROT={'pedidos.ver':'Ver pedidos','pedidos.criar':'Criar pedido manual','pedidos.status':'Mudar status (confirmar, pago, saiu, entregue)',

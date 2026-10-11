@@ -451,6 +451,7 @@ footer a{color:var(--gold2);text-decoration:none}
 .qchips button{border:1px solid var(--line);background:rgba(232,190,98,.06);color:var(--gold2);border-radius:999px;padding:8px 14px;font:600 .85rem Poppins,sans-serif;cursor:pointer}
 .qchips button.on{background:var(--gold-grad);color:#2a0838;border-color:transparent}
 [hidden]{display:none!important}
+.aviso{background:var(--gold-grad);color:#2a0838;text-align:center;font-weight:700;font-size:.9rem;padding:9px 14px}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 #tsBox{min-height:0;margin-top:12px}
 .loyal{border:1px dashed rgba(232,190,98,.35);border-radius:12px;padding:12px 14px}
@@ -927,8 +928,8 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
         <fieldset class="f-group">
           <legend>4. Pagamento</legend>
           <div class="opts">
-            <label class="opt"><input type="radio" name="pag" value="Pix" checked><span>💠 Pix</span></label>
-            <label class="opt"><input type="radio" name="pag" value="Cartão"><span>💳 Cartão</span></label>
+            <label class="opt"><input type="radio" name="pag" value="pix" data-nome="Pix" checked><span>💠 Pix</span></label>
+            <label class="opt"><input type="radio" name="pag" value="cartao" data-nome="Cartão"><span>💳 Cartão</span></label>
           </div>
           <label class="fld full" style="margin-top:14px"><span>Observações <small>(opcional)</small></span><textarea name="obs" rows="2" placeholder="Ex.: entregar depois das 19h"></textarea></label>
         </fieldset>
@@ -942,6 +943,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
         <div class="sum-line"><span>Entrega</span><b id="sumShip">taxa do app</b></div>
         <div class="sum-total"><span>Total</span><b id="sumTotal">R$ 42,00</b></div>
         <p class="sum-note" id="sumNote">A taxa de entrega é a do aplicativo e é confirmada no WhatsApp.</p>
+        <p class="hint" id="horaNote" role="status" hidden></p>
         <div class="hp" aria-hidden="true"><label>Deixe em branco<input type="text" name="site_url" tabindex="-1" autocomplete="off"></label></div>
         <div id="tsBox"></div>
         <button type="submit" class="btn btn-wa"><svg><use href="#wa"/></svg>Enviar pedido pelo WhatsApp</button>
@@ -1014,15 +1016,17 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
 
 <script>
 (function(){
-  var FONE=window.TQR_FONE;
   var MSG={
     padrao:'Olá, TQR Açaí! 💜 Vim pelo site e quero fazer meu pedido.\n\n🥤 Quantidade: __ garrafa(s) de 300 ml\n🛵 Entrega ou retirada: __\n📍 Bairro: __\n💳 Pagamento: Pix ou cartão\n\nPode me confirmar o total?',
     combo:'Olá, TQR Açaí! 💜 Vim pelo site e quero o *Combo 3 por R$ 42*.\n\n🛵 Entrega ou retirada: __\n📍 Bairro: __\n💳 Pagamento: Pix ou cartão',
     kit:'Olá, TQR Açaí! 💜 Vim pelo site e quero *5 ou mais garrafas* (R$ 14 cada + entrega grátis).\n\n🥤 Quantidade: __\n📍 Bairro: __\n💳 Pagamento: Pix ou cartão',
     revenda:'Olá, TQR Açaí! Vim pelo site e quero saber como revender o #TQR Açaí no meu negócio.\n\n🏪 Tipo de negócio: __\n📍 Bairro: __\n📦 Quantidade estimada por semana: __'
   };
+  // Os links usam o número vigente (window.TQR_FONE); o painel pode trocá-lo, então os links são refeitos quando a configuração chega.
+  window.TQR_relink=function(){document.querySelectorAll('[data-wa]').forEach(function(a){
+    a.href='https://wa.me/'+window.TQR_FONE+'?text='+encodeURIComponent(MSG[a.dataset.wa]||MSG.padrao);});};
+  window.TQR_relink();
   document.querySelectorAll('[data-wa]').forEach(function(a){
-    a.href='https://wa.me/'+FONE+'?text='+encodeURIComponent(MSG[a.dataset.wa]||MSG.padrao);
     a.target='_blank'; a.rel='noopener';
     a.addEventListener('click',function(){
       var p={oferta:a.dataset.wa,posicao:a.dataset.src};
@@ -1073,7 +1077,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
   // ===== FORMULÁRIO DE PEDIDO =====
   (function(){
     var f=document.getElementById('orderForm'); if(!f) return;
-    var UN=16.99, C3=42, U5=14;
+    var UN=16.99, C3=42, U5=14, QMIN=1, QMAX=99;
     var qty=f.querySelector('#qty'), addr=document.getElementById('addrBox');
     function brl(v){return 'R$ '+v.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
     function rs(v){return brl(v).replace(',00','');}  // "R$ 14" ou "R$ 16,99"
@@ -1086,7 +1090,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
     }
     function tipo(){return f.querySelector('input[name=tipo]:checked').value;}
     function update(){
-      var q=Math.max(1,Math.min(99,parseInt(qty.value,10)||1)); qty.value=q;
+      var q=Math.max(QMIN,Math.min(QMAX,parseInt(qty.value,10)||QMIN)); qty.value=q;
       var c=calc(q), ent=tipo()==='entrega';
       document.getElementById('sumQty').textContent=q+' garrafa'+(q>1?'s':'')+' de 300 ml';
       document.getElementById('sumSub').textContent=brl(c.full);
@@ -1138,6 +1142,36 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
       UN=+p.unitario;C3=+p.combo3;U5=+p.mais5;
       update(); if(typeof qset==='function')qset(qq.value);
     }).catch(function(){});
+    // Configuração do painel: WhatsApp, aviso, horário, pagamento, contador e limites. Se a leitura falhar, vale o que está no HTML.
+    function emojiPag(id){return id==='pix'?'💠':(id==='cartao'?'💳':'💵');}
+    function fmtH(x){return x.replace(/^0/,'').replace(':00','h').replace(':','h');}
+    function dentroDoHorario(a,b){
+      var p=new Intl.DateTimeFormat('en-GB',{timeZone:'America/Fortaleza',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date()), h=+p[0].value*60+ +p[2].value;
+      function m(x){var t=x.split(':');return +t[0]*60+ +t[1];}
+      var ini=m(a),fim=m(b);
+      return ini<=fim?(h>=ini&&h<fim):(h>=ini||h<fim);
+    }
+    rpc('obter_config_publica',{},5000).then(function(c){
+      if(!c||typeof c!=='object')return;
+      if(/^55\d{10,11}$/.test(c.whatsapp||'')){window.TQR_FONE=c.whatsapp;if(window.TQR_relink)window.TQR_relink();}
+      if(c.aviso){var av=document.createElement('div');av.className='aviso';av.setAttribute('role','status');av.textContent=c.aviso;document.body.insertBefore(av,document.body.firstChild);}
+      var ct=document.querySelector('[data-count][data-prefix="+"]');
+      if(ct&&c.contador>0){ct.dataset.count=c.contador;ct.textContent='+'+Number(c.contador).toLocaleString('pt-BR');}
+      if(c.pedido_min>0&&c.pedido_max>=c.pedido_min){QMIN=c.pedido_min;QMAX=c.pedido_max;qty.min=QMIN;qty.max=QMAX;var qq0=document.getElementById('qQty');if(qq0){qq0.min=QMIN;qq0.max=QMAX;}}
+      if(c.formas_pagamento&&c.formas_pagamento.length){
+        var box=f.querySelector('.opts input[name=pag]').closest('.opts'); box.textContent='';
+        c.formas_pagamento.forEach(function(fp,i){
+          var l=document.createElement('label'),r=document.createElement('input'),sp=document.createElement('span');
+          l.className='opt';r.type='radio';r.name='pag';r.value=fp.id;r.dataset.nome=fp.nome;r.checked=(i===0);
+          sp.textContent=emojiPag(fp.id)+' '+fp.nome;l.appendChild(r);l.appendChild(sp);box.appendChild(l);
+        });
+      }
+      if(c.horario_abre&&c.horario_fecha&&!dentroDoHorario(c.horario_abre,c.horario_fecha)){
+        var hn=document.getElementById('horaNote');
+        hn.textContent='Agora estamos fora do horário de atendimento ('+fmtH(c.horario_abre)+' às '+fmtH(c.horario_fecha)+'). Pode enviar o pedido; respondemos assim que abrirmos.';hn.hidden=false;
+      }
+      update(); if(typeof qset==='function')qset(qq.value);
+    }).catch(function(){});
     var wf=f.elements.whats, nomeFld=document.getElementById('nomeFld'), waNote=document.getElementById('waNote'), loyal=document.getElementById('loyalBox'), tmr;
     function digits(){return wf.value.replace(/\D/g,'');}
     function setKnown(k){known=k;nomeFld.hidden=k;f.elements.nome.required=!k;waNote.hidden=!k;waNote.textContent=k?'Cadastro encontrado. Não precisa informar o nome.':'';loyal.hidden=k;}
@@ -1160,7 +1194,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
       var dg=digits(), nm=known?'':v('nome');
       if(dg.length<10||dg.length>13){ok=false;var ww=wf.closest('.fld');ww.classList.add('err');var mm=document.createElement('span');mm.className='msg';mm.textContent='Informe o DDD e o número';ww.appendChild(mm);wf.focus();return;}
       if(!known&&nm.length<3){var nw=f.elements.nome.closest('.fld');nw.classList.add('err');var nmm=document.createElement('span');nmm.className='msg';nmm.textContent='Informe seu nome';nw.appendChild(nmm);f.elements.nome.focus();return;}
-      var pagv=f.querySelector('input[name=pag]:checked').value, btn=f.querySelector('button[type=submit]'), lbl=btn.innerHTML;
+      var pagi=f.querySelector('input[name=pag]:checked'), pagv=pagi.value, pagn=pagi.dataset.nome||pagi.value, btn=f.querySelector('button[type=submit]'), lbl=btn.innerHTML;
       btn.disabled=true; btn.textContent='Registrando pedido…';
       function go(code,srvTotal){
         if(srvTotal>0&&Math.abs(srvTotal-c.total)>0.009)c=Object.assign({},c,{total:srvTotal});
@@ -1172,7 +1206,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
           '📱 *WhatsApp:* '+v('whats'));
         if(nm)L.push('👤 *Nome:* '+nm);
         if(ent){L.push('📍 *Endereço:* '+v('rua')+(v('comp')?', '+v('comp'):'')+' – '+v('bairro'));if(v('ref'))L.push('🧭 *Referência:* '+v('ref'));}
-        L.push('💳 *Pagamento:* '+pagv);
+        L.push('💳 *Pagamento:* '+pagn);
         if(v('obs'))L.push('📝 *Obs.:* '+v('obs'));
         var url='https://wa.me/'+window.TQR_FONE+'?text='+encodeURIComponent(L.join('\n'));
         var p={quantidade:q,valor:c.total,tipo:ent?'entrega':'retirada'};
@@ -1185,7 +1219,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
       var args={
         p_whatsapp:dg,p_quantidade:q,p_nome:nm||null,
         p_data_nascimento:known?null:(v('nasc')||null),p_email:known?null:(v('email')||null),
-        p_aceite_lgpd:true,p_forma_pagamento:pagv==='Pix'?'pix':'cartao',
+        p_aceite_lgpd:true,p_forma_pagamento:pagv,
         p_endereco:ent?(v('rua')+(v('comp')?', '+v('comp'):'')):null,p_bairro:ent?v('bairro'):null,
         p_observacao:[ent?'':'Retirada',ent&&v('ref')?'Ref.: '+v('ref'):'',v('obs')].filter(Boolean).join(' | ')||null
       };
@@ -1202,7 +1236,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
     // ===== Pedido rápido no topo =====
     var qq=document.getElementById('qQty');
     if(qq){
-      var qset=function(n){n=Math.max(1,Math.min(99,parseInt(n,10)||1));qq.value=n;qty.value=n;var c=update();document.getElementById('qTotal').textContent=brl(c.total);
+      var qset=function(n){n=Math.max(QMIN,Math.min(QMAX,parseInt(n,10)||QMIN));qq.value=n;qty.value=n;var c=update();document.getElementById('qTotal').textContent=brl(c.total);
         document.getElementById('qHint').textContent=n>=5?rs(U5)+' cada + entrega grátis':(n===4?'Leve 5 e ganhe entrega grátis':(n===3?'Combo 3 aplicado: '+rs(C3/3)+' cada':'Leve 3 por '+rs(C3)+' e economize '+econ()));};
       document.querySelectorAll('[data-qstep]').forEach(function(b){b.addEventListener('click',function(){qset((parseInt(qq.value,10)||1)+(+b.dataset.qstep));});});
       qq.addEventListener('input',function(){if(qq.value!=='')qset(qq.value);});

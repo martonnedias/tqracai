@@ -19,7 +19,9 @@
 <!-- ===== RASTREAMENTO =====
   Preencha os IDs abaixo. As ferramentas só carregam depois que o visitante aceitar os cookies (LGPD).
   Ex.: ga4:'G-ABC123XYZ', metaPixel:'123456789012345'  -->
-<script>window.TQR_TRACKING={ga4:'',metaPixel:''};</script>
+<script>window.TQR_TRACKING={ga4:'',metaPixel:''};
+/* Número que recebe os pedidos (só dígitos, com 55). TEMPORÁRIO: número de teste. Original: 5586995884770 */
+window.TQR_FONE='5586994144709';</script>
 
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FoodEstablishment","name":"#TQR Açaí","servesCuisine":"Açaí","telephone":"+55-86-99588-4770","priceRange":"R$ 14–17","address":{"@type":"PostalAddress","addressLocality":"Teresina","addressRegion":"PI","addressCountry":"BR"},"areaServed":"Teresina","openingHours":"Mo-Su 08:00-02:00","paymentAccepted":"Pix, Cartão","taxID":"59.270.529/0001-78","sameAs":["https://instagram.com/tqracai"],"image":"img/og-image.jpg"}
@@ -1002,7 +1004,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
 
 <script>
 (function(){
-  var FONE='5586995884770';
+  var FONE=window.TQR_FONE;
   var MSG={
     padrao:'Olá, TQR Açaí! 💜 Vim pelo site e quero fazer meu pedido.\n\n🥤 Quantidade: __ garrafa(s) de 300 ml\n🛵 Entrega ou retirada: __\n📍 Bairro: __\n💳 Pagamento: Pix ou cartão\n\nPode me confirmar o total?',
     combo:'Olá, TQR Açaí! 💜 Vim pelo site e quero o *Combo 3 por R$ 42*.\n\n🛵 Entrega ou retirada: __\n📍 Bairro: __\n💳 Pagamento: Pix ou cartão',
@@ -1133,7 +1135,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
         if(ent){L.push('📍 *Endereço:* '+v('rua')+(v('comp')?', '+v('comp'):'')+' – '+v('bairro'));if(v('ref'))L.push('🧭 *Referência:* '+v('ref'));}
         L.push('💳 *Pagamento:* '+pagv);
         if(v('obs'))L.push('📝 *Obs.:* '+v('obs'));
-        var url='https://wa.me/5586995884770?text='+encodeURIComponent(L.join('\n'));
+        var url='https://wa.me/'+window.TQR_FONE+'?text='+encodeURIComponent(L.join('\n'));
         var p={quantidade:q,valor:c.total,tipo:ent?'entrega':'retirada'};
         try{window.dataLayer=window.dataLayer||[];dataLayer.push(Object.assign({event:'pedido_formulario'},p));}catch(e){}
         try{if(window.gtag)gtag('event','pedido_formulario',p);}catch(e){}

@@ -144,6 +144,14 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
     </nav>
   </div></header>
 
+  <section class="wrap" id="codSec" hidden aria-live="polite">
+    <div class="banner" style="flex-direction:column;align-items:stretch;margin:12px 0 0">
+      <b>Clientes pedindo código de verificação</b>
+      <p class="muted">Envie o código pelo WhatsApp. Vale por 10 minutos.</p>
+      <div class="list" id="codList"></div>
+    </div>
+  </section>
+
   <main class="wrap">
     <section id="tab-pedidos" hidden>
       <div class="banner" id="mfaBanner" hidden><span>Ative a verificação em duas etapas para proteger o painel.</span><button class="btn sm go" type="button" id="mfaGo">Ativar agora</button></div>
@@ -408,7 +416,7 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
       show('app');clearInterval(timer);
       var primeira=document.querySelector('#tabs button:not([hidden])');
       if(primeira)abrirAba(primeira.dataset.tab);
-      if(can('pedidos.ver')){loadAll();timer=setInterval(loadPedidos,30000);}
+      loadAll();timer=setInterval(function(){if(can('pedidos.ver'))loadPedidos();loadCodigos();},30000);
       mfaStatus().then(function(on){$('#mfaBanner').hidden=on;});
     });
   }
@@ -426,7 +434,26 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
   }
   $('#tabs').addEventListener('click',function(e){var b=e.target.closest('button[data-tab]');if(b)abrirAba(b.dataset.tab);});
   $('#btnRefresh').addEventListener('click',loadAll);
-  function loadAll(){if(can('pedidos.ver')){loadPedidos();loadResumo();}if(!$('#tab-clientes').hidden)loadClientes();}
+  // ===== Códigos de verificação pedidos pelos clientes (para enviar por WhatsApp) =====
+  var codVistos=null;
+  function loadCodigos(){
+    if(!can('clientes.ver'))return;
+    sb.rpc('admin_codigos_pendentes').then(function(r){
+      var rows=r.data||[],box=$('#codList');
+      if(r.error){return;}
+      $('#codSec').hidden=!rows.length;box.textContent='';
+      rows.forEach(function(c){
+        var n=el('article','ped'),min=Math.max(0,Math.round((new Date(c.expira_em)-Date.now())/60000));
+        n.appendChild(el('b',null,c.nome+' · '+fone(c.whatsapp)));n.appendChild(el('span',null,'Código: '+c.codigo+' (expira em '+min+' min)'));
+        var a=el('div','acts'),w=el('a','btn sm wa','Enviar pelo WhatsApp');w.target='_blank';w.rel='noopener';
+        w.href='https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent('Seu código TQR Açaí é '+c.codigo+'. Vale por 10 minutos. Não compartilhe com ninguém. 💜');a.appendChild(w);n.appendChild(a);box.appendChild(n);
+      });
+      var ids=rows.map(function(c){return c.id;});
+      if(codVistos&&alertaOn&&ids.some(function(i){return codVistos.indexOf(i)<0;})){bip();toast('Cliente pediu código de verificação');}
+      codVistos=ids;
+    });
+  }
+  function loadAll(){loadCodigos();if(can('pedidos.ver')){loadPedidos();loadResumo();}if(!$('#tab-clientes').hidden)loadClientes();}
 
   // ===== Resumo =====
   function loadResumo(){
@@ -780,7 +807,23 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
       n.appendChild(el('span','muted',c.ultimo_pedido?'Último pedido: '+hora(c.ultimo_pedido):'Ainda sem pedidos'));
       var a=el('div','acts'),w=el('a','btn sm wa','WhatsApp');w.target='_blank';w.rel='noopener';
       w.href='https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent('Olá, '+first(c.nome)+'! Aqui é da TQR Açaí 💜 Tudo bem? Quer garantir suas garrafas geladas hoje?');
-      a.appendChild(w);n.appendChild(a);box.appendChild(n);});
+      a.appendChild(w);
+      var eb=el('button','btn sm','Endereços');eb.type='button';var el2=el('div','hist');el2.hidden=true;
+      eb.addEventListener('click',function(){
+        if(!el2.hidden){el2.hidden=true;return;}
+        sb.from('enderecos_cliente').select('id,apelido,rua,complemento,bairro').eq('cliente_id',c.id).eq('ativo',true).order('criado_em',{ascending:false}).then(function(x){
+          el2.textContent='';if(x.error){toast('Não consegui carregar os endereços.',true);return;}
+          if(!(x.data||[]).length)el2.appendChild(el('span',null,'Nenhum endereço salvo.'));
+          (x.data||[]).forEach(function(e){
+            var l=el('div','row'),t=el('span',null,(e.apelido?e.apelido+' · ':'')+e.rua+(e.complemento?', '+e.complemento:'')+' – '+e.bairro);t.style.flex='1';l.appendChild(t);
+            if(can('clientes.editar')){var rm=el('button','btn sm danger','Remover');rm.type='button';rm.addEventListener('click',function(){confirmar('Remover endereço?',[e.rua+' – '+e.bairro],'Remover',true).then(function(ok){
+              if(ok)sb.from('enderecos_cliente').update({ativo:false,padrao:false}).eq('id',e.id).then(function(y){if(y.error){toast('Não consegui remover.',true);return;}toast('Endereço removido.');l.remove();});});});l.appendChild(rm);}
+            el2.appendChild(l);
+          });
+          el2.hidden=false;
+        });
+      });
+      a.appendChild(eb);n.appendChild(a);n.appendChild(el2);box.appendChild(n);});
   }
 
   // ===== Configurações (formas de pagamento, bairros e chaves do site) =====

@@ -460,6 +460,12 @@ footer a{color:var(--gold2);text-decoration:none}
 .xrow .xn{font-weight:600;font-size:.92rem}.xrow small{display:block;color:var(--muted);font-weight:400}
 .xrow .xs{display:flex;align-items:center;gap:8px}.xrow .xs button{width:34px;height:34px;border-radius:50%;border:1px solid var(--gold);background:transparent;color:var(--gold2);font-size:1.1rem;cursor:pointer}
 .xrow .xs b{min-width:1.6em;text-align:center}
+#endLista{display:grid;gap:8px;margin-top:10px}
+.endrow{display:flex;gap:8px;align-items:center;justify-content:space-between;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.endrow span{font-size:.9rem}.endrow small{display:block;color:var(--muted)}
+.endrow .ea{display:flex;gap:6px}.endrow button{border:1px solid var(--gold);background:transparent;color:var(--gold2);border-radius:999px;padding:6px 12px;cursor:pointer;font:inherit;font-size:.85rem}
+.endrow button.x{border-color:#ff9b9b;color:#ff9b9b}
+.endcod{display:flex;gap:8px;margin-top:8px}.endcod input{flex:1;background:#1a0724;border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:10px;color:#fff;font:inherit;letter-spacing:.2em}
 select.sel{width:100%;background:#1a0724;border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:12px;color:#fff;font:inherit}
 .loyal{border:1px dashed rgba(232,190,98,.35);border-radius:12px;padding:12px 14px}
 .loyal summary{cursor:pointer;color:var(--gold-light);font-weight:600;font-size:.9rem}
@@ -915,12 +921,22 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
             <p class="hint full" id="waNote" role="status" hidden></p>
             <label class="fld full" id="nomeFld">Nome<input type="text" name="nome" autocomplete="name" required placeholder="Como podemos te chamar?"></label>
             <div class="addr full" id="addrBox">
+              <div class="full" id="endBox" hidden>
+                <button type="button" class="btn btn-ghost" id="btnEnd">📍 Usar um endereço salvo</button>
+                <div id="endCod" hidden>
+                  <p class="hint">Vamos te mandar um código de 6 dígitos pelo WhatsApp. Pode levar alguns minutos. Digite aqui quando chegar:</p>
+                  <div class="endcod"><input id="endCodIn" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000" aria-label="Código de 6 dígitos"><button type="button" class="btn btn-gold" id="endCodOk">Confirmar</button></div>
+                </div>
+                <p class="hint" id="endMsg" role="status" hidden></p>
+                <div id="endLista" hidden></div>
+              </div>
               <div class="grid2">
                 <label class="fld full">Rua e número<input type="text" name="rua" autocomplete="street-address" required placeholder="Ex.: Rua Areolino de Abreu, 1234"></label>
                 <label class="fld" id="bairroSelFld" hidden>Bairro<select class="sel" id="bairroSel" aria-label="Bairro"></select></label>
                 <label class="fld" id="bairroTxtFld">Bairro<input type="text" name="bairro" autocomplete="address-level3" required placeholder="Ex.: Jóquei"></label>
                 <label class="fld"><span>Complemento <small>(opcional)</small></span><input type="text" name="comp" placeholder="Apto, bloco, casa"></label>
                 <label class="fld full"><span>Ponto de referência <small>(opcional)</small></span><input type="text" name="ref" placeholder="Ex.: perto da praça"></label>
+                <label class="check full" id="salvarEndFld" hidden><input type="checkbox" id="salvarEnd" checked><span>Salvar este endereço para os próximos pedidos</span></label>
               </div>
             </div>
             <details class="loyal full" id="loyalBox">
@@ -1359,7 +1375,56 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
     }).catch(function(){});
     var wf=f.elements.whats, nomeFld=document.getElementById('nomeFld'), waNote=document.getElementById('waNote'), loyal=document.getElementById('loyalBox'), tmr;
     function digits(){return wf.value.replace(/\D/g,'');}
-    function setKnown(k){known=k;nomeFld.hidden=k;f.elements.nome.required=!k;waNote.hidden=!k;waNote.textContent=k?'Cadastro encontrado. Não precisa informar o nome.':'';loyal.hidden=k;}
+    // ===== Endereços salvos (exigem confirmar o número com um código enviado pelo WhatsApp) =====
+    var SESS=null;
+    try{var ss=JSON.parse(sessionStorage.getItem('tqr_sess')||'null');if(ss&&ss.t&&ss.w)SESS=ss;}catch(e){}
+    function msgEnd(t){var m=document.getElementById('endMsg');m.textContent=t||'';m.hidden=!t;}
+    function guardaSess(){try{if(SESS)sessionStorage.setItem('tqr_sess',JSON.stringify(SESS));else sessionStorage.removeItem('tqr_sess');}catch(e){}}
+    function sessOk(){return !!(SESS&&SESS.w===digits());}
+    function preencheEnd(e){
+      f.elements.rua.value=e.rua||''; f.elements.comp.value=e.complemento||''; f.elements.ref.value=e.referencia||'';
+      var bs=document.getElementById('bairroSel');
+      if(BAIRROS.length){
+        if(e.bairro_id&&bs.querySelector('option[value="'+e.bairro_id+'"]')){bs.value=e.bairro_id;}
+        else{bs.value='outro';f.elements.bairro.value=e.bairro||'';}
+      }else{f.elements.bairro.value=e.bairro||'';}
+      f.elements.rua.dispatchEvent(new Event('input'));update();
+    }
+    function listaEnd(){
+      var box=document.getElementById('endLista');
+      rpc('listar_enderecos',{p_whatsapp:digits(),p_token:SESS.t},6000).then(function(arr){
+        box.textContent='';box.hidden=false;msgEnd(arr.length?'':'Você ainda não tem endereços salvos. Preencha abaixo e marque para salvar.');
+        arr.forEach(function(e){
+          var r=document.createElement('div'),t=document.createElement('span'),sm=document.createElement('small'),ac=document.createElement('div'),u=document.createElement('button'),x=document.createElement('button');
+          r.className='endrow';t.textContent=(e.apelido?e.apelido+' · ':'')+e.rua;sm.textContent=e.bairro+(e.complemento?' · '+e.complemento:'');t.appendChild(sm);
+          ac.className='ea';u.type=x.type='button';u.textContent='Usar';x.textContent='Apagar';x.className='x';x.setAttribute('aria-label','Apagar endereço '+e.rua);
+          u.addEventListener('click',function(){preencheEnd(e);});
+          x.addEventListener('click',function(){if(!window.confirm('Apagar este endereço salvo?'))return;rpc('apagar_endereco',{p_whatsapp:digits(),p_token:SESS.t,p_id:e.id},6000).then(listaEnd).catch(function(){msgEnd('Não consegui apagar agora.');});});
+          ac.appendChild(u);ac.appendChild(x);r.appendChild(t);r.appendChild(ac);box.appendChild(r);
+        });
+        document.getElementById('salvarEndFld').hidden=false;
+      }).catch(function(){SESS=null;guardaSess();document.getElementById('endLista').hidden=true;msgEnd('Sua confirmação expirou. Peça um novo código.');});
+    }
+    document.getElementById('btnEnd').addEventListener('click',function(){
+      if(sessOk()){listaEnd();return;}
+      rpc('solicitar_codigo',{p_whatsapp:digits()},6000).then(function(){
+        document.getElementById('endCod').hidden=false;msgEnd('Pedido enviado. Assim que o código chegar no seu WhatsApp, digite acima.');document.getElementById('endCodIn').focus();
+      }).catch(function(){msgEnd('Muitos pedidos de código. Tente de novo em alguns minutos.');});
+    });
+    document.getElementById('endCodOk').addEventListener('click',function(){
+      var c=(document.getElementById('endCodIn').value||'').trim(); if(c.length!==6){msgEnd('Digite os 6 dígitos.');return;}
+      rpc('verificar_codigo',{p_whatsapp:digits(),p_codigo:c},6000).then(function(tok){
+        if(!tok){msgEnd('Código incorreto ou vencido. Confira ou peça outro.');return;}
+        SESS={w:digits(),t:tok};guardaSess();document.getElementById('endCod').hidden=true;document.getElementById('endCodIn').value='';msgEnd('');listaEnd();
+      }).catch(function(){msgEnd('Não consegui confirmar agora. Tente de novo.');});
+    });
+    function salvarEnderecoSeQuiser(){
+      if(!sessOk()||!f.elements.rua.value.trim()||document.getElementById('salvarEndFld').hidden||!document.getElementById('salvarEnd').checked||tipo()!=='entrega')return;
+      var bn=bairroNome(); if(!bn)return;
+      rpc('salvar_endereco',{p_whatsapp:digits(),p_token:SESS.t,p_rua:f.elements.rua.value.trim(),p_bairro:bn,p_complemento:f.elements.comp.value.trim()||null,
+        p_referencia:f.elements.ref.value.trim()||null,p_bairro_id:bairroId()},6000).catch(function(){});
+    }
+    function setKnown(k){known=k;document.getElementById('endBox').hidden=!k;if(!k||!sessOk()){document.getElementById('endLista').hidden=true;document.getElementById('salvarEndFld').hidden=true;}if(k&&sessOk())listaEnd();nomeFld.hidden=k;f.elements.nome.required=!k;waNote.hidden=!k;waNote.textContent=k?'Cadastro encontrado. Não precisa informar o nome.':'';loyal.hidden=k;}
     wf.addEventListener('input',function(){
       clearTimeout(tmr);var d=digits();setKnown(false);
       if(d.length>=10)tmr=setTimeout(function(){rpc('cliente_cadastrado',{p_whatsapp:d},4000).then(function(r){if(digits()===d)setKnown(r===true);}).catch(function(){});},500);
@@ -1434,7 +1499,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
         var req=window.TQR_TURNSTILE
           ? (tsToken?post('/functions/v1/criar-pedido',{token:tsToken,versao:it?2:1,args:args},9000):Promise.reject(new Error('sem_token')))
           : rpc(it?'criar_pedido_v2':'criar_pedido',args);
-        req.then(function(r){var x=r&&r[0];go(x&&x.pedido_codigo,x?{total:+x.pedido_total,pedido_promocao:x.pedido_promocao}:null);}).catch(function(){go(null);}).then(resetTs);
+        req.then(function(r){var x=r&&r[0];if(x&&x.pedido_codigo)salvarEnderecoSeQuiser();go(x&&x.pedido_codigo,x?{total:+x.pedido_total,pedido_promocao:x.pedido_promocao}:null);}).catch(function(){go(null);}).then(resetTs);
       });
     });
 

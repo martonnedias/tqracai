@@ -1,6 +1,6 @@
 # Como aplicar o banco e as funções (ordem)
 
-**Status (12/10/2026): migrações 03 a 06 e a função `admin-usuarios` JÁ ESTÃO APLICADAS no projeto `elaczoriyaejkixkubxn`** (aplicadas em blocos menores; os nomes no histórico do Supabase terminam em a/b/c/d). O seu usuário é o Dono. As migrações foram testadas antes num PostgreSQL local com papéis e funções de autenticação simulados.
+**Status (12/10/2026): migrações 03 a 08 e a função `admin-usuarios` JÁ ESTÃO APLICADAS no projeto `elaczoriyaejkixkubxn`** (aplicadas em blocos menores; os nomes no histórico do Supabase terminam em a/b/c/d). O seu usuário é o Dono. As migrações foram testadas antes num PostgreSQL local com papéis e funções de autenticação simulados.
 
 Diferenças entre o repositório e a produção: as políticas antigas `admin_all` estão neutralizadas (`using (false)`) e não apagadas, e `solicitar_codigo` não faz limpeza automática. Motivo: a ferramenta que aplica migrações trava em comandos `drop`/`delete`. Se quiser, remova as políticas antigas no SQL Editor (comandos no comentário da migração 04).
 
@@ -12,6 +12,8 @@ Diferenças entre o repositório e a produção: as políticas antigas `admin_al
 | `20261012_04_fundacao_painel.sql` | Perfis e permissões (seu usuário vira **dono**), formas de pagamento, bairros, novas configurações, contador, políticas por permissão. |
 | `20261013_05_produtos_promocoes_motor.sql` | Produtos com preço/foto, promoções, motor de preço no servidor, `criar_pedido_v2`, bucket de fotos. As regras "Combo 3" e "5 ou mais" viram promoções. |
 | `20261014_06_verificacao_enderecos.sql` | Código de verificação, sessão do cliente e endereços múltiplos. |
+| `20261015_07_pontos_financeiro.sql` | Fase 2: livro de pontos, caixa (lançamentos), estorno automático, resgate/ajuste/aniversário, consulta de saldo, visões do financeiro. |
+| `20261016_08_config_publica_pontos.sql` | O site lê as regras de pontos. |
 
 Depois da 04 o número que recebe os pedidos passa a vir de **Configurações → WhatsApp dos pedidos** (nasce igual ao número de teste
 que o site usa hoje). Troque pelo original quando terminar os testes.

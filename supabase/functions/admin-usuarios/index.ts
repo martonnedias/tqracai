@@ -7,6 +7,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.45.0";
 const PERMISSOES = [
   "pedidos.ver", "pedidos.criar", "pedidos.status", "pedidos.status_entrega", "pedidos.cancelar", "pedidos.editar",
   "clientes.ver", "clientes.editar", "produtos.gerir", "promocoes.gerir", "config.gerir", "financeiro.ver", "financeiro.gerir",
+  "custos.ver", "custos.gerir", "estoque.ver", "estoque.gerir",
 ];
 
 const ORIGENS = (Deno.env.get("ALLOWED_ORIGINS") ?? "https://martonnedias.github.io").split(",").map((o) => o.trim());

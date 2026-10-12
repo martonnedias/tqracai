@@ -38,3 +38,11 @@ o site novo cai para o pedido simples se o banco ainda não tiver a migração 0
 - 6 clientes `(exemplo)` com WhatsApp `55869990000xx` e observação `[EXEMPLO]`, 5 endereços, 16 pedidos em vários status (gerando caixa e pontos), despesas de 3 meses e 2 contas a pagar.
 - O contador do site foi neutralizado em `contador_ajuste` (-43) para as vendas de exemplo não alterarem o número público.
 - Catálogo (produtos, bairros, formas, promoções): edite/exclua pelo painel. Pedidos, clientes e lançamentos de exemplo: rode `supabase/opcional/remover_dados_ficticios.sql` no SQL Editor (também zera `contador_ajuste`).
+
+## Fase 3: custos e estoque (migrações 11 a 14 — já aplicadas)
+- **11:** `admin_atualizar_cliente` (nome, nascimento, e-mail, observações) e `admin_resgatar_pontos_v2` (resgate que também grava o nascimento esquecido).
+- **12:** insumos, compras (atualizam custo e estoque), histórico de custo do insumo e do produto, ficha técnica, margem, movimentos de estoque (baixa automática no pedido pago, estorno no cancelamento), custo gravado no item do pedido. Permissões novas: `custos.ver`, `custos.gerir`, `estoque.ver`, `estoque.gerir` (gerente já recebe; dono tem tudo). Configurações: `custo_metodo` (media_ponderada | ultimo), `custo_compras_n`, `margem_alvo_pct`.
+- **13:** dados fictícios de custos (9 insumos, 10 compras, 5 fichas, estoque de tampas abaixo do mínimo). Remoção no `opcional/remover_dados_ficticios.sql`.
+- **14:** visões de custo sem "security definer" (`v_custo_produto` com invoker; custo das mercadorias pela função `cmv_mes`). A visão `v_cmv_mes` ficou sem uso e pode ser apagada no SQL Editor.
+- A função `admin-usuarios` foi republicada (v3) com as 4 permissões novas na lista de perfis.
+- Apagar compra/insumo não existe: compra é "anulada" e ficha/insumo é "desativado", para preservar o histórico.

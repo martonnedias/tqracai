@@ -6,6 +6,8 @@
 <meta name="robots" content="noindex,nofollow">
 <title>Central TQR · #TQR Açaí</title>
 <link rel="icon" href="../img/rotulo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap">
 <style>
 :root{
   color-scheme:light;
@@ -362,6 +364,81 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
 @media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr}.pz{grid-template-columns:1fr;justify-items:center}.pz-leg{width:100%}.cfg-bar{flex-direction:column;align-items:stretch}.cfg-bar .muted{display:none}}
 .novaversao{position:sticky;top:0;z-index:60;display:flex;gap:12px;align-items:center;justify-content:center;padding:8px 14px;background:var(--gold,#e8be62);color:#2a0838;font-size:.875rem;font-weight:600}
 .novaversao[hidden]{display:none}
+
+/* ===== Central TQR · casca berinjela com fio de ouro, fundo lilás-polpa, Poppins + script da marca ===== */
+:root{--casca:#1a0a2b;--casca-2:#2a1245;--ouro:#e8be62;--ouro-2:#fbe2a0;--fundo:#f5f1f9;--f-destaque:'Kaushan Script',cursive;--f-ui:Poppins,Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--warn-dot:#d98c10;
+  --bg:var(--fundo);--brand-soft:#efe7f8;--brand-line:#d8c6ec;--line:#e6dfef;--line-strong:#d2c8df}
+@font-face{font-family:'Kaushan Script';src:url(../fonts/Kaushan.ttf);font-display:swap}
+body{background:var(--fundo);font-family:var(--font)}
+h2,h3,.stat b,.bname b,.ini-data{font-family:var(--f-ui)}
+.script-h{font-family:var(--f-destaque);font-weight:400;letter-spacing:0}
+/* topo: mesma casca do menu, fio de ouro embaixo */
+header.top{background:linear-gradient(180deg,#24103d 0,var(--casca) 100%);border-bottom:1px solid rgba(232,190,98,.45);box-shadow:0 1px 0 rgba(0,0,0,.4),0 8px 20px -14px rgba(26,10,43,.8);backdrop-filter:none}
+.bname b{font-size:1.45rem;line-height:1;color:var(--ouro-2);font-weight:400}
+.bname small{color:#b9a6d0;font-size:.7rem}
+.bar .brand img{box-shadow:0 0 0 1px rgba(232,190,98,.55),0 6px 14px -6px rgba(0,0,0,.7)}
+.hact{border-color:rgba(255,255,255,.12)}
+.hbtn{color:#d9cdea}.hbtn:hover{background:rgba(255,255,255,.09);color:#fff}
+#btnAlert::before{background:#7b6a93}
+#btnAlert.on{background:rgba(110,214,150,.16);color:#9be8b8}#btnAlert.on::before{background:#6ed696;box-shadow:0 0 0 3px rgba(110,214,150,.25)}
+.hbtn.out{color:#ffb0b5}.hbtn.out:hover{background:rgba(255,120,130,.14);color:#ffd0d3}
+.uchip{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.16)}#userTag{color:#fff}
+.avatar{background:linear-gradient(135deg,var(--ouro),#b8862e);color:#2a0838}
+.side{background:var(--casca);box-shadow:inset -1px 0 0 rgba(255,255,255,.04)}
+nav#tabs .btn.on{background:linear-gradient(90deg,rgba(232,190,98,.22),rgba(232,190,98,.05));box-shadow:inset 0 0 0 1px rgba(232,190,98,.35)}
+nav#tabs .btn.on svg{color:var(--ouro)}
+.nbadge{background:var(--ouro);color:#2a0838}
+/* conteúdo */
+h2{font-weight:700;color:#21122f}
+.stat b{font-weight:700}
+.cards{border-color:var(--line);box-shadow:0 1px 0 #fff inset,var(--sh1)}
+.btn.go{background:linear-gradient(180deg,var(--brand),var(--brand-hover));border-color:var(--brand-hover)}
+:focus-visible{outline-color:var(--ouro);outline-offset:2px;box-shadow:0 0 0 4px rgba(89,41,138,.25)}
+.login{max-width:none;margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(ellipse 70% 60% at 50% 0,#3b1763 0,var(--casca) 70%);padding:24px 16px}
+.login form{width:min(380px,100%);background:#fff;border:0;border-radius:18px;box-shadow:0 0 0 1px rgba(232,190,98,.5),0 30px 60px -20px rgba(0,0,0,.7);padding:30px}
+.login .logo{width:64px;height:64px;border-radius:14px;margin:-62px auto 4px;box-shadow:0 0 0 2px var(--ouro),0 12px 24px -8px rgba(0,0,0,.6)}
+.login h2{text-align:center;font-size:2rem;color:var(--brand);margin:0}.login-sub{text-align:center;margin:-6px 0 4px}
+body:has(.login:not([hidden])){background:var(--casca)}
+/* Início: topo, pulso do dia e fila ao vivo */
+.ini-top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.ini-top h2{margin:0;font-size:2.1rem;line-height:1.1;color:var(--brand)}
+.ini-data{margin:0 0 2px;font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.ini-aberto{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:999px;font-size:.8125rem;font-weight:600;background:var(--surface);border:1px solid var(--line)}
+.ini-aberto::before{content:"";width:8px;height:8px;border-radius:50%;background:#9a90a8}
+.ini-aberto.on{color:var(--ok);border-color:#bfe3cd;background:var(--ok-soft)}.ini-aberto.on::before{background:var(--ok);box-shadow:0 0 0 3px rgba(20,112,63,.2)}
+.ini-grid2{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start}
+.ini-main{display:grid;gap:14px;min-width:0}
+.ini-main .sub{margin:6px 0 -4px}
+.pulso{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px 12px;box-shadow:var(--sh1);position:relative}
+.pulso::before{content:"";position:absolute;left:16px;right:16px;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--ouro),transparent);opacity:.9}
+.pulso header{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}.pulso h3{margin:0 0 6px}
+.pulso-svg{width:100%;height:auto}.pulso-svg text{font-size:11px;fill:var(--muted)}
+.pulso-vazio{font-family:var(--f-destaque);font-size:1.05rem;color:var(--brand);text-align:center;margin:-70px 0 52px;position:relative}
+.pulso-leg{list-style:none;padding:0;display:flex;gap:14px;flex-wrap:wrap;font-size:.75rem;color:var(--muted);margin:2px 0 0}
+.pulso-leg li{display:flex;align-items:center;gap:6px}.pulso-leg i{width:9px;height:9px;border-radius:50%;display:block}
+.fila{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh1);overflow:hidden}
+.fila header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fbf9fd,#f6f2fa)}
+.fila h3{margin:0}
+.chip{min-width:26px;text-align:center;padding:2px 9px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:.8rem}.chip.alerta{background:var(--warn-soft);color:var(--warn)}
+.fila-lista{display:grid}
+.fila-i{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line)}
+.fila-i:last-child{border-bottom:0}
+.fila-i.atraso{background:linear-gradient(90deg,var(--bad-soft),transparent 70%)}
+.fi-a{display:grid;min-width:0;gap:1px}.fi-cod{font-weight:700;font-size:.9rem}.fi-cli{font-size:.8125rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fi-meta{font-size:.75rem;color:var(--muted)}
+.fila-i.atraso .fi-meta{color:var(--bad);font-weight:600}
+.fi-b{display:grid;gap:6px;justify-items:end;flex:none}
+.fi-bt{min-height:40px;padding:6px 14px;font-weight:650;white-space:nowrap}
+.fila-vazia{font-family:var(--f-destaque);font-size:1.1rem;color:var(--brand);text-align:center;padding:26px 14px;margin:0}
+.fila-mais{margin:10px 14px 12px;width:calc(100% - 28px)}
+.ini-side{display:grid;gap:14px;min-width:0;position:sticky;top:76px}
+@media(max-width:1100px){.ini-grid2{grid-template-columns:1fr}.ini-side{position:static;order:-1}}
+@media(max-width:959px){
+  header.top{background:var(--casca)}.side{background:var(--casca)}
+  .bname b{font-size:1.25rem}.ini-top h2{font-size:1.7rem}
+  .fi-bt{min-height:44px}
+}
+.fila header .chip{flex:none;width:auto;min-width:26px}.fila h3{white-space:nowrap}
+@media(max-width:520px){#btnSite,#btnRefresh{display:none}.bname b{font-size:1.2rem}.bar .brand{min-width:0}.bname{min-width:0}}
 </style>
 </head>
 <body>
@@ -369,9 +446,9 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
 
 <section class="login" id="viewLogin" hidden>
   <form id="loginForm">
-    <img class="logo" src="../img/rotulo.webp" alt="">
-    <h2>Central TQR</h2>
-    <p class="muted" style="margin:-8px 0 2px">Gestão do #TQR Açaí · acesso da equipe</p>
+    <img class="logo" src="../img/rotulo.webp" alt="" data-marca="logo">
+    <h2 class="script-h" data-marca="nome">Central TQR</h2>
+    <p class="muted login-sub" data-marca="loginSub">Gestão do #TQR Açaí · acesso da equipe</p>
     <label class="fld">E-mail<input type="email" id="lEmail" autocomplete="username" required></label>
     <label class="fld">Senha<input type="password" id="lPass" autocomplete="current-password" required></label>
     <button class="btn go" type="submit">Entrar</button>
@@ -422,7 +499,7 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
 <div id="app" hidden>
   <div class="novaversao" id="novaVersao" role="status" hidden><span>Há uma nova versão do painel disponível.</span><button class="btn sm go" type="button" id="novaVersaoGo">Atualizar agora</button></div>
   <header class="top"><div class="bar">
-    <span class="brand"><img src="../img/rotulo.webp" alt=""><span class="bname"><b>Central TQR</b><small>Gestão do #TQR Açaí</small></span></span>
+    <span class="brand"><img src="../img/rotulo.webp" alt="" data-marca="logo"><span class="bname"><b class="script-h" data-marca="nome">Central TQR</b><small data-marca="subtitulo">Gestão do #TQR Açaí</small></span></span>
     <div class="hact" role="toolbar" aria-label="Ações rápidas">
       <a class="hbtn" href="../" target="_blank" rel="noopener" id="btnSite" title="Abrir o site em outra aba"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg><span class="lbl">Ver site</span></a>
       <button class="hbtn" id="btnAlert" type="button" aria-pressed="false" title="Aviso sonoro de novos pedidos">Avisos: desligados</button>
@@ -470,17 +547,24 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
 
   <main class="wrap">
     <section id="tab-inicio" hidden>
-      <h2 id="inicioSaudacao">Início</h2>
+      <div class="ini-top">
+        <div><p class="ini-data" id="inicioData"></p><h2 id="inicioSaudacao" class="script-h">Início</h2></div>
+        <span class="ini-aberto" id="inicioAberto" hidden></span>
+      </div>
       <div class="cards" id="inicioCards"></div>
-      <div class="rel-card" id="inicioGrafico" hidden><h3>Vendas dos últimos 7 dias</h3><div id="inicioGraficoBox"></div></div>
-      <div class="inicio-grid">
-        <div>
+      <div class="ini-grid2">
+        <div class="ini-main">
+          <div class="pulso" id="pulso"><header><h3>Pulso do dia</h3><span class="muted" id="pulsoLegenda"></span></header><div id="pulsoBox"></div><ul class="pulso-leg" id="pulsoLeg"></ul></div>
+          <div class="rel-card" id="inicioGrafico" hidden><h3>Vendas dos últimos 7 dias</h3><div id="inicioGraficoBox"></div></div>
           <h3 class="sub">Precisa de atenção</h3>
           <div class="alertas" id="inicioAlertas"></div>
           <h3 class="sub">Atalhos</h3>
           <div class="acts" id="inicioAtalhos"></div>
         </div>
-        <div class="primeiro" id="inicioPrimeiro" hidden></div>
+        <aside class="ini-side">
+          <div class="fila"><header><h3>Fila ao vivo</h3><span class="chip" id="filaCont">0</span></header><div id="filaLista" class="fila-lista"></div></div>
+          <div class="primeiro" id="inicioPrimeiro" hidden></div>
+        </aside>
       </div>
     </section>
 
@@ -937,6 +1021,7 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
 </dialog>
 <div id="toast" role="status" hidden></div>
 
+<script src="marca.js"></script>
 <script src="ajuda.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
 <script>
@@ -1045,6 +1130,32 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
   }
 
   // ===== Abas =====
+  // ===== Pacote de marca (admin/marca.js) =====
+  var MARCA=window.TQR_MARCA||{};
+  (function aplicaMarca(){
+    var c=MARCA.cores||{},r=document.documentElement.style;
+    var mp={casca:'--casca',casca2:'--casca-2',marca:'--brand',marcaHover:'--brand-hover',destaque:'--ouro',destaque2:'--ouro-2',fundo:'--fundo'};
+    Object.keys(mp).forEach(function(k){if(c[k])r.setProperty(mp[k],c[k]);});
+    if(MARCA.fonteDestaque&&MARCA.fonteDestaque.arquivo){var st=document.createElement('style');st.textContent="@font-face{font-family:'TQRDestaque';src:url("+MARCA.fonteDestaque.arquivo+");font-display:swap}";document.head.appendChild(st);r.setProperty('--f-destaque',"'TQRDestaque',"+(MARCA.fonteDestaque.familia||'cursive')+",cursive");}
+    var tx={nome:MARCA.nome,subtitulo:MARCA.subtitulo,loginSub:(MARCA.textos||{}).loginSub};
+    document.querySelectorAll('[data-marca]').forEach(function(n){var k=n.dataset.marca;if(k==='logo'){if(MARCA.logo)n.src=MARCA.logo;}else if(tx[k])n.textContent=tx[k];});
+    if(MARCA.nome)document.title=MARCA.nome+(MARCA.empresa?' · '+MARCA.empresa:'');
+  })();
+  // vocabulário do negócio (admin/marca.js): troca "garrafa(s)" nos textos quando o cliente usa outra palavra
+  (function(){
+    var v=MARCA.vocabulario||{};if(!v.unidade||(v.unidade==='garrafa'&&(!v.unidades||v.unidades==='garrafas')))return;
+    var un=v.unidade,uns=v.unidades||(v.unidade+'s');
+    function cap(w,m){return m.charAt(0)===m.charAt(0).toUpperCase()&&m.charAt(0)!==m.charAt(0).toLowerCase()?w.charAt(0).toUpperCase()+w.slice(1):w;}
+    function tr(t){return t.replace(/\b(garrafas|garrafa)\b/gi,function(m){return cap(m.toLowerCase()==='garrafas'?uns:un,m);});}
+    function walk(n){
+      if(n.nodeType===3){var t=tr(n.nodeValue);if(t!==n.nodeValue)n.nodeValue=t;return;}
+      if(n.nodeType!==1||/^(SCRIPT|STYLE)$/.test(n.tagName))return;
+      ['placeholder','aria-label','title'].forEach(function(a){var x=n.getAttribute&&n.getAttribute(a);if(x){var y=tr(x);if(y!==x)n.setAttribute(a,y);}});
+      for(var c=n.firstChild;c;c=c.nextSibling)walk(c);
+    }
+    walk(document.body);
+    new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEach(walk);if(m.type==='characterData')walk(m.target);});}).observe(document.body,{childList:true,subtree:true,characterData:true});
+  })();
   var tabAtual='';
   document.addEventListener('click',function(e){if(e.target&&e.target.id==='novaVersaoGo')location.reload();});
   function abrirAba(t){
@@ -1116,7 +1227,7 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
     sb.from('pedidos').select('id,codigo,status,total,forma_pagamento,endereco,bairro,observacao,origem,criado_em,atualizado_em,modalidade,subtotal,desconto,taxa_entrega,cupom,extras,montagens,clientes(nome,whatsapp),itens_pedido(quantidade,nome_produto,brinde,preco_unitario,subtotal)')
       .order('criado_em',{ascending:false}).limit(300).then(function(r){
         if(r.error){toast('Não consegui carregar os pedidos.',true);return;}
-        avisar(r.data||[]);pedidos=r.data||[];renderPedidos();badgePedidos();
+        avisar(r.data||[]);pedidos=r.data||[];renderPedidos();badgePedidos();if(tabAtual==='inicio')desenhaVivo();
       });
   }
   // ===== Kanban de pedidos =====
@@ -2925,9 +3036,89 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
 
   // ===== Início: visão do dia, alertas e atalhos =====
   var ATALHOS=[['pedidos','Pedidos','pedidos.ver'],['novo','Novo pedido','pedidos.criar'],['crm','CRM','clientes.ver'],['financeiro','Financeiro','financeiro.ver'],['relatorios','Relatórios','financeiro.ver'],['pagamentos','Pagamentos','financeiro.ver'],['notas','Notas fiscais','financeiro.ver'],['estoque','Estoque','estoque.ver'],['custos','Custos','custos.ver'],['promocoes','Promoções','promocoes.gerir'],['config','Configurações','config.gerir']];
+  // ===== Início ao vivo: Pulso do dia + fila de pedidos =====
+  var HORARIO=null,TIPICO=null;
+  function carregaHorario(){
+    if(HORARIO)return Promise.resolve(HORARIO);
+    return Promise.resolve(sb.from('configuracoes').select('chave,valor').in('chave',['horario_abre','horario_fecha'])).then(function(r){
+      var m={};(r.data||[]).forEach(function(x){m[x.chave]=x.valor;});
+      var h=function(v,d){var n=parseInt(String(v||'').split(':')[0],10);return isNaN(n)?d:n;};
+      HORARIO={abre:h(m.horario_abre,8),fecha:h(m.horario_fecha,2)};return HORARIO;
+    },function(){HORARIO={abre:8,fecha:2};return HORARIO;});
+  }
+  function horaLocal(iso){var d=new Date(iso),p=new Intl.DateTimeFormat('en-GB',{timeZone:TZ,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(d),h=0,m=0;p.forEach(function(x){if(x.type==='hour')h=+x.value;if(x.type==='minute')m=+x.value;});return h+m/60;}
+  var COR_ST={pendente:'var(--warn-dot,#d98c10)',confirmado:'var(--info)',pago:'var(--ok)',saiu_entrega:'var(--brand)',entregue:'#8c9a94',cancelado:'var(--bad)'};
+  function desenhaVivo(){
+    if(!$('#pulsoBox'))return;
+    var hz=HORARIO||{abre:8,fecha:2},span=((hz.fecha-hz.abre)+24)%24||24,off=((horaLocal(new Date().toISOString())-hz.abre)+24)%24,aberto=off<span;
+    var ab=$('#inicioAberto');ab.hidden=false;ab.className='ini-aberto '+(aberto?'on':'off');
+    ab.textContent=aberto?'Aberto agora · fecha às '+hz.fecha+'h':'Fechado · abre às '+hz.abre+'h';
+    var inicio=Date.now()-Math.min(off,span)*3600e3,hoje=pedidos.filter(function(p){return new Date(p.criado_em).getTime()>=inicio-60000;});
+    var comTip=function(){return TIPICO;};
+    var go=function(){montaPulso(hoje,hz,span,Math.min(off,span),aberto,comTip());};
+    if(TIPICO===null&&can('financeiro.ver')){
+      var f=function(d){return d.toLocaleDateString('sv-SE',{timeZone:TZ});};
+      Promise.resolve(sb.rpc('rel_vendas',{p_ini:f(new Date(Date.now()-7*864e5)),p_fim:f(new Date(Date.now()-864e5))})).then(function(r){
+        var d=r&&r.data,ph=d&&d.por_hora;TIPICO=ph?ph.map(function(x){return (+x.pedidos||0)/7;}):false;go();
+      },function(){TIPICO=false;go();});
+    }else go();
+    renderFila();
+  }
+  function montaPulso(hoje,hz,span,off,aberto,tip){
+    var box=$('#pulsoBox');box.textContent='';
+    var W=760,H=190,pl=6,pr=6,pb=26,pt=14,sw=(W-pl-pr)/span,base=H-pb;
+    var cont=new Array(span).fill(0),porSlot=[];for(var i=0;i<span;i++)porSlot.push([]);
+    hoje.forEach(function(p){var o=((horaLocal(p.criado_em)-hz.abre)+24)%24,k=Math.min(span-1,Math.floor(o));porSlot[k].push(p);});
+    var tipv=function(k){return tip?(tip[(hz.abre+k)%24]||0):0;};
+    var mx=1;for(var k=0;k<span;k++)mx=Math.max(mx,porSlot[k].length,Math.ceil(tipv(k)));
+    var unit=(base-pt)/Math.max(mx,3);
+    var g=sv('svg',{viewBox:'0 0 '+W+' '+H,class:'chart pulso-svg',role:'img','aria-label':'Pulso do dia: pedidos por hora, hoje e ritmo típico'});
+    g.appendChild(sv('line',{x1:pl,x2:W-pr,y1:base,y2:base,stroke:'var(--line-strong)'}));
+    for(var k2=0;k2<span;k2++){
+      var x=pl+k2*sw,t=tipv(k2);
+      if(t>0){var bh=Math.max(2,t*unit),rb=sv('rect',{x:x+3,y:base-bh,width:sw-6,height:bh,rx:3,fill:'var(--brand-soft)',stroke:'var(--brand-line)','stroke-width':1});rb.appendChild(sv('title',{},'Ritmo típico às '+((hz.abre+k2)%24)+'h: '+t.toFixed(1).replace('.',',')+' pedidos'));g.appendChild(rb);}
+      if(k2%2===0)g.appendChild(sv('text',{x:x+2,y:H-8,'font-size':11},((hz.abre+k2)%24)+'h'));
+      porSlot[k2].slice(0,10).forEach(function(p,j){
+        var cy=base-9-j*Math.min(13,unit),cx=x+sw/2,hol=p.status==='cancelado';
+        var c=sv('circle',{cx:cx,cy:cy,r:5.5,fill:hol?'var(--surface)':COR_ST[p.status]||'#999',stroke:COR_ST[p.status]||'#999','stroke-width':hol?2:1});
+        c.appendChild(sv('title',{},p.codigo+' · '+(LABEL[p.status]||p.status)+' · '+brl(p.total)));g.appendChild(c);
+      });
+      if(porSlot[k2].length>10)g.appendChild(sv('text',{x:x+sw/2,y:pt-2,'text-anchor':'middle','font-size':10,'font-weight':700},'+'+(porSlot[k2].length-10)));
+    }
+    if(aberto){var xa=pl+off*sw;g.appendChild(sv('line',{x1:xa,x2:xa,y1:pt-6,y2:base,stroke:'var(--ouro)','stroke-width':2.5,'stroke-linecap':'round'}));
+      g.appendChild(sv('text',{x:Math.min(xa+4,W-40),y:pt-2,'font-size':10.5,'font-weight':700,fill:'var(--brand)'},'agora'));}
+    box.appendChild(g);
+    var tot=hoje.filter(function(p){return p.status!=='cancelado';}).length;
+    $('#pulsoLegenda').textContent=tot?tot+' pedido'+(tot>1?'s':'')+' hoje'+(tip?' · barras claras = ritmo típico (média dos últimos 7 dias)':''):'';
+    if(!tot){box.appendChild(el('p','pulso-vazio',(MARCA.textos||{}).pulsoVazio||'O dia ainda não começou.'));}
+    var lg=$('#pulsoLeg');lg.textContent='';
+    ['pendente','confirmado','pago','saiu_entrega','entregue'].forEach(function(st){var li=el('li'),i=document.createElement('i');i.style.background=COR_ST[st];li.appendChild(i);li.appendChild(document.createTextNode(LABEL[st]));lg.appendChild(li);});
+  }
+  var ACAO_CURTA={pendente:'Confirmar',confirmado:'Marcar pago',pago:'Saiu p/ entrega',saiu_entrega:'Entregue'};
+  function renderFila(){
+    var box=$('#filaLista');if(!box)return;box.textContent='';
+    var ab=pedidos.filter(function(p){return ['pendente','confirmado','pago','saiu_entrega'].indexOf(p.status)>=0;});
+    ab.sort(function(a,b){var o={pendente:0,confirmado:1,pago:2,saiu_entrega:3};return (o[a.status]-o[b.status])||(new Date(a.criado_em)-new Date(b.criado_em));});
+    $('#filaCont').textContent=String(ab.length);$('#filaCont').className='chip'+(ab.some(function(p){return p.status==='pendente';})?' alerta':'');
+    if(!ab.length){box.appendChild(el('p','fila-vazia',(MARCA.textos||{}).filaVazia||'Nenhum pedido na fila.'));return;}
+    ab.slice(0,8).forEach(function(p){
+      var c=p.clientes||{},idade=idadeMin(p.criado_em),atraso=(p.status==='pendente'&&idade>10)||(p.status==='confirmado'&&idade>60),
+          r=el('article','fila-i'+(atraso?' atraso':'')),a=el('div','fi-a'),b=el('div','fi-b');
+      var cd=el('span','fi-cod',p.codigo);a.appendChild(cd);a.appendChild(el('span','fi-cli',(first(c.nome)||'Cliente')+(p.bairro?' · '+p.bairro:'')));
+      a.appendChild(el('span','fi-meta',brl(p.total)+' · '+(idade<60?idade+' min':Math.floor(idade/60)+' h '+(idade%60)+' min')));
+      var st=el('span','tag '+p.status,LABEL[p.status]);b.appendChild(st);
+      var nx=NEXT[p.status];
+      if(nx&&podeMover(p,nx)){var bt=el('button','btn go fi-bt',ACAO_CURTA[p.status]);bt.type='button';bt.setAttribute('aria-label',ACAO_CURTA[p.status]+' '+p.codigo);bt.addEventListener('click',function(){pedirMover(p,nx);});b.appendChild(bt);}
+      r.appendChild(a);r.appendChild(b);box.appendChild(r);
+    });
+    if(ab.length>8){var mais=el('button','btn sm fila-mais','Ver todos os '+ab.length+' pedidos');mais.type='button';mais.addEventListener('click',function(){abrirAba('pedidos');});box.appendChild(mais);}
+  }
   function renderInicio(){
     var hr=+new Intl.DateTimeFormat('en-GB',{timeZone:TZ,hour:'2-digit',hourCycle:'h23'}).format(new Date());
-    $('#inicioSaudacao').textContent=(hr<12?'Bom dia':hr<18?'Boa tarde':'Boa noite')+(nomeUsuario?', '+first(nomeUsuario):'')+'.';
+    var sd=MARCA.saudacao||{manha:'Bom dia',tarde:'Boa tarde',noite:'Boa noite'};
+    $('#inicioSaudacao').textContent=(hr<12?sd.manha:hr<18?sd.tarde:sd.noite)+(nomeUsuario?', '+first(nomeUsuario):'')+'.';
+    $('#inicioData').textContent=new Date().toLocaleDateString('pt-BR',{timeZone:TZ,weekday:'long',day:'numeric',month:'long'});
+    carregaHorario().then(function(){desenhaVivo();});
     var cards=$('#inicioCards');cards.textContent='';
     if(can('pedidos.ver')){
       sb.from('v_resumo_dia').select('*').eq('dia',dia(new Date().toISOString())).maybeSingle().then(function(r){

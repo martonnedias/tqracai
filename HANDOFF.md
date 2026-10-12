@@ -215,3 +215,12 @@ Critérios de aceite importantes (resumo): pedido do site aparece no painel como
 Mensagem sugerida para colar na primeira mensagem da nova sessão:
 
 > Leia o arquivo `HANDOFF.md` na raiz do repositório e continue o projeto TQR Açaí a partir da seção 5. Comece pelas pendências 5.2 (proteção contra robôs, MFA no painel, preços lidos do banco) e me diga o que precisa de mim antes de construir. Não coloque chaves secretas no código e não envie pedidos de teste ao WhatsApp real.
+
+## Produto como assinatura (roteiro)
+Decisão do dono: servir a outros tipos de delivery. Caminho escolhido: **uma instância por cliente** (um projeto Supabase, um site e um painel por cliente, a partir deste modelo); multiempresa único só depois dos primeiros clientes.
+1. **Pacote de marca** (feito no painel: `admin/marca.js`, ver `admin/MARCA.md`): nome, logo, cores, fonte de destaque, textos e vocabulário do produto.
+2. Levar o pacote de marca e o vocabulário também ao site público e às mensagens de WhatsApp.
+3. Generalizar o que é específico de açaí: unidade "garrafa", "Montagem" (grupos de opções), pontos por garrafa, textos da Ajuda. Módulos ligáveis por segmento (custos e estoque, montagem, CRM).
+4. **Assistente de implantação:** criar projeto Supabase, aplicar `supabase/migrations`, criar o usuário dono e o primeiro catálogo; script único.
+5. **Cobrança recorrente** (Asaas assinatura) com bloqueio gentil por atraso; termos de uso, contrato de serviço e LGPD (a empresa do dono é *operadora* dos dados do cliente).
+6. Suporte e documentação por cliente (a Central de Ajuda já é a base).

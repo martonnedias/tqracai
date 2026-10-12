@@ -29,6 +29,14 @@ window.TQR_AJUDA = {
       passos: ['Os clientes entram sozinhos no funil: Novo, Recorrente, VIP, Em risco ou Inativo, conforme os pedidos.', 'Arraste um cartão para mudar a etapa à mão. Arrastar de volta para a etapa automática volta ao automático.', 'Clique em "Ficha" para ver o cliente, escolher uma mensagem pronta, abrir o WhatsApp, criar tarefas e anotar contatos.', 'Use os filtros: aniversariantes, com brinde para resgatar, em risco ou inativos.', 'Em "Mensagens prontas" (quem tem permissão de configurações) edite os textos; {nome}, {pontos} e {garrafas} são preenchidos sozinhos.'],
       dicas: ['O painel não envia nada sozinho: ele abre o WhatsApp com o texto e registra que houve contato.', 'Etiquetas ajudam a agrupar (revenda, academia, empresa).'],
       faq: [['Por que o cliente está "Em risco"?', 'Passou do limite de dias sem pedir (padrão 30). Os limites ficam nas configurações do banco.']] },
+    { id: 'mensagens', titulo: 'Mensagens', perm: 'clientes.ver', resumo: 'Modelos de mensagem e campanhas rápidas por WhatsApp, separados do CRM.',
+      passos: ['Em "Modelos de mensagem", edite os textos usando {nome}, {pontos} e {garrafas}; o painel preenche com os dados de cada cliente.', 'Em "Campanha rápida", escolha o modelo e o grupo (aniversariantes, com brinde, em risco, inativos, VIP, novos...).', 'Clique em "Enviar no WhatsApp" em cada cliente: o painel abre o WhatsApp com o texto pronto e registra o contato no CRM.', 'Quem já recebeu a mensagem fica marcado como "Enviado".'],
+      dicas: ['O envio é sempre feito por você, um a um, o que respeita as regras do WhatsApp e evita bloqueio do número.', 'Oculte um modelo que não usa mais em vez de apagá-lo.', 'Só quem tem permissão de configuração cria ou edita modelos.'],
+      faq: [['Dá para enviar para todo mundo de uma vez?', 'Não pelo painel: o envio automático em massa exige a API oficial do WhatsApp (está no roteiro do projeto).']] },
+    { id: 'fidelidade', titulo: 'Fidelidade', perm: 'clientes.ver', resumo: 'Regras do programa de pontos e clientes perto do brinde.',
+      passos: ['Defina quantos pontos o cliente ganha por R$ 1 pago, quantos pontos valem 1 brinde e o brinde de aniversário.', 'Veja quantos clientes já têm brinde, os pontos em circulação e os aniversariantes do mês.', 'Em "Perto do próximo brinde", veja quem está quase lá e chame no WhatsApp pela aba Mensagens.'],
+      dicas: ['Pontos entram sozinhos quando o pedido é pago e voltam se o pedido for cancelado.', 'Zero no brinde de aniversário desliga o benefício.'],
+      faq: [['Mudar as regras afeta pontos antigos?', 'Não: o saldo já acumulado continua; só os próximos pedidos usam a regra nova.']] },
     { id: 'financeiro', titulo: 'Financeiro', perm: 'financeiro.ver', resumo: 'Caixa, despesas, contas a pagar e resultado do mês.',
       passos: ['Escolha o mês. Veja entradas, taxas, saídas, resultado, a receber e a pagar.', 'As entradas dos pedidos entram sozinhas quando o pedido é marcado como pago, já descontando a taxa da forma de pagamento.', 'Lance despesas em "Novo lançamento". Marque "Já foi pago" ou informe o vencimento para virar conta a pagar.', 'Use o filtro da lista para ver entradas, saídas ou pendências, e "Exportar CSV" para o contador.', 'O ponto de equilíbrio mostra quantas garrafas por mês cobrem as despesas fixas.'],
       dicas: ['Categorias marcadas como fixas (aluguel, pessoal, energia) entram no ponto de equilíbrio.', 'Se o custo dos produtos estiver cadastrado, aparecem também o custo das mercadorias e o lucro bruto.'],
@@ -80,6 +88,8 @@ window.TQR_AJUDA = {
   ],
 
   campos: {
+    'Para quem': 'Grupo de clientes que vai receber a campanha: por exemplo aniversariantes do mês ou clientes em risco de sumir.',
+    'Mensagem': 'Modelo de texto usado na campanha. Edite os modelos logo abaixo.',
     'Inscrição estadual': 'Número da inscrição estadual da empresa, se tiver. O contador informa.',
     'Inscrição municipal': 'Número da inscrição municipal, se tiver.',
     'Regime tributário': 'Como a empresa paga impostos (ex.: Simples Nacional). Confirme com o contador.',

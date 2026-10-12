@@ -17,7 +17,7 @@ function cors(req: Request) {
   };
 }
 
-// versao 1: criar_pedido (só quantidade, telas antigas); versao 2: criar_pedido_v2 (vários itens, bairro, cupom)
+// versao 1: criar_pedido (só quantidade, telas antigas); versao 2: criar_pedido_v2 (vários itens, bairro, cupom); versao 3: criar_pedido_v3 (v2 + montagens/personalização)
 const CAMPOS_V1 = [
   "p_whatsapp", "p_quantidade", "p_nome", "p_data_nascimento", "p_email",
   "p_aceite_lgpd", "p_forma_pagamento", "p_endereco", "p_bairro", "p_observacao",
@@ -47,11 +47,12 @@ Deno.serve(async (req) => {
 
   // Repassa só os campos conhecidos de criar_pedido.
   const args: Record<string, unknown> = {};
-  const v2 = corpo.versao === 2;
-  for (const k of (v2 ? CAMPOS_V2 : CAMPOS_V1)) if (k in corpo.args) args[k] = corpo.args[k];
+  const v3 = corpo.versao === 3;
+  const v2 = corpo.versao === 2 || v3;
+  for (const k of (v3 ? [...CAMPOS_V2, "p_montagens"] : v2 ? CAMPOS_V2 : CAMPOS_V1)) if (k in corpo.args) args[k] = corpo.args[k];
 
   const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-  const { data, error } = await sb.rpc(v2 ? "criar_pedido_v2" : "criar_pedido", args);
+  const { data, error } = await sb.rpc(v3 ? "criar_pedido_v3" : v2 ? "criar_pedido_v2" : "criar_pedido", args);
   if (error) return new Response(JSON.stringify({ erro: error.message }), { status: 422, headers: h });
   return new Response(JSON.stringify(data), { status: 200, headers: h });
 });

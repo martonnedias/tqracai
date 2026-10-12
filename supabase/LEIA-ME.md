@@ -62,3 +62,9 @@ o site novo cai para o pedido simples se o banco ainda não tiver a migração 0
 ## Impressão (migração 18 — já aplicada)
 - Dados da loja (nome, razão social, CNPJ, telefone, endereço, rodapé) ficam em Configurações > Dados da loja e são lidos por `dados_loja()` (só equipe).
 - Botão "Imprimir" no pedido (lista e Kanban): comanda de produção, cupom de entrega e recibo, em bobina térmica 80 mm ou A4. "Imprimir fila do dia" imprime todas as comandas ativas. O recibo traz "sem valor fiscal".
+
+## Pagamentos (migração 19 — já aplicada)
+- Tabelas `pagamentos` e `pagamento_eventos`; gateway em Configurações do banco: `gateway_ativo` = `nenhum` (padrão, Pix manual) | `teste` | `asaas`. A aba Pagamentos troca o modo.
+- **Modo teste** roda inteiro no banco: gera Pix simulado, "Simular pagamento aprovado/recusa" e estorno. Aprovar marca o pedido como pago e os gatilhos existentes geram caixa, pontos e baixa de estoque; a taxa real (quando o gateway informa) substitui a estimada.
+- **Gateway real (Asaas):** publique a função `supabase/functions/pagamentos` com `supabase functions deploy pagamentos --no-verify-jwt` e defina os segredos `GATEWAY_API_KEY`, `GATEWAY_WEBHOOK_TOKEN` e `GATEWAY_URL` (sandbox: `https://sandbox.asaas.com/api/v3`). No Asaas, cadastre o webhook `https://elaczoriyaejkixkubxn.supabase.co/functions/v1/pagamentos?webhook=asaas` com o mesmo token. O webhook é idempotente (`pagamento_eventos`). O adaptador segue a documentação pública e deve ser validado no sandbox antes de ligar o modo `asaas`.
+- No site, o Pix aparece na tela após o pedido só quando o gateway não está `nenhum`; consulta por `pagamento_publico(codigo, whatsapp)`.

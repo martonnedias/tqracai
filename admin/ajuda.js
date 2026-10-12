@@ -57,6 +57,10 @@ window.TQR_AJUDA = {
       passos: ['Em "Loja", ajuste o WhatsApp que recebe os pedidos, o horário e o aviso do topo do site.', 'Em "Contador", defina a base e o ajuste do número de garrafas vendidas exibido no site.', 'Em "Programa de pontos", defina quantos pontos por real e quantos valem uma garrafa.', 'Cadastre formas de pagamento (com taxa) e bairros de entrega (com taxa fixa).'],
       dicas: ['Troque o WhatsApp de teste pelo número real quando terminar os testes.', 'A taxa de cada forma de pagamento alimenta o Financeiro.'],
       faq: [['Mudei e o site não atualizou.', 'Recarregue o site com Ctrl+F5.']] },
+    { id: 'pagamentos', titulo: 'Pagamentos', perm: 'financeiro.ver', resumo: 'Cobranças Pix/cartão pelo gateway, modo teste, estornos e conferência com o caixa.',
+      passos: ['Em "Gateway", escolha o modo: Desligado (Pix manual), Teste (simulado, sem dinheiro) ou Asaas (real, depois de configurar a chave na função de borda).', 'Em "Pedidos aguardando pagamento", use "Gerar cobrança Pix" e envie o Pix copia e cola ao cliente (botão WhatsApp).', 'Quando o pagamento é aprovado, o pedido vira "pago" sozinho: caixa, pontos e estoque seguem o fluxo normal e a taxa real do gateway substitui a estimada.', 'No modo Teste, use "Simular pagamento aprovado" para ver todo o caminho funcionando.', 'Estornar cancela o pedido (se ainda não saiu) e devolve caixa, pontos e estoque.'],
+      dicas: ['Com o gateway ligado, o site mostra o Pix na tela depois do pedido e confirma sozinho quando o cliente paga.', 'As chaves do gateway nunca ficam no painel nem no banco: só nos segredos da função de borda.', 'Cobranças em "disputa" ou pagas depois do cancelamento aparecem em destaque na conciliação.'],
+      faq: [['O cliente pagou mas o pedido não mudou.', 'Veja se a cobrança está "Aprovada" aqui. Se estiver aguardando, o gateway ainda não avisou; confira no painel do gateway.'], ['Posso testar sem gastar?', 'Sim: modo Teste. Nada é cobrado e o Pix exibido é de mentira.']] },
     { id: 'usuarios', titulo: 'Usuários', perm: '*', resumo: 'Quem acessa o painel e o que cada pessoa pode fazer.',
       passos: ['Crie o usuário com nome, e-mail, perfil e uma senha temporária; peça para a pessoa ativar a verificação em duas etapas.', 'Desative quem saiu da equipe: a pessoa deixa de entrar.', 'Crie perfis personalizados marcando exatamente as permissões que cada função precisa.'],
       dicas: ['Só o perfil Dono gerencia usuários e perfis.', 'Perfis de sistema (dono, gerente, atendente, entregador) não podem ser editados.'],
@@ -68,6 +72,8 @@ window.TQR_AJUDA = {
   ],
 
   campos: {
+    // Pagamentos
+    'Modo': 'Desligado = Pix manual como hoje. Teste = cobranças simuladas, sem dinheiro. Asaas = cobrança real (precisa da chave nos segredos da função de borda).',
     // Impressão e dados da loja
     'Documento': 'O que será impresso: comanda (cozinha), cupom de entrega (entregador), recibo (cliente) ou os três.',
     'Formato do papel': 'Térmica 80 mm para impressora de cupom; A4 para folha comum. Fica lembrado neste computador.',

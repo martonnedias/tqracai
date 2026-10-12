@@ -524,6 +524,11 @@ div.card>b{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:
 .mini-pulso{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px 14px 6px;margin-bottom:14px;box-shadow:var(--sh1)}
 .mini-pulso>b{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.mini-svg{width:100%;height:auto;margin-top:4px}
 .empty{display:grid;gap:10px;justify-items:center}.empty .btn{justify-self:center}
+
+.kcol{max-height:calc(100vh - 230px);overflow-y:auto;scrollbar-width:thin}
+.kcol>header{position:sticky;top:-10px;z-index:2;background:inherit;padding-top:10px;margin-top:-10px}
+.kmais{width:100%;justify-content:center}
+@media(max-width:959px){.kcol{max-height:none}}
 </style>
 </head>
 <body>
@@ -1442,6 +1447,7 @@ div.card>b{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:
     return n;
   }
   var dragPed=null;
+  var kLim={};
   function renderKanban(rows){
     var box=$('#kanban');box.textContent='';var d=$('#fDia').value,hoje=dia(new Date().toISOString());
     KCOLS.forEach(function(st){
@@ -1451,7 +1457,11 @@ div.card>b{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:
         return true;});
       var h=el('header'),soma=lista.reduce(function(t,p){return t+ +p.total;},0);h.appendChild(el('b',null,LABEL[st]+' ('+lista.length+')'));h.appendChild(el('span',null,brl(soma)));col.appendChild(h);
       if(!lista.length)col.appendChild(el('div','kvazio',st==='entregue'?'Nenhuma entrega hoje.':'Nada por aqui.'));
-      lista.forEach(function(p){col.appendChild(cardKanban(p));});
+      if(st==='entregue')lista.sort(function(a,b){return new Date(b.atualizado_em||b.criado_em)-new Date(a.atualizado_em||a.criado_em);});
+      var lim=kLim[st]||8;
+      lista.slice(0,lim).forEach(function(p){col.appendChild(cardKanban(p));});
+      if(lista.length>lim){var mais=el('button','btn sm kmais','Mostrar mais ('+(lista.length-lim)+')');mais.type='button';mais.addEventListener('click',function(){kLim[st]=lim+10;renderPedidos();});col.appendChild(mais);}
+      else if(st==='entregue'&&lista.length>8){var menos=el('button','btn sm kmais','Mostrar menos');menos.type='button';menos.addEventListener('click',function(){kLim[st]=8;renderPedidos();});col.appendChild(menos);}
       col.addEventListener('dragover',function(e){if(dragPed&&podeMover(dragPed,st)){e.preventDefault();col.classList.add('over');}});
       col.addEventListener('dragleave',function(){col.classList.remove('over');});
       col.addEventListener('drop',function(e){e.preventDefault();col.classList.remove('over');if(dragPed&&podeMover(dragPed,st))pedirMover(dragPed,st);});

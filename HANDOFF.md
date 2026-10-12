@@ -61,6 +61,12 @@ Detalhes de segurança já aplicados: texto vindo do público é sempre inserido
 - Cadastro: nome completo, WhatsApp, data de nascimento e e-mail; no site é opcional (nascimento e e-mail) e o aceite da política vale ao enviar o pedido.
 - Pagamento e entrega continuam manuais. Sem gateway de pagamento por enquanto.
 - Custo do insumo: cada compra atualiza o custo; mostrar lado a lado o último preço pago e a média ponderada.
+- **Contador de garrafas vendidas (site):** valor exibido = base inicial (1.000, editável) + garrafas dos pedidos pagos (status pago, saiu para entrega ou entregue) + ajuste manual (editável). Atualiza a cada pedido pago, sem arredondar em centenas. Cancelar um pedido pago desconta automaticamente. A base de 1.000 é número real do dono (já vendeu mais de 1.000).
+- **Endereços do cliente:** vários por cliente, com apelido e um padrão; o cliente pode apagar os dele no site (exclusão lógica, o pedido guarda cópia do endereço usado). Só aparecem depois de verificar o número por código.
+- **Entrega:** três modalidades: retirada; entrega com taxa fixa por bairro (tabela editável no painel); entrega por aplicativo, em que o próprio cliente solicita pelo app dele. Frete grátis continua a partir de 5 garrafas (regra editável).
+- **Promoções:** uma promoção por pedido na primeira versão (vale a mais vantajosa para o cliente); a estrutura já prevê acumular, desligado. Empilhar promoções pode ser decidido depois.
+- **Usuários do painel:** só o administrador (dono) cadastra usuários, com perfis de acesso limitados e permissões por módulo.
+- **Confirmação:** toda mudança de status de pedido abre um popup de confirmação.
 - Stack: HTML, CSS e JS puros no site; Supabase para banco e login; GitHub Pages para hospedagem.
 
 ## 5. Pendências, em ordem
@@ -76,12 +82,12 @@ Detalhes de segurança já aplicados: texto vindo do público é sempre inserido
 
 ### 5.2 Código a fazer (fase 1 e endurecimento)
 
-- [ ] **Proteção contra robôs** no pedido (ex.: Cloudflare Turnstile ou função de borda com verificação) antes de divulgar. Hoje alguém pode enviar pedidos falsos em volume e testar números pelo `cliente_cadastrado` (existe só o limite de 5 pedidos por hora por cliente).
-- [ ] **MFA no painel**: fluxo de inscrição e verificação de fator TOTP com a API de MFA do supabase-js.
+- [x] **Proteção contra robôs** no pedido (ex.: Cloudflare Turnstile ou função de borda com verificação) antes de divulgar. Hoje alguém pode enviar pedidos falsos em volume e testar números pelo `cliente_cadastrado` (existe só o limite de 5 pedidos por hora por cliente). *(Código pronto em 11/10: campo-isca no formulário + Cloudflare Turnstile com função de borda em `supabase/functions/criar-pedido`. Desligado até o dono criar o site no Cloudflare e publicar a função; passos em `supabase/functions/criar-pedido/README.md`. `cliente_cadastrado` ainda permite testar números.)*
+- [x] **MFA no painel**: fluxo de inscrição e verificação de fator TOTP com a API de MFA do supabase-js. *(Pronto: tela de cadastro por QR code, desafio no login, botão Segurança. Para exigir no banco: `supabase/opcional/exigir_mfa_no_painel.sql`, só depois do dono cadastrar o fator.)*
 - [ ] Testar o painel no navegador real com o login de verdade (os testes automáticos usaram respostas simuladas; a biblioteca vem da jsDelivr e nunca foi carregada de lá em teste). Se a CDN for um problema, hospedar o arquivo da biblioteca na pasta do site.
-- [ ] Preços estão duplicados: no JS do site (`UN=16.99, C3=42, U5=14`) e na tabela `configuracoes`. O banco é a fonte de verdade para o total gravado, mas a mensagem do WhatsApp usa o total do JS. Fazer o site ler os preços do banco (função pública de leitura) ou garantir os dois em sincronia ao mudar preço.
-- [ ] Painel: alerta de pedido novo (som ou notificação), histórico de status do pedido (tabela `pedido_eventos` já existe), editar observações do cliente, exportar para planilha.
-- [ ] `admin/` fora do Google: já tem `noindex`; acrescentar `Disallow: /admin/` no `robots.txt` e não listar no sitemap.
+- [x] Preços estão duplicados: no JS do site (`UN=16.99, C3=42, U5=14`) e na tabela `configuracoes`. O banco é a fonte de verdade para o total gravado, mas a mensagem do WhatsApp usa o total do JS. Fazer o site ler os preços do banco (função pública de leitura) ou garantir os dois em sincronia ao mudar preço. *(Pronto no código: `obter_precos()` na migração `20261011_03_obter_precos.sql` — precisa ser aplicada no Supabase — e a mensagem do WhatsApp usa o total devolvido pelo servidor. Os textos fixos de oferta no HTML continuam manuais.)*
+- [x] Painel: alerta de pedido novo (som ou notificação), histórico de status do pedido (tabela `pedido_eventos` já existe), editar observações do cliente, exportar para planilha. *(Pronto: aviso sonoro/notificação, histórico por pedido, exportar CSV. Falta: editar observações do cliente.)*
+- [x] `admin/` fora do Google: já tem `noindex`; acrescentar `Disallow: /admin/` no `robots.txt` e não listar no sitemap. *(`robots.txt` e `sitemap.xml` criados; no GitHub Pages de projeto o robots.txt só vale com domínio próprio.)*
 - [ ] Opcional: página ou seção de cadastro de fidelidade separada, usando `cadastrar_cliente` (a função já existe e exige nome, nascimento, e-mail e aceite).
 
 ### 5.3 Fase 2 — Financeiro e pontos
@@ -112,7 +118,7 @@ Brinde de aniversário, mensagens automáticas (exige API oficial do WhatsApp co
 
 - [ ] URL do feed do Instagram (Behold) no lugar de `INSTAGRAM_FEED_URL`.
 - [ ] IDs de GA4 e Meta Pixel em `window.TQR_TRACKING` (o aviso de cookies só aparece quando há ID).
-- [ ] SEO: `og:image` com URL absoluta, canonical, `sitemap.xml` e `robots.txt` no domínio final; Google Business Profile.
+- [x] SEO: `og:image` com URL absoluta, canonical, `sitemap.xml` e `robots.txt` no domínio final; Google Business Profile. *(og:image absoluto, canonical, og:url e twitter:card feitos com a URL do GitHub Pages; trocar quando houver domínio próprio. Google Business Profile é com o dono.)*
 - [ ] Domínio próprio (tqracai.com.br) e ajuste das URLs.
 - [ ] Comprimir os JPGs restantes em `img/`.
 - [ ] Corrigir o rótulo "CONGEADO" no material do produto; conferir avisos de alérgenos e lactose.
@@ -121,6 +127,55 @@ Brinde de aniversário, mensagens automáticas (exige API oficial do WhatsApp co
 - [ ] Alinhar `DESIGN.md` e CSS (muitos valores de cor fixos no CSS em vez de tokens).
 - [ ] Teste do WhatsApp em celular real (Android e iPhone). Em alguns navegadores, `window.open` depois de uma chamada assíncrona é bloqueado; o código já cai para `location.href`, mas confirmar na prática.
 - [ ] Atualizar o documento do projeto `claude/landing-page-decisoes.md` (está na versão de 08/10).
+
+### 5.7 Novos requisitos (pedido do dono em 11/10/2026) e etapas de implementação
+
+O dono pediu para fazer tudo na mesma rodada. Estes itens entram no projeto existente (fases 1 a 4) e a ordem abaixo respeita as dependências. Cada etapa termina com teste e commit; migrações de banco só são aplicadas no Supabase com autorização do dono.
+
+Requisitos novos:
+
+1. Endereços múltiplos por cliente, com histórico, escolha no pedido e exclusão pelo cliente.
+2. Cadastro de produtos e precificação no painel; o site passa a montar a vitrine e o formulário a partir do banco.
+3. Promoções configuráveis: faixa por quantidade (regra atual), combo/kit, leve X pague Y, casadinha (A dá desconto em B), desconto em % ou R$, cupom (código, validade, limite de usos), desconto no primeiro pedido, frete grátis por valor ou quantidade, brinde, preço por dia/horário, desconto por forma de pagamento. Campos comuns: nome, tipo, regra, validade, limite de uso, prioridade, acumula ou não (desligado).
+4. Popup de confirmação a cada mudança de status de pedido (inclui cancelar, que hoje usa `confirm`).
+5. Botão "Abrir site" no painel e link "Ir para o site" na tela de login.
+6. Contador de vendidos automático (regra na seção 4), com base e ajuste editáveis no painel.
+7. Configurações no painel que o site lê do banco: preços, combos, formas de pagamento (com taxa e desconto), taxas de entrega por bairro, frete grátis, WhatsApp de recebimento (hoje `TQR_FONE` fixo), horário de atendimento, mínimo e máximo por pedido, aviso temporário no site, pontos (`pontos_por_real`, `pontos_por_brinde`).
+8. Módulo de usuários com perfis e permissões por módulo (pedidos: ver, mudar status, cancelar; clientes; produtos; promoções; configurações; financeiro; usuários). Perfis iniciais sugeridos: Dono (tudo), Gerente (tudo menos usuários), Atendente (pedidos e clientes, sem financeiro nem preços), Entregador (só ver pedidos de entrega e marcar saiu/entregue). Criar usuário exige a chave de serviço, por isso vai por função de borda `admin-usuarios`, nunca pelo navegador.
+
+Etapas:
+
+- **Etapa 1 — Painel, só front (sem banco):** popup de confirmação de status, botão "Abrir site", link no login. Sem risco para os dados.
+- **Etapa 2 — Fundação de dados (migrações):** perfis e permissões (substituir `is_admin()` por checagem de permissão mantendo o admin atual como Dono, para ninguém ficar sem acesso); `formas_pagamento`; `bairros_entrega`; novas chaves em `configuracoes` (contador_base, contador_ajuste, horário, aviso, mínimo/máximo, WhatsApp); colunas novas em `produtos` (preço, foto, descrição, ordem, categoria); `taxa_entrega` e modalidade no pedido; funções públicas de leitura (`obter_config_publica`, `obter_contador`, `obter_vitrine`).
+- **Etapa 3 — Usuários e permissões:** módulo no painel + função de borda `admin-usuarios` (criar, desativar, trocar perfil, redefinir senha). Todas as telas seguintes já nascem respeitando as permissões. Maior risco da entrega (RLS): testar bloqueio e liberação por perfil antes de seguir.
+- **Etapa 4 — Configurações no painel + site lendo do banco:** telas de pagamento, entrega por bairro, horário, aviso, contador (base e ajuste), WhatsApp. O site passa a usar `obter_config_publica` e `obter_contador`; `TQR_FONE` fica só como reserva se a leitura falhar.
+- **Etapa 5 — Produtos, promoções e motor de preço:** CRUD de produtos com foto (Supabase Storage); `promocoes` com regras em JSON validado; função `calcular_pedido` no servidor (itens, cupom, bairro, pagamento) que é a única fonte do total; `criar_pedido` passa a aceitar vários itens e a taxa de entrega (atualizar também a função de borda `criar-pedido` do Turnstile); site monta vitrine, oferta e formulário a partir do banco e mostra a promoção aplicada. Os textos fixos de oferta no HTML são substituídos por dados.
+- **Etapa 6 — Verificação por código + endereços múltiplos:** `codigos_verificacao` (hash, validade, no máximo 5 tentativas), `solicitar_codigo`/`verificar_codigo`; código aparece no painel para o dono enviar pelo WhatsApp (mesma base do saldo de pontos); `enderecos_cliente` com apelido, padrão e exclusão lógica; site lista, escolhe, adiciona e apaga endereços após verificação; painel mostra e edita na ficha do cliente. Sem verificação o site segue só com "lembrar neste aparelho".
+- **Etapa 7 — Fase 2 (pontos e financeiro):** como na seção 5.3, agora com `formas_pagamento.taxa` alimentando as taxas, e "marcar como pago" no servidor também atualizando o contador de vendidos.
+- **Etapa 8 — Fase 3 (custos) e Fase 4 (extras):** seções 5.4 e 5.5. Usuários com permissões já cobertos pela etapa 3.
+- **Fechamento de cada etapa:** testes com respostas simuladas, verificação dos alertas de segurança do Supabase, atualização deste arquivo e aviso ao dono do que precisa ser aplicado, publicado ou testado em celular real.
+
+Pontos de atenção:
+
+- Taxa de entrega por bairro muda o total do pedido (hoje não entra no total) e a mensagem do WhatsApp; entrega por aplicativo não soma taxa.
+- Trocar `is_admin()` por permissões mexe em todas as políticas de segurança; preservar o acesso do admin atual e testar antes de aplicar.
+- Promoção e preço nunca vêm do navegador: só `calcular_pedido` calcula; o site apenas exibe.
+- Contador: se a base de 1.000 deixar de ser real, ajustar o texto; hoje é real segundo o dono.
+
+Status em 12/10/2026 (código na branch `claude/bold-lovelace-25ml91`; **migrações 03 a 06 e a função `admin-usuarios` aplicadas no Supabase em 12/10**, site e painel ainda NÃO publicados no GitHub Pages; ver `supabase/LEIA-ME.md`):
+
+- [x] Etapa 1: popup de confirmação de status (inclui cancelar), botão "Abrir site" no painel e link "Ir para o site" no login.
+- [x] Etapa 2: migração 04 (perfis dono/gerente/atendente/entregador, formas de pagamento, bairros, configurações, contador, RLS por permissão).
+- [x] Etapa 3: módulo Usuários no painel + função de borda `admin-usuarios`; interface do painel respeita as permissões.
+- [x] Etapa 4: aba Configurações (loja, horário, aviso, limites, contador, pontos, formas de pagamento, bairros); o site lê tudo do banco.
+- [x] Etapa 5: migração 05 (promoções de 8 tipos, motor `motor_pedido`, `simular_pedido`, `criar_pedido_v2`, fotos no Storage); abas Produtos e Promoções; pedido manual com itens, bairro e cupom; o site monta ofertas, extras, bairro com taxa, cupom e total a partir do servidor.
+- [x] Etapa 6: migração 06 (código de verificação, sessão do cliente, `enderecos_cliente`); site com "Usar um endereço salvo"; painel com códigos pendentes (botão de WhatsApp) e endereços na ficha do cliente.
+- [x] Etapa 7 (fase 2): migrações 07 e 08 **aplicadas em produção em 12/10**. Pedido que chega a "pago" (ou além) gera, uma vez só, a entrada no caixa (com a taxa da forma de pagamento) e os pontos; cancelar pedido pago estorna (valor e pontos); pedido cancelado não volta. Resgate (170 pontos), ajuste manual e brinde de aniversário (premissa: 170 pontos, editável em Configurações, uma vez por ano no mês) são funções do banco, com o saldo nunca ficando negativo. Painel: aba Financeiro (resultado do mês, fluxo de 12 meses, lançamentos, a pagar/receber, ponto de equilíbrio, CSV) e pontos na ficha do cliente. Site: seção "Programa de pontos" com consulta do saldo por código. Permissão nova: `financeiro.gerir` (perfil Gerente já recebeu).
+- [ ] Etapa 8 (fases 3 e 4: custos/ficha técnica e extras): não iniciada. Decisões pendentes na seção 8 (margem-alvo, insumos, quantas compras entram na média, custo de entrega).
+
+Regras do motor de preço: uma promoção por pedido (a mais vantajosa para o cliente); cupom só vale digitado; desempate por prioridade; frete grátis de uma promoção só vale quando a regra dela se aplica; brinde conta como benefício e não entra no contador de vendidos; limite de usos é reservado com trava na criação do pedido.
+
+Pendências conhecidas desta rodada: textos fixos de marketing no HTML (hero, textos de SEO, mensagens de WhatsApp dos botões "Combo"/"Kit") ainda citam R$ 16,99/R$ 42/R$ 14 e não mudam sozinhos; entrega por aplicativo não tem taxa no sistema (combinada no WhatsApp); o código de verificação é enviado manualmente pelo dono (guardado em texto por até 10 min no banco, ver comentário da migração 06); `cliente_cadastrado` continua permitindo testar números.
 
 ## 6. Especificação resumida das fases (modelo de dados completo)
 
@@ -147,6 +202,7 @@ Critérios de aceite importantes (resumo): pedido do site aparece no painel como
 - Código de verificação do saldo: manual na fase 2 ou pela API oficial do WhatsApp desde o início.
 - Lista de insumos, quantidade por garrafa e preços atuais; taxas reais de Pix e cartão; categorias de despesa.
 - Se o projeto Supabase novo for pago, plano e orçamento.
+- **(novos, 11/10)** Perfis e permissões exatos de cada nível (a lista da 5.7 é sugestão). Quais tipos de promoção entram ativos já na primeira versão (hipótese atual: todos os da lista, uma por pedido). Valor da taxa por bairro e lista de bairros atendidos. Se o endereço salvo só aparece depois do código ou se basta o WhatsApp (hipótese atual: depois do código). Formas de pagamento além de Pix e cartão e suas taxas.
 
 ## 9. Como começar a nova sessão
 

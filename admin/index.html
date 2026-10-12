@@ -229,6 +229,7 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
       <button class="btn" data-tab="clientes" data-perm="clientes.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.4c2 .7 3.5 2.6 3.5 5.6"/></svg><span>Clientes</span></button>
       <button class="btn" data-tab="financeiro" data-perm="financeiro.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6.5 9.5v5M17.5 9.5v5"/></svg><span>Financeiro</span></button>
       <button class="btn" data-tab="produtos" data-perm="produtos.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg><span>Produtos</span></button>
+      <button class="btn" data-tab="montagem" data-perm="produtos.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.4 5 5.6.8-4 3.9 1 5.5-5-2.7-5 2.7 1-5.5-4-3.9 5.6-.8z"/></svg><span>Montagem</span></button>
       <button class="btn" data-tab="custos" data-perm="custos.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5M4 19h16"/><path d="m8 15 3-4 3 2 5-7"/></svg><span>Custos</span></button>
       <button class="btn" data-tab="estoque" data-perm="estoque.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4-9-4Z"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4"/></svg><span>Estoque</span></button>
       <button class="btn" data-tab="promocoes" data-perm="promocoes.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8L3 12Z"/><circle cx="7.5" cy="8.5" r="1.2"/></svg><span>Promoções</span></button>
@@ -322,6 +323,23 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
           <label class="fld">Volume (ml)<input id="prVol" type="number" min="1" step="1"></label>
         </div>
         <button class="btn go" type="submit">Adicionar produto</button>
+      </form>
+    </section>
+
+    <section id="tab-montagem" hidden>
+      <h2>Monte o seu açaí</h2>
+      <p class="muted">Grupos de opções que o cliente escolhe por garrafa (complementos, caldas, extras). Cada opção tem preço adicional e pode ter ficha técnica (custo e baixa de estoque). "Grátis até" é quantas escolhas do grupo não cobram adicional; as mais caras saem de graça primeiro. Promoções não descontam os adicionais.</p>
+      <div class="list" id="listGrupos"></div>
+      <form class="card" id="formGrupo" autocomplete="off" style="margin-top:12px">
+        <b>Novo grupo de opções</b>
+        <label class="fld">Nome<input id="gpNome" type="text" required minlength="2" maxlength="60" placeholder="Ex.: Complementos"></label>
+        <div class="row2">
+          <label class="fld">Mínimo de escolhas<input id="gpMin" type="number" min="0" value="0"></label>
+          <label class="fld">Máximo de escolhas<input id="gpMax" type="number" min="1" value="3"></label>
+        </div>
+        <label class="fld">Escolhas grátis <small>(0 = todas cobram o adicional)</small><input id="gpGratis" type="number" min="0" value="0"></label>
+        <div class="fld">Vale para <small>(nenhum marcado = todos os produtos)</small><div class="perms" id="gpProdutos"></div></div>
+        <button class="btn go" type="submit">Criar grupo</button>
       </form>
     </section>
 
@@ -612,6 +630,7 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
     if(t==='produtos')loadProdutos();
     if(t==='financeiro')initFinanceiro();
     if(t==='promocoes')loadPromocoes();
+    if(t==='montagem')loadMontagem();
     if(t==='custos')loadCustos();
     if(t==='estoque')loadEstoque();
     if(t==='novo')loadCatalogo().then(montaNovo);
@@ -654,7 +673,7 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
   $('#fBusca').addEventListener('input',renderPedidos);
 
   function loadPedidos(){
-    sb.from('pedidos').select('id,codigo,status,total,forma_pagamento,endereco,bairro,observacao,origem,criado_em,modalidade,subtotal,desconto,taxa_entrega,cupom,clientes(nome,whatsapp),itens_pedido(quantidade,nome_produto,brinde)')
+    sb.from('pedidos').select('id,codigo,status,total,forma_pagamento,endereco,bairro,observacao,origem,criado_em,modalidade,subtotal,desconto,taxa_entrega,cupom,extras,montagens,clientes(nome,whatsapp),itens_pedido(quantidade,nome_produto,brinde)')
       .order('criado_em',{ascending:false}).limit(300).then(function(r){
         if(r.error){toast('Não consegui carregar os pedidos.',true);return;}
         avisar(r.data||[]);pedidos=r.data||[];renderPedidos();
@@ -681,8 +700,10 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
     n.appendChild(el('span',null,qtd+' garrafa'+(qtd>1?'s':'')+' · '+brl(p.total)+(p.forma_pagamento?' · '+(NOME_PAG[p.forma_pagamento]||p.forma_pagamento):'')));
     var its=(p.itens_pedido||[]).filter(function(i){return i.nome_produto;}).map(function(i){return i.quantidade+'× '+i.nome_produto+(i.brinde?' (brinde)':'');});
     if(its.length)n.appendChild(el('span','muted',its.join(' · ')));
+    (p.montagens||[]).forEach(function(m){var l=el('span',null,'Montagem: '+m.quantidade+'× '+m.nome_produto+' com '+(m.opcoes||[]).map(function(o){return o.nome;}).join(', '));n.appendChild(l);});
     var det=[];
     if(p.modalidade)det.push(MOD_ROT[p.modalidade]||p.modalidade);
+    if(+p.extras>0)det.push('adicionais '+brl(p.extras));
     if(+p.desconto>0)det.push('desconto '+brl(p.desconto));
     if(+p.taxa_entrega>0)det.push('entrega '+brl(p.taxa_entrega));
     if(p.cupom)det.push('cupom '+p.cupom);
@@ -1671,6 +1692,122 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
       ac.appendChild(bm);if(can('estoque.gerir'))ac.appendChild(bg);n.appendChild(ac);n.appendChild(mx);box.appendChild(n);
     });
   }
+
+  // ===== Montagem (personalização): grupos de opções, preço adicional, esgotado e ficha técnica =====
+  var grupos=[],opcoesAll=[],custoOp={},recOp={},prodsMont=[];
+  function msgMont(er){var m=String(er&&er.message||'');if(/duplicate|unique/i.test(m))return 'Já existe uma opção/grupo com esse nome.';if(/check|violates/i.test(m))return 'Confira os valores (máximo precisa ser ≥ mínimo e ≥ grátis).';return msgCus(er);}
+  function loadMontagem(){
+    var pc=can('custos.ver');
+    Promise.all([
+      sb.from('grupos_opcao').select('*').order('ordem').order('criado_em'),
+      sb.from('opcoes').select('*').order('ordem').order('criado_em'),
+      sb.from('produtos').select('id,nome').order('ordem'),
+      pc?sb.from('v_custo_opcao').select('opcao_id,custo,tem_ficha'):Promise.resolve({data:[]}),
+      pc?sb.from('insumos').select('id,nome,unidade,custo_atual,ativo').order('nome'):Promise.resolve({data:[]}),
+      pc?sb.from('opcao_receitas').select('opcao_id,insumo_id,quantidade,perda_pct').eq('ativo',true):Promise.resolve({data:[]})
+    ]).then(function(rs){
+      for(var i=0;i<3;i++)if(rs[i].error){toast('Não consegui carregar a montagem.',true);return;}
+      grupos=rs[0].data||[];opcoesAll=rs[1].data||[];prodsMont=rs[2].data||[];
+      custoOp={};(rs[3].data||[]).forEach(function(c){custoOp[c.opcao_id]=c;});
+      insumos=rs[4].data||insumos;recOp={};(rs[5].data||[]).forEach(function(r){(recOp[r.opcao_id]=recOp[r.opcao_id]||[]).push(r);});
+      renderGrupos();montaProdChecks();
+    });
+  }
+  function montaProdChecks(){
+    var box=$('#gpProdutos');box.textContent='';
+    prodsMont.forEach(function(p){var l=el('label',null),c=document.createElement('input');c.type='checkbox';c.value=p.id;l.appendChild(c);l.appendChild(el('span',null,' '+p.nome));box.appendChild(l);});
+  }
+  function nomesProdutos(ids){if(!ids||!ids.length)return 'todos os produtos';return ids.map(function(id){var p=prodsMont.filter(function(x){return x.id===id;})[0];return p?p.nome:'?';}).join(', ');}
+  function renderGrupos(){
+    var box=$('#listGrupos');box.textContent='';
+    if(!grupos.length){box.appendChild(el('p','empty','Nenhum grupo ainda. Crie o primeiro abaixo (por exemplo "Complementos").'));return;}
+    grupos.forEach(function(g){
+      var n=el('article','ped'),top=el('div','top');top.appendChild(el('b',null,g.nome));top.appendChild(el('span','tag '+(g.ativo?'pago':'cancelado'),g.ativo?'No site':'Oculto'));n.appendChild(top);
+      n.appendChild(el('span','muted',(g.minimo>0?'Escolha de '+g.minimo+' a '+g.maximo:'Até '+g.maximo+' escolhas')+(g.gratis_ate>0?' · '+g.gratis_ate+' grátis':'')+' · vale para '+nomesProdutos(g.produtos)));
+      var lista=el('div','perms');
+      opcoesAll.filter(function(o){return o.grupo_id===g.id;}).forEach(function(o){lista.appendChild(linhaOpcao(o));});
+      n.appendChild(lista);
+      var ac=el('div','acts'),be=el('button','btn sm','Editar grupo'),bt=el('button','btn sm',g.ativo?'Ocultar':'Mostrar'),bo=el('button','btn sm go','+ Opção');be.type=bt.type=bo.type='button';
+      var ex=el('div','hist');ex.hidden=true;
+      bt.addEventListener('click',function(){sb.from('grupos_opcao').update({ativo:!g.ativo}).eq('id',g.id).then(function(x){if(x.error){toast(msgMont(x.error),true);return;}loadMontagem();});});
+      be.addEventListener('click',function(){
+        if(!ex.hidden){ex.hidden=true;return;}ex.textContent='';
+        var nm=campo('Nome','text',g.nome,{maxlength:60}),mn=campo('Mínimo','number',g.minimo,{min:0}),mx=campo('Máximo','number',g.maximo,{min:1}),gr=campo('Grátis até','number',g.gratis_ate,{min:0}),od=campo('Ordem','number',g.ordem,{step:1});
+        var r1=el('div','row2');r1.appendChild(mn[0]);r1.appendChild(mx[0]);var r2=el('div','row2');r2.appendChild(gr[0]);r2.appendChild(od[0]);
+        var pb=el('div','perms'),sel=g.produtos||[];prodsMont.forEach(function(p){var l=el('label',null),c=document.createElement('input');c.type='checkbox';c.value=p.id;c.checked=sel.indexOf(p.id)>=0;l.appendChild(c);l.appendChild(el('span',null,' '+p.nome));pb.appendChild(l);});
+        ex.appendChild(nm[0]);ex.appendChild(r1);ex.appendChild(r2);ex.appendChild(el('span','muted','Produtos (nenhum marcado = todos):'));ex.appendChild(pb);
+        var sv=el('button','btn sm go','Salvar grupo');sv.type='button';
+        sv.addEventListener('click',function(){
+          var ids=[].slice.call(pb.querySelectorAll('input:checked')).map(function(c){return c.value;});
+          sb.from('grupos_opcao').update({nome:nm[1].value.trim(),minimo:+mn[1].value||0,maximo:+mx[1].value||1,gratis_ate:+gr[1].value||0,ordem:+od[1].value||0,produtos:ids.length?ids:null}).eq('id',g.id).then(function(x){
+            if(x.error){toast(msgMont(x.error),true);return;}toast('Grupo salvo.');loadMontagem();});});
+        ex.appendChild(sv);ex.hidden=false;
+      });
+      bo.addEventListener('click',function(){
+        if(!ex.hidden){ex.hidden=true;return;}ex.textContent='';
+        var nm=campo('Nome da opção','text','',{maxlength:60}),pr=campo('Preço adicional R$','number',0,{min:0,step:'0.01'});
+        ex.appendChild(nm[0]);ex.appendChild(pr[0]);var sv=el('button','btn sm go','Adicionar opção');sv.type='button';
+        sv.addEventListener('click',function(){
+          if(!nm[1].value.trim()){toast('Informe o nome.',true);return;}
+          sb.from('opcoes').insert({grupo_id:g.id,nome:nm[1].value.trim(),preco_adicional:+pr[1].value||0,ordem:opcoesAll.filter(function(o){return o.grupo_id===g.id;}).length+1}).then(function(x){
+            if(x.error){toast(msgMont(x.error),true);return;}toast('Opção adicionada.');loadMontagem();});});
+        ex.appendChild(sv);ex.hidden=false;
+      });
+      ac.appendChild(bo);ac.appendChild(be);ac.appendChild(bt);n.appendChild(ac);n.appendChild(ex);box.appendChild(n);
+    });
+  }
+  function linhaOpcao(o){
+    var w=el('div',null),r=el('div','row'),c=custoOp[o.id],pre=+o.preco_adicional;
+    var t=o.nome+' · '+(pre>0?'+'+brl(pre):'sem adicional')+(o.esgotado?' · ESGOTADO':'')+(o.ativo?'':' · oculta');
+    var sp=el('span',null,t);sp.style.flex='1';r.appendChild(sp);
+    var bs=el('button','btn sm',o.esgotado?'Voltou':'Acabou hoje'),bf=el('button','btn sm','Preço/ficha');bs.type=bf.type='button';
+    bs.addEventListener('click',function(){sb.from('opcoes').update({esgotado:!o.esgotado}).eq('id',o.id).then(function(x){if(x.error){toast(msgMont(x.error),true);return;}loadMontagem();});});
+    r.appendChild(bs);r.appendChild(bf);w.appendChild(r);
+    if(c&&c.tem_ficha)w.appendChild(el('span','muted','Custo '+brl(c.custo)+(pre>0?' · margem do adicional '+brl(pre-c.custo)+' ('+Math.round((pre-c.custo)/pre*100)+'%)':'')));
+    var ed=el('div','hist');ed.hidden=true;w.appendChild(ed);
+    bf.addEventListener('click',function(){
+      if(!ed.hidden){ed.hidden=true;return;}ed.textContent='';
+      var pr=campo('Preço adicional R$','number',o.preco_adicional,{min:0,step:'0.01'}),od=campo('Ordem','number',o.ordem,{step:1});
+      ed.appendChild(pr[0]);ed.appendChild(od[0]);
+      var ac=el('div','acts'),sv=el('button','btn sm go','Salvar preço'),at=el('button','btn sm',o.ativo?'Ocultar opção':'Mostrar opção');sv.type=at.type='button';
+      sv.addEventListener('click',function(){sb.from('opcoes').update({preco_adicional:+pr[1].value||0,ordem:+od[1].value||0}).eq('id',o.id).then(function(x){if(x.error){toast(msgMont(x.error),true);return;}toast('Opção salva.');loadMontagem();});});
+      at.addEventListener('click',function(){sb.from('opcoes').update({ativo:!o.ativo}).eq('id',o.id).then(function(x){if(x.error){toast(msgMont(x.error),true);return;}loadMontagem();});});
+      ac.appendChild(sv);ac.appendChild(at);ed.appendChild(ac);
+      if(can('custos.ver'))fichaOpcao(o,ed);
+      ed.hidden=false;
+    });
+    return w;
+  }
+  function fichaOpcao(o,box){
+    var podeEditar=can('custos.gerir'),ativos=insumos.filter(function(i){return i.ativo;}),linhas=(recOp[o.id]||[]),rows=el('div','perms'),tot=el('b',null,'');
+    box.appendChild(el('b',null,'Ficha técnica da opção (o que vai em 1 porção)'));
+    function recalc(){var t=0;rows.querySelectorAll('.row').forEach(function(r){var s=r.querySelector('select'),q=r.querySelector('input[data-q]'),pe=r.querySelector('input[data-p]'),i=insumoPor(s.value);if(i&&+q.value>0)t+=+q.value*(1+(+pe.value||0)/100)*(+i.custo_atual);var u=r.querySelector('.un');if(u)u.textContent=i?i.unidade:'';});tot.textContent='Custo da opção: '+brl4(t);}
+    function addL(l){
+      var r=el('div','row'),s=document.createElement('select');ativos.forEach(function(i){var op=el('option',null,i.nome+' ('+i.unidade+')');op.value=i.id;if(l&&l.insumo_id===i.id)op.selected=true;s.appendChild(op);});
+      var q=numIn(l?l.quantidade:'',{min:0.0001,step:'0.0001',placeholder:'Qtd'});q.setAttribute('data-q','1');q.style.maxWidth='90px';var u=el('span','muted');u.className='un muted';
+      var pe=numIn(l?l.perda_pct:0,{min:0,max:90,step:'0.1'});pe.setAttribute('data-p','1');pe.style.maxWidth='64px';
+      var rm=el('button','btn sm danger','×');rm.type='button';rm.addEventListener('click',function(){r.remove();recalc();});
+      [s,q,u,pe,el('span','muted','% perda'),rm].forEach(function(x){r.appendChild(x);});
+      if(!podeEditar){s.disabled=q.disabled=pe.disabled=true;rm.hidden=true;}
+      [s,q,pe].forEach(function(x){x.addEventListener('input',recalc);});rows.appendChild(r);
+    }
+    linhas.forEach(addL);box.appendChild(rows);
+    if(podeEditar&&ativos.length){var ad=el('button','btn sm','+ Insumo');ad.type='button';ad.addEventListener('click',function(){addL(null);recalc();});box.appendChild(ad);}
+    box.appendChild(tot);recalc();
+    if(!podeEditar)return;
+    var sv=el('button','btn sm go','Salvar ficha da opção');sv.type='button';
+    sv.addEventListener('click',function(){
+      var itens=[];rows.querySelectorAll('.row').forEach(function(r){var q=+r.querySelector('input[data-q]').value;if(q>0)itens.push({insumo_id:r.querySelector('select').value,quantidade:q,perda_pct:+r.querySelector('input[data-p]').value||0});});
+      sb.rpc('salvar_ficha_opcao',{p_opcao:o.id,p_itens:itens}).then(function(x){if(x.error){toast(msgMont(x.error),true);return;}toast('Ficha salva. Custo: '+brl4(x.data));loadMontagem();});
+    });
+    box.appendChild(sv);
+  }
+  $('#formGrupo').addEventListener('submit',function(e){
+    e.preventDefault();
+    var ids=[].slice.call($('#gpProdutos').querySelectorAll('input:checked')).map(function(c){return c.value;});
+    sb.from('grupos_opcao').insert({nome:$('#gpNome').value.trim(),minimo:+$('#gpMin').value||0,maximo:+$('#gpMax').value||1,gratis_ate:+$('#gpGratis').value||0,ordem:grupos.length+1,produtos:ids.length?ids:null}).then(function(r){
+      if(r.error){toast(msgMont(r.error),true);return;}toast('Grupo criado. Adicione as opções nele.');$('#formGrupo').reset();loadMontagem();});
+  });
 
   sb.auth.onAuthStateChange(function(ev){if(ev==='SIGNED_OUT')show('viewLogin');});
   start();

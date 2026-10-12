@@ -46,3 +46,10 @@ o site novo cai para o pedido simples se o banco ainda não tiver a migração 0
 - **14:** visões de custo sem "security definer" (`v_custo_produto` com invoker; custo das mercadorias pela função `cmv_mes`). A visão `v_cmv_mes` ficou sem uso e pode ser apagada no SQL Editor.
 - A função `admin-usuarios` foi republicada (v3) com as 4 permissões novas na lista de perfis.
 - Apagar compra/insumo não existe: compra é "anulada" e ficha/insumo é "desativado", para preservar o histórico.
+
+## "Monte o seu açaí" (migrações 15 e 16 — já aplicadas)
+- **15:** grupos de opções e opções (preço adicional, esgotado, ordem), ficha técnica por opção (custo e baixa de estoque), montagem validada no servidor (`calcular_montagens`: mínimo/máximo/grátis; as opções mais caras saem grátis primeiro), funções `simular_pedido_v3`, `criar_pedido_v3`, `admin_criar_pedido_v3` e `salvar_ficha_opcao`, colunas `pedidos.extras` e `pedidos.montagens`, vitrine pública com a personalização (sem nenhum custo).
+- **16:** grupos/opções de exemplo (Complementos, Caldas, Turbine seu açaí), editáveis na aba Montagem do painel.
+- Promoções valem sobre o produto-base; o adicional das opções entra depois, sem desconto. O custo das opções entra no custo do item do pedido.
+- A função de borda `criar-pedido` (Turnstile, ainda não publicada) aceita `versao: 3` para as montagens.
+- Pedido manual no painel (aba Novo pedido) ainda não tem a escolha de opções; o pedido do site mostra a montagem no cartão do pedido.

@@ -78,3 +78,10 @@ o site novo cai para o pedido simples se o banco ainda não tiver a migração 0
 ## Relatórios (migração 21 — já aplicada)
 - Funções só de leitura, todas exigem `financeiro.ver`: `rel_vendas(ini, fim)`, `rel_produtos(ini, fim)` (lucro só com `custos.ver`), `rel_financeiro(meses)` e `rel_clientes(ini, fim)`. Cada uma devolve um jsonb que a aba Relatórios desenha em SVG (sem biblioteca). Período máximo de 400 dias.
 - Venda = pedido pago, em saída para entrega ou entregue; datas no fuso de Fortaleza. Exportação em CSV e impressão/PDF pelo navegador.
+
+## Módulos e planos (migração 22 — já aplicada)
+Base da assinatura. Tabelas `modulos`, `planos`, `plano_modulos`, `instancia_modulos`, `instancia_plano`. Esta loja nasce com **todos os módulos ativos** (plano Completo).
+- `modulo_ativo(m)` / `meus_modulos()` leem o estado; o dono liga/desliga com `admin_definir_modulo` e troca de plano com `admin_aplicar_plano` (tela **Plano e módulos**).
+- Trava no servidor: `tem_permissao` passa a exigir o módulo (financeiro/custos/estoque → `gestao`; promocoes → `marketing`); as funções `crm_*`, de pontos, `pagamento_admin_*` e `nota_*` chamam `app_private.exige_modulo`. Módulo desligado devolve `modulo_inativo:<módulo>`; nada é apagado.
+- `minhas_permissoes()` agora devolve também `modulos`. O menu do painel esconde o que está desligado.
+

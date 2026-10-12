@@ -17,7 +17,8 @@ Esforço relativo: **P** (≤ 1 dia) · **M** (2–4 dias) · **G** (1–2 seman
 | 9 | Redesign "Central TQR", marca trocável, Pulso do dia | ✅ PRs #7–#14 |
 | 10 | Menu Marketing, pedido manual, gráficos, barra inferior mobile | ✅ |
 | 11 | Limite de cartões no Kanban | ✅ PR #15 |
-| 12 | Documentação PRD/TRD/Fluxo/Design/Banco/Plano | ✅ este PR |
+| 12 | Documentação PRD/TRD/Fluxo/Design/Banco/Plano | ✅ PR #16 |
+| 13 | Fase 1 da assinatura: módulos e planos | ✅ |
 
 ## 2. Go-live (pendências do dono)
 
@@ -34,7 +35,7 @@ Esforço relativo: **P** (≤ 1 dia) · **M** (2–4 dias) · **G** (1–2 seman
 
 ## 3. Roadmap da assinatura (SaaS)
 
-### Fase 1 — Módulos e planos · **G**
+### Fase 1 — Módulos e planos · **G** · ✅ entregue (migração 22 + tela Plano e módulos)
 - Migration 22: `modulos`, `planos`, `plano_modulos`, `instancia_modulos`, `modulo_ativo()`, `meus_modulos()`.
 - Guardas em RLS/RPCs: `gestao` (financeiro, relatórios, custos, estoque), `marketing` (CRM, mensagens, promoções, fidelidade), `pagamentos`, `fiscal`, `personalizacao`.
 - Painel: ocultar abas, tela "Plano e módulos", mensagem "módulo não contratado".

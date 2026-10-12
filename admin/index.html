@@ -169,13 +169,13 @@ dialog#dlgImprimir::backdrop{background:rgba(29,23,38,.5)}dialog#dlgImprimir h3{
 .rel-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:14px}
 .rel-card h3{margin:0 0 10px;font-size:.95rem}
 .rel-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
-.chart{width:100%;height:auto;display:block}.chart text{font-size:10px;fill:var(--muted)}
+.chart{width:100%;height:auto;display:block}.chart text{font-size:11px;fill:var(--muted)}
 .hb{display:grid;grid-template-columns:minmax(80px,38%) 1fr auto;gap:8px;align-items:center;font-size:.85rem;margin:5px 0}
 .hb i{display:block;height:10px;border-radius:5px;background:var(--brand)}.hb span.tr{background:var(--brand-soft);border-radius:5px;display:block}
 .rel-note{color:var(--muted);font-size:.82rem;margin:6px 0 0}
 .leg{display:flex;gap:14px;font-size:.8rem;color:var(--muted);margin-top:6px}.leg b{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:middle}
 .rel-print .rel-card{break-inside:avoid;border:1px solid #bbb}
-#printArea{display:none}
+#printArea{display:none;background:#fff;color:#1d1726}
 @media print{
   body>*:not(#printArea){display:none!important}
   #printArea{display:block!important}
@@ -314,6 +314,52 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
   .filters input,.filters select,.fld input,.fld select,.fld textarea,.row input,.row select{min-height:42px;font-size:1rem}
   h2{font-size:1.3rem}
 }
+
+/* ===== módulos compactos: cabeçalho de página, grids, financeiro, config, gráficos ===== */
+.phead{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.phead h2{margin:0}
+.ptools{display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap}
+.ptools select,.ptools input{min-height:32px;padding:3px 10px;border:1px solid var(--line-strong);border-radius:7px;background:var(--surface);font-size:.8125rem}
+.fld.inl{display:flex;align-items:center;gap:8px}.fld.inl input{width:auto}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px;align-items:end}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 14px;align-items:end}
+.cards-6{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.cards-6 .stat{padding:11px 16px}.cards-6 .stat b{font-size:1.25rem}
+.fin-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start}
+.fin-side{position:sticky;top:76px}
+.fin-side form.card{max-width:none;padding:16px;gap:10px}.fin-side .row2{grid-template-columns:1fr}
+.rel-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:6px}
+.rel-card{padding:12px 14px}
+.lcompact{grid-template-columns:1fr!important;gap:5px}
+.lcompact .ped{display:flex;flex-wrap:wrap;align-items:center;gap:2px 12px;padding:8px 12px;box-shadow:none}
+.lcompact .ped .top{gap:10px}.lcompact .ped>span{font-size:.8125rem}
+.lcompact .ped .acts{margin:0 0 0 auto;gap:6px}
+.cfg-seg{margin:0 0 14px;flex-wrap:wrap}
+.cfg-card{max-width:900px!important;gap:10px!important}
+.cfg-card .cfg-pane{display:grid;gap:12px}
+.cfg-card .cfg-pane[hidden]{display:none}
+.cfg-card>.cfg-pane>b{padding-top:6px}
+.cfg-card>.cfg-pane>b:not(:first-child){margin-top:6px;padding-top:16px;border-top:1px solid var(--line)}
+.cfg-bar{position:sticky;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:6px -22px -22px;padding:12px 22px;background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-top:1px solid var(--line);border-radius:0 0 var(--r) var(--r)}
+.cfg-out{max-width:900px}
+.cfg-out .list{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.pz{display:grid;grid-template-columns:150px minmax(0,1fr);gap:14px;align-items:center}
+.pz-svg{width:150px;height:150px}
+.pz-leg{list-style:none;padding:0;display:grid;gap:5px;font-size:.8125rem}
+.pz-leg li{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:8px;align-items:center}
+.pz-leg i{width:11px;height:11px;border-radius:3px;display:block}
+.pz-leg span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pz-leg b{font-weight:650;color:var(--text)}
+#btnRefresh.spin svg{animation:gira .7s linear infinite}@keyframes gira{to{transform:rotate(360deg)}}
+.doc-head{margin-bottom:14px;border-bottom:2px solid #59298a;padding-bottom:8px}.doc-head b{color:#59298a;font-size:.9rem}
+.doc-head h1{font-size:1.4rem;margin:2px 0}.doc-head p{font-size:.8rem;color:#555}
+.doc-h3{margin:16px 0 6px;font-size:.95rem}
+.doc-tbl{width:100%;border-collapse:collapse;font-size:.78rem;margin-bottom:6px}
+.doc-tbl th{background:#efe9f6;text-align:left;padding:4px 7px;border-bottom:1px solid #c9bbdc}
+.doc-tbl td{padding:3px 7px;border-bottom:1px solid #e5e0ec}.doc-tbl td.num{text-align:right;font-variant-numeric:tabular-nums}
+.rel-print .cards{box-shadow:none;margin-bottom:12px}.rel-print .rel-grid{grid-template-columns:repeat(2,1fr)}
+.rel-print .pz{grid-template-columns:110px minmax(0,1fr)}.rel-print .pz-svg{width:110px;height:110px}
+@media(max-width:1100px){.fin-grid{grid-template-columns:1fr}.fin-side{position:static}}
+@media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr}.pz{grid-template-columns:1fr;justify-items:center}.pz-leg{width:100%}.cfg-bar{flex-direction:column;align-items:stretch}.cfg-bar .muted{display:none}}
 </style>
 </head>
 <body>
@@ -510,36 +556,46 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
     </section>
 
     <section id="tab-financeiro" hidden>
-      <h2>Financeiro</h2>
-      <div class="filters">
-        <label class="fld">Mês<input type="month" id="finMes"></label>
-        <button class="btn sm" type="button" id="finCsv">Exportar CSV</button>
+      <div class="phead"><h2>Financeiro</h2>
+        <div class="ptools">
+          <label class="fld inl">Mês<input type="month" id="finMes"></label>
+          <select id="finFiltro" aria-label="Filtro dos lançamentos"><option value="">Todos os lançamentos</option><option value="entrada">Só entradas</option><option value="saida">Só saídas</option><option value="pendente">A pagar / a receber</option></select>
+          <button class="btn sm" type="button" id="finCsv">CSV</button>
+          <button class="btn sm go" type="button" id="finPdf">PDF do mês</button>
+        </div>
       </div>
-      <div class="cards" id="finCards"></div>
+      <div class="cards cards-6" id="finCards"></div>
       <p class="muted" id="finPE"></p>
-      <h2 style="margin-top:18px">Fluxo de caixa (12 meses)</h2>
-      <div class="list" id="finFluxo"></div>
-      <h2 style="margin-top:18px">Lançamentos do mês</h2>
-      <div class="filters">
-        <select id="finFiltro" aria-label="Filtro"><option value="">Todos</option><option value="entrada">Entradas</option><option value="saida">Saídas</option><option value="pendente">A pagar / a receber</option></select>
+      <div class="fin-grid">
+        <div class="fin-main">
+          <div class="rel-grid">
+            <div class="rel-card"><h3>Fluxo dos últimos 12 meses</h3><div id="finGrafFluxo"></div></div>
+            <div class="rel-card"><h3>Despesas do mês por categoria</h3><div id="finGrafCat"></div></div>
+          </div>
+          <h3>Lançamentos do mês</h3>
+          <div class="list lcompact" id="finLista"></div>
+          <h3>Resumo mensal</h3>
+          <div class="list lcompact" id="finFluxo"></div>
+        </div>
+        <aside class="fin-side">
+          <form class="card" id="formLanc" autocomplete="off">
+            <b>Novo lançamento</b>
+            <div class="row2">
+              <label class="fld">Tipo<select id="lcTipo"><option value="saida">Saída (despesa)</option><option value="entrada">Entrada</option></select></label>
+              <label class="fld">Categoria<select id="lcCat" required></select></label>
+            </div>
+            <label class="fld">Descrição<input id="lcDesc" type="text" maxlength="200" placeholder="Ex.: compra de açaí"></label>
+            <div class="row2">
+              <label class="fld">Valor (R$)<input id="lcValor" type="number" min="0.01" step="0.01" required></label>
+              <label class="fld">Data<input id="lcData" type="date" required></label>
+            </div>
+            <label class="chk"><input id="lcPago" type="checkbox" checked><span>Já foi pago / recebido</span></label>
+            <label class="fld" id="lcVencFld" hidden>Vencimento<input id="lcVenc" type="date"></label>
+            <button class="btn go" type="submit" id="lcGo">Lançar</button>
+            <p class="muted">Entradas de pedidos entram sozinhas quando o pedido é pago, já com a taxa. Cancelar um pedido pago gera o estorno.</p>
+          </form>
+        </aside>
       </div>
-      <div class="list" id="finLista"></div>
-      <form class="card" id="formLanc" autocomplete="off" style="margin-top:12px">
-        <b>Novo lançamento</b>
-        <div class="row2">
-          <label class="fld">Tipo<select id="lcTipo"><option value="saida">Saída (despesa)</option><option value="entrada">Entrada</option></select></label>
-          <label class="fld">Categoria<select id="lcCat" required></select></label>
-        </div>
-        <label class="fld">Descrição<input id="lcDesc" type="text" maxlength="200" placeholder="Ex.: compra de açaí"></label>
-        <div class="row2">
-          <label class="fld">Valor (R$)<input id="lcValor" type="number" min="0.01" step="0.01" required></label>
-          <label class="fld">Data<input id="lcData" type="date" required></label>
-        </div>
-        <label class="chk"><input id="lcPago" type="checkbox" checked><span>Já foi pago / recebido</span></label>
-        <label class="fld" id="lcVencFld" hidden>Vencimento<input id="lcVenc" type="date"></label>
-        <button class="btn go" type="submit" id="lcGo">Lançar</button>
-        <p class="muted">As entradas dos pedidos entram sozinhas quando o pedido é marcado como pago, já com a taxa da forma de pagamento. Cancelar um pedido pago gera o estorno.</p>
-      </form>
     </section>
 
     <section id="tab-pagamentos" hidden>
@@ -578,7 +634,8 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
       <h2>Relatórios</h2>
       <div class="row">
         <label class="fld">Período<select id="relPer"><option value="7">Últimos 7 dias</option><option value="30" selected>Últimos 30 dias</option><option value="90">Últimos 90 dias</option><option value="mes">Este mês</option><option value="mesant">Mês passado</option></select></label>
-        <button class="btn sm" id="relCsv" type="button">Baixar CSV</button><button class="btn sm" id="relPdf" type="button">Imprimir / PDF</button>
+        <label class="fld">Modelo do PDF<select id="relModo"><option value="resumo">Resumido (1 página)</option><option value="analitico">Analítico (com tabelas)</option></select></label>
+        <button class="btn sm" id="relCsv" type="button">Baixar CSV</button><button class="btn sm go" id="relPdf" type="button">Gerar PDF</button>
       </div>
       <div class="seg" style="margin:10px 0 16px" id="relSeg" role="tablist" aria-label="Tipo de relatório">
         <button class="btn sm on" data-rel="vendas" type="button">Vendas</button><button class="btn sm" data-rel="produtos" type="button">Produtos</button><button class="btn sm" data-rel="financeiro" type="button">Financeiro</button><button class="btn sm" data-rel="clientes" type="button">Clientes</button>
@@ -743,76 +800,94 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
     </section>
 
     <section id="tab-config" hidden>
-      <h2>Configurações do site</h2>
-      <form class="card" id="formCfg" autocomplete="off">
-        <b>Loja</b>
-        <label class="fld">WhatsApp que recebe os pedidos <small>(com 55 e DDD, só números)</small><input data-chave="whatsapp_pedidos" type="tel" inputmode="numeric" pattern="55[0-9]{10,11}" required></label>
-        <div class="row2">
-          <label class="fld">Abre às<input data-chave="horario_abre" type="time" required></label>
-          <label class="fld">Fecha às<input data-chave="horario_fecha" type="time" required></label>
+      <div class="phead"><h2>Configurações</h2></div>
+      <div class="seg cfg-seg" id="cfgSeg" role="tablist" aria-label="Seções das configurações">
+        <button class="btn sm on" type="button" data-cfg="loja">Loja e site</button>
+        <button class="btn sm" type="button" data-cfg="pedidos">Pedidos e pontos</button>
+        <button class="btn sm" type="button" data-cfg="empresa">Empresa e fiscal</button>
+        <button class="btn sm" type="button" data-cfg="pagamento">Pagamento</button>
+        <button class="btn sm" type="button" data-cfg="entrega">Entrega</button>
+      </div>
+      <form class="card cfg-card" id="formCfg" autocomplete="off" novalidate>
+        <div class="cfg-pane" data-pane="loja">
+          <b>Funcionamento</b>
+          <div class="grid3">
+            <label class="fld">WhatsApp dos pedidos <small>(55 + DDD, só números)</small><input data-chave="whatsapp_pedidos" type="tel" inputmode="numeric" pattern="55[0-9]{10,11}" required></label>
+            <label class="fld">Abre às<input data-chave="horario_abre" type="time" required></label>
+            <label class="fld">Fecha às<input data-chave="horario_fecha" type="time" required></label>
+          </div>
+          <b>Aviso no topo do site</b>
+          <div class="grid2">
+            <label class="fld">Texto do aviso<input data-chave="aviso_site" type="text" maxlength="160" placeholder="Ex.: Hoje fechamos às 22h"></label>
+            <label class="chk"><input data-chave="aviso_ativo" data-bool="1" type="checkbox"><span>Mostrar o aviso no site</span></label>
+          </div>
+          <b>Contador "garrafas vendidas"</b>
+          <p class="muted">Exibido = base + garrafas dos pedidos pagos + ajuste. Agora o site mostra: <b id="cntAtual">…</b></p>
+          <div class="grid2">
+            <label class="fld">Base (vendas antes do sistema)<input data-chave="contador_base" type="number" min="0" required></label>
+            <label class="fld">Ajuste manual <small>(pode ser negativo)</small><input data-chave="contador_ajuste" type="number" required></label>
+          </div>
         </div>
-        <label class="fld">Aviso no topo do site<input data-chave="aviso_site" type="text" maxlength="160" placeholder="Ex.: Hoje fechamos às 22h"></label>
-        <label class="chk"><input data-chave="aviso_ativo" data-bool="1" type="checkbox"><span>Mostrar o aviso no site</span></label>
-        <div class="row2">
-          <label class="fld">Mínimo de garrafas por pedido<input data-chave="pedido_min" type="number" min="1" max="999" required></label>
-          <label class="fld">Máximo de garrafas por pedido<input data-chave="pedido_max" type="number" min="1" max="999" required></label>
+        <div class="cfg-pane" data-pane="pedidos" hidden>
+          <b>Limites do pedido</b>
+          <div class="grid2">
+            <label class="fld">Mínimo de garrafas<input data-chave="pedido_min" type="number" min="1" max="999" required></label>
+            <label class="fld">Máximo de garrafas<input data-chave="pedido_max" type="number" min="1" max="999" required></label>
+          </div>
+          <b>Programa de pontos</b>
+          <div class="grid3">
+            <label class="fld">Pontos por R$ 1 pago<input data-chave="pontos_por_real" type="number" min="0" step="0.01" required></label>
+            <label class="fld">Pontos para 1 garrafa grátis<input data-chave="pontos_por_brinde" type="number" min="1" required></label>
+            <label class="fld">Brinde de aniversário <small>(pontos; 0 desliga)</small><input data-chave="aniversario_pontos" type="number" min="0" required></label>
+          </div>
         </div>
-        <b>Contador "garrafas vendidas" do site</b>
-        <p class="muted">Exibido = base + garrafas dos pedidos pagos + ajuste. Agora o site mostra: <b id="cntAtual">…</b></p>
-        <div class="row2">
-          <label class="fld">Base (vendas antes do sistema)<input data-chave="contador_base" type="number" min="0" required></label>
-          <label class="fld">Ajuste manual <small>(pode ser negativo)</small><input data-chave="contador_ajuste" type="number" required></label>
+        <div class="cfg-pane" data-pane="empresa" hidden>
+          <b>Dados da empresa (impressos e nota fiscal)</b>
+          <div class="grid2">
+            <label class="fld">Nome da loja<input data-chave="loja_nome" type="text" maxlength="60"></label>
+            <label class="fld">Razão social<input data-chave="loja_razao" type="text" maxlength="100"></label>
+            <label class="fld">CNPJ<input data-chave="loja_cnpj" type="text" maxlength="20" placeholder="00.000.000/0000-00"></label>
+            <label class="fld">Telefone da loja<input data-chave="loja_telefone" type="text" maxlength="30"></label>
+            <label class="fld">Endereço da loja<input data-chave="loja_endereco" type="text" maxlength="160"></label>
+            <label class="fld">Mensagem do recibo<input data-chave="loja_rodape" type="text" maxlength="120"></label>
+          </div>
+          <b>Dados fiscais</b>
+          <div class="grid3">
+            <label class="fld">Inscrição estadual<input data-chave="nf_ie" type="text" maxlength="30"></label>
+            <label class="fld">Inscrição municipal<input data-chave="nf_im" type="text" maxlength="30"></label>
+            <label class="fld">Série<input data-chave="nf_serie" type="text" maxlength="3"></label>
+            <label class="fld">Regime tributário<select data-chave="nf_regime"><option value="simples">Simples Nacional</option><option value="presumido">Lucro presumido</option><option value="real">Lucro real</option></select></label>
+            <label class="fld">Tipo de nota<select data-chave="nf_tipo"><option value="nfce">NFC-e (consumidor)</option><option value="nfe">NF-e</option></select></label>
+            <label class="fld">Ambiente<select data-chave="nf_ambiente"><option value="homologacao">Homologação (simulada)</option></select></label>
+          </div>
+          <label class="chk"><input data-chave="nf_emissao_auto" data-bool="1" type="checkbox"><span>Emitir nota automaticamente quando o pedido for pago</span></label>
         </div>
-        <b>Programa de pontos</b>
-        <div class="row2">
-          <label class="fld">Pontos por R$ 1 pago<input data-chave="pontos_por_real" type="number" min="0" step="0.01" required></label>
-          <label class="fld">Pontos para 1 garrafa grátis<input data-chave="pontos_por_brinde" type="number" min="1" required></label>
-        </div>
-        <label class="fld">Pontos do brinde de aniversário <small>(0 desliga; vale uma vez por ano, no mês do aniversário)</small><input data-chave="aniversario_pontos" type="number" min="0" required></label>
-        <b>Dados da loja (impressos e nota fiscal)</b>
-        <label class="fld">Nome da loja<input data-chave="loja_nome" type="text" maxlength="60"></label>
-        <label class="fld">Razão social<input data-chave="loja_razao" type="text" maxlength="100"></label>
-        <div class="row2">
-          <label class="fld">CNPJ<input data-chave="loja_cnpj" type="text" maxlength="20" placeholder="00.000.000/0000-00"></label>
-          <label class="fld">Telefone da loja<input data-chave="loja_telefone" type="text" maxlength="30"></label>
-        </div>
-        <label class="fld">Endereço da loja<input data-chave="loja_endereco" type="text" maxlength="160"></label>
-        <label class="fld">Mensagem do recibo<input data-chave="loja_rodape" type="text" maxlength="120"></label>
-        <b>Dados fiscais (nota fiscal)</b>
-        <div class="row2">
-          <label class="fld">Inscrição estadual<input data-chave="nf_ie" type="text" maxlength="30"></label>
-          <label class="fld">Inscrição municipal<input data-chave="nf_im" type="text" maxlength="30"></label>
-        </div>
-        <div class="row2">
-          <label class="fld">Regime tributário<select data-chave="nf_regime"><option value="simples">Simples Nacional</option><option value="presumido">Lucro presumido</option><option value="real">Lucro real</option></select></label>
-          <label class="fld">Tipo de nota<select data-chave="nf_tipo"><option value="nfce">NFC-e (consumidor)</option><option value="nfe">NF-e</option></select></label>
-        </div>
-        <div class="row2">
-          <label class="fld">Série<input data-chave="nf_serie" type="text" maxlength="3"></label>
-          <label class="fld">Ambiente<select data-chave="nf_ambiente"><option value="homologacao">Homologação (simulada)</option></select></label>
-        </div>
-        <label class="chk"><input data-chave="nf_emissao_auto" data-bool="1" type="checkbox"><span>Emitir nota automaticamente quando o pedido for pago</span></label>
-        <button class="btn go" type="submit" id="cfgGo">Salvar configurações</button>
+        <div class="cfg-bar" id="cfgBar"><span class="muted">As alterações valem para o site e para o painel assim que você salvar.</span><button class="btn go" type="submit" id="cfgGo">Salvar configurações</button></div>
       </form>
-
-      <h2 style="margin-top:22px">Formas de pagamento</h2>
-      <div class="list" id="listPag"></div>
-      <form class="card" id="formPag" autocomplete="off" style="margin-top:12px">
-        <b>Nova forma de pagamento</b>
-        <label class="fld">Código <small>(minúsculas, ex.: dinheiro)</small><input id="fpId" type="text" required pattern="[a-z][a-z0-9_]{1,30}" maxlength="31"></label>
-        <label class="fld">Nome<input id="fpNome" type="text" required maxlength="40"></label>
-        <button class="btn go" type="submit">Adicionar</button>
-      </form>
-
-      <h2 style="margin-top:22px">Entrega por bairro</h2>
-      <p class="muted">Cada bairro tem uma taxa fixa. "Entrega por aplicativo" (o cliente chama pelo app dele) não tem taxa aqui.</p>
-      <div class="list" id="listBai"></div>
-      <form class="card" id="formBai" autocomplete="off" style="margin-top:12px">
-        <b>Novo bairro</b>
-        <label class="fld">Nome<input id="bNome" type="text" required minlength="2" maxlength="60"></label>
-        <label class="fld">Taxa (R$)<input id="bTaxa" type="number" min="0" step="0.01" value="0" required></label>
-        <button class="btn go" type="submit">Adicionar</button>
-      </form>
+      <div class="cfg-pane cfg-out" data-pane="pagamento" hidden>
+        <p class="muted">Formas de pagamento oferecidas no site, com a taxa que o painel usa para calcular o lucro.</p>
+        <div class="list" id="listPag"></div>
+        <form class="card" id="formPag" autocomplete="off" style="margin-top:12px">
+          <b>Nova forma de pagamento</b>
+          <div class="grid3">
+            <label class="fld">Código <small>(minúsculas, ex.: dinheiro)</small><input id="fpId" type="text" required pattern="[a-z][a-z0-9_]{1,30}" maxlength="31"></label>
+            <label class="fld">Nome<input id="fpNome" type="text" required maxlength="40"></label>
+            <button class="btn go" type="submit" style="align-self:end">Adicionar</button>
+          </div>
+        </form>
+      </div>
+      <div class="cfg-pane cfg-out" data-pane="entrega" hidden>
+        <p class="muted">Cada bairro tem uma taxa fixa. "Entrega por aplicativo" (o cliente chama pelo app dele) não tem taxa aqui.</p>
+        <div class="list" id="listBai"></div>
+        <form class="card" id="formBai" autocomplete="off" style="margin-top:12px">
+          <b>Novo bairro</b>
+          <div class="grid3">
+            <label class="fld">Nome<input id="bNome" type="text" required minlength="2" maxlength="60"></label>
+            <label class="fld">Taxa (R$)<input id="bTaxa" type="number" min="0" step="0.01" value="0" required></label>
+            <button class="btn go" type="submit" style="align-self:end">Adicionar</button>
+          </div>
+        </form>
+      </div>
     </section>
 
     <section id="tab-usuarios" hidden>
@@ -931,9 +1006,14 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
   }
 
   // ===== Abas =====
+  var tabAtual='';
   function abrirAba(t){
+    tabAtual=t;
     document.querySelectorAll('#tabs button').forEach(function(x){x.classList.toggle('on',x.dataset.tab===t);});
     document.querySelectorAll('main > section[id^=tab-]').forEach(function(x){x.hidden=(x.id!=='tab-'+t);});
+    carregaAba(t);
+  }
+  function carregaAba(t){
     if(t==='clientes')loadClientes();
     if(t==='crm')loadCrm();
     if(t==='usuarios')loadUsuarios();
@@ -952,7 +1032,10 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
     if(t==='novo')loadCatalogo().then(montaNovo);
   }
   $('#tabs').addEventListener('click',function(e){var b=e.target.closest('button[data-tab]');if(b)abrirAba(b.dataset.tab);});
-  $('#btnRefresh').addEventListener('click',loadAll);
+  $('#btnRefresh').addEventListener('click',function(){
+    var b=this;b.classList.add('spin');b.disabled=true;loadAll();if(tabAtual)carregaAba(tabAtual);
+    setTimeout(function(){b.classList.remove('spin');b.disabled=false;toast('Dados atualizados.');},700);
+  });
   // ===== Códigos de verificação pedidos pelos clientes (para enviar por WhatsApp) =====
   var codVistos=null;
   function loadCodigos(){
@@ -1492,8 +1575,17 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
     sb.rpc('obter_contador').then(function(r){$('#cntAtual').textContent=r.data==null?'—':Number(r.data).toLocaleString('pt-BR');});
     loadPagamentos();loadBairros();
   }
+  var CFG_FORM=['loja','pedidos','empresa'];
+  function showCfg(k){
+    document.querySelectorAll('#cfgSeg button').forEach(function(b){b.classList.toggle('on',b.dataset.cfg===k);});
+    document.querySelectorAll('#tab-config .cfg-pane').forEach(function(p){p.hidden=p.dataset.pane!==k;});
+    $('#formCfg').hidden=CFG_FORM.indexOf(k)<0;
+  }
+  $('#cfgSeg').addEventListener('click',function(e){var b=e.target.closest('button[data-cfg]');if(b)showCfg(b.dataset.cfg);});
   $('#formCfg').addEventListener('submit',function(e){
     e.preventDefault();
+    var bad=null;document.querySelectorAll('#formCfg [data-chave]').forEach(function(i){if(!bad&&i.type!=='checkbox'&&!i.checkValidity())bad=i;});
+    if(bad){var pn=bad.closest('.cfg-pane');if(pn)showCfg(pn.dataset.pane);bad.reportValidity();return;}
     var mud=[];
     document.querySelectorAll('#formCfg [data-chave]').forEach(function(i){
       var k=i.dataset.chave,v=i.dataset.bool?String(i.checked):String(i.value).trim();
@@ -1742,9 +1834,28 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
         n.appendChild(el('span',null,'Entradas '+brl(x.entradas)+' · Taxas '+brl(x.taxas)+' · Saídas '+brl(x.saidas)+' · Resultado '+brl(x.resultado)));
         if(+x.a_pagar||+x.a_receber)n.appendChild(el('span','muted','A receber '+brl(x.a_receber)+' · A pagar '+brl(x.a_pagar)));fx.appendChild(n);});
       if(!flx.length)fx.appendChild(el('p','empty','Sem movimentação ainda.'));
-      finLinhas=rs[2].data||[];renderFinLista();
+      finLinhas=rs[2].data||[];renderFinLista();finGraficos(flx);
     });
   }
+  function finGraficos(flx){
+    var asc=flx.slice().sort(function(a,b){return String(a.mes)<String(b.mes)?-1:1;}),rot=asc.map(function(x){return String(x.mes).slice(5,7)+'/'+String(x.mes).slice(2,4);});
+    var gl=$('#finGrafFluxo');gl.textContent='';
+    if(asc.length){gl.appendChild(linhas(rot,[{nome:'Entradas',cor:'var(--ok)',pontos:asc.map(function(m){return +m.entradas;})},{nome:'Saídas',cor:'var(--bad)',pontos:asc.map(function(m){return +m.saidas;})},{nome:'Resultado',cor:'var(--brand)',pontos:asc.map(function(m){return +m.resultado;})}],400));
+      var lg=el('div','leg');[['Entradas','var(--ok)'],['Saídas','var(--bad)'],['Resultado','var(--brand)']].forEach(function(x){var sp=el('span'),b=document.createElement('b');b.style.background=x[1];sp.appendChild(b);sp.appendChild(document.createTextNode(x[0]));lg.appendChild(sp);});gl.appendChild(lg);}
+    else gl.appendChild(el('p','empty','Sem movimentação ainda.'));
+    var por={};finLinhas.forEach(function(l){if(l.tipo==='saida'&&l.pago){por[l.categoria_id]=(por[l.categoria_id]||0)+(+l.valor);}});
+    var dc=Object.keys(por).map(function(k){return {l:nomeCat(k),v:por[k]};}).sort(function(a,b){return b.v-a.v;});
+    var gc=$('#finGrafCat');gc.textContent='';gc.appendChild(pizza(dc,brl));
+  }
+  $('#finPdf').addEventListener('click',function(){
+    if(!finLinhas.length&&!$('#finCards').children.length){toast('Nada para imprimir.',true);return;}
+    imprimirDoc('Financeiro · '+finMes.split('-').reverse().join('/'),'Mês '+finMes.split('-').reverse().join('/'),function(area){
+      var k=$('#finCards').cloneNode(true);area.appendChild(k);var pe=$('#finPE').textContent;if(pe)area.appendChild(el('p','rel-note',pe));
+      var gr=el('div','rel-grid');[['Fluxo dos últimos 12 meses','#finGrafFluxo'],['Despesas do mês por categoria','#finGrafCat']].forEach(function(x){var c=el('div','rel-card');c.appendChild(el('h3',null,x[0]));c.appendChild($(x[1]).cloneNode(true));gr.appendChild(c);});area.appendChild(gr);
+      area.appendChild(el('h3','doc-h3','Lançamentos do mês'));
+      area.appendChild(tabelaDoc({c:['Data','Tipo','Categoria','Descrição','Valor','Taxa','Situação'],l:finLinhas.map(function(l){return [l.data.split('-').reverse().join('/'),l.tipo,nomeCat(l.categoria_id),l.descricao||'',Number(l.valor).toFixed(2),Number(l.taxa).toFixed(2),l.pago?'pago':'pendente'];})}));
+    });
+  });
   function nomeCat(id){var c=finCats.filter(function(x){return x.id===id;})[0];return c?c.nome:id;}
   function renderFinLista(){
     var f=$('#finFiltro').value,box=$('#finLista');box.textContent='';
@@ -2263,23 +2374,23 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
     baixaArquivo('notas-xml-tqr-'+$('#nfMes').value+'.xml',x,'application/xml');});});
 
   // ===== Relatórios e gráficos (SVG simples, sem biblioteca) =====
-  var relTipo='vendas',relLinhas=[];
+  var relTipo='vendas',relLinhas=[],relTabs=[],relKpis=null;
   var SVGNS='http://www.w3.org/2000/svg';
   function sv(tag,at,txt){var n=document.createElementNS(SVGNS,tag);Object.keys(at||{}).forEach(function(k){n.setAttribute(k,at[k]);});if(txt!=null)n.textContent=txt;return n;}
   function curto(v){v=+v||0;return v>=1000?(v/1000).toFixed(v>=10000?0:1).replace('.',',')+' mil':String(Math.round(v));}
-  function barras(dados,cor,fmt){   // dados: [{l,v}]
+  function barras(dados,cor,fmt,largura){   // dados: [{l,v}]
     if(!dados.some(function(d){return d.v>0;}))return el('p','empty','Sem vendas neste período.');
-    var W=640,H=200,pl=34,pb=24,pt=10,n=dados.length||1,mx=Math.max.apply(null,dados.map(function(d){return d.v;}).concat([1])),bw=(W-pl)/n;
+    var W=largura||640,H=200,pl=34,pb=24,pt=10,n=dados.length||1,mx=Math.max.apply(null,dados.map(function(d){return d.v;}).concat([1])),bw=(W-pl)/n;
     var g=sv('svg',{viewBox:'0 0 '+W+' '+H,class:'chart',role:'img','aria-label':'Gráfico de barras'});
     [0,.5,1].forEach(function(f){var y=pt+(H-pt-pb)*(1-f);g.appendChild(sv('line',{x1:pl,x2:W,y1:y,y2:y,stroke:'var(--line)'}));g.appendChild(sv('text',{x:pl-4,y:y+3,'text-anchor':'end'},curto(mx*f)));});
     var passo=Math.ceil(n/12);
-    dados.forEach(function(d,i){var h=(H-pt-pb)*(d.v/mx),x=pl+i*bw+bw*.15,r=sv('rect',{x:x,y:H-pb-h,width:Math.max(bw*.7,1),height:Math.max(h,d.v>0?1:0),rx:2,fill:cor||'var(--brand)'});
+    dados.forEach(function(d,i){var h=(H-pt-pb)*(d.v/mx),bwid=Math.min(bw*.7,48),x=pl+i*bw+(bw-bwid)/2,r=sv('rect',{x:x,y:H-pb-h,width:Math.max(bwid,1),height:Math.max(h,d.v>0?1:0),rx:2,fill:cor||'var(--brand)'});
       r.appendChild(sv('title',{},d.l+': '+(fmt?fmt(d.v):d.v)));g.appendChild(r);
-      if(i%passo===0)g.appendChild(sv('text',{x:x+bw*.35,y:H-8,'text-anchor':'middle'},d.l));});
+      if(i%passo===0)g.appendChild(sv('text',{x:x+bwid/2,y:H-8,'text-anchor':'middle'},d.l));});
     return g;
   }
-  function linhas(meses,series){   // series: [{nome,cor,pontos:[v]}]
-    var W=640,H=210,pl=44,pb=24,pt=10,n=meses.length,all=[];series.forEach(function(s){all=all.concat(s.pontos);});
+  function linhas(meses,series,largura){   // series: [{nome,cor,pontos:[v]}]
+    var W=largura||640,H=210,pl=44,pb=24,pt=10,n=meses.length,all=[];series.forEach(function(s){all=all.concat(s.pontos);});
     var mx=Math.max.apply(null,all.concat([1])),mn=Math.min.apply(null,all.concat([0])),rg=(mx-mn)||1,dx=n>1?(W-pl-10)/(n-1):0;
     var g=sv('svg',{viewBox:'0 0 '+W+' '+H,class:'chart',role:'img','aria-label':'Gráfico de linhas por mês'});
     [0,.5,1].forEach(function(f){var y=pt+(H-pt-pb)*(1-f);g.appendChild(sv('line',{x1:pl,x2:W,y1:y,y2:y,stroke:'var(--line)'}));g.appendChild(sv('text',{x:pl-4,y:y+3,'text-anchor':'end'},curto(mn+rg*f)));});
@@ -2289,6 +2400,23 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
     meses.forEach(function(m,i){if(n<=12||i%2===0)g.appendChild(sv('text',{x:pl+i*dx,y:H-8,'text-anchor':'middle'},m));});
     return g;
   }
+  var PAL=['#59298a','#c9972a','#1b8a8a','#c24a6b','#2f6fba','#3e9a5a','#d9822b','#8a8296'];
+  function pizza(dados,fmt){   // dados: [{l,v}] -> rosca com legenda
+    var box=el('div','pz'),tot=dados.reduce(function(t,d){return t+(+d.v||0);},0);
+    if(!(tot>0)){box.appendChild(el('p','empty','Sem dados no período.'));return box;}
+    var R=70,r=44,C=80,g=sv('svg',{viewBox:'0 0 160 160',class:'chart pz-svg',role:'img','aria-label':'Gráfico de pizza'}),ang=-Math.PI/2,leg=el('ul','pz-leg');
+    dados.filter(function(d){return d.v>0;}).forEach(function(d,i){
+      var cor=PAL[i%PAL.length],fr=d.v/tot,a2=ang+fr*2*Math.PI,lg=fr>.5?1:0,pct=(fr*100).toFixed(fr<.1?1:0).replace('.',',')+'%';
+      var pt=function(rad,a){return (C+rad*Math.cos(a)).toFixed(2)+' '+(C+rad*Math.sin(a)).toFixed(2);};
+      var path=fr>=.9999?'M '+pt(R,0)+' A '+R+' '+R+' 0 1 1 '+pt(R,Math.PI)+' A '+R+' '+R+' 0 1 1 '+pt(R,0)+' L '+pt(r,0)+' A '+r+' '+r+' 0 1 0 '+pt(r,Math.PI)+' A '+r+' '+r+' 0 1 0 '+pt(r,0)+' Z'
+        :'M '+pt(R,ang)+' A '+R+' '+R+' 0 '+lg+' 1 '+pt(R,a2)+' L '+pt(r,a2)+' A '+r+' '+r+' 0 '+lg+' 0 '+pt(r,ang)+' Z';
+      var sl=sv('path',{d:path,fill:cor,stroke:'#fff','stroke-width':1.5});sl.appendChild(sv('title',{},d.l+': '+(fmt?fmt(d.v):d.v)+' ('+pct+')'));g.appendChild(sl);ang=a2;
+      var li=el('li'),sw=document.createElement('i');sw.style.background=cor;li.appendChild(sw);li.appendChild(el('span',null,d.l));li.appendChild(el('b',null,(fmt?fmt(d.v):String(d.v))+' · '+pct));leg.appendChild(li);
+    });
+    g.appendChild(sv('text',{x:C,y:C-2,'text-anchor':'middle','font-size':11,fill:'var(--muted)'},'Total'));
+    g.appendChild(sv('text',{x:C,y:C+12,'text-anchor':'middle','font-size':12,'font-weight':700,fill:'var(--text)'},fmt?fmt(tot):String(tot)));
+    box.appendChild(g);box.appendChild(leg);return box;
+  }
   function hbarras(lista,fmt){   // [{l,v,extra}]
     var box=el('div'),mx=Math.max.apply(null,lista.map(function(d){return d.v;}).concat([1]));
     if(!lista.length){box.appendChild(el('p','empty','Sem dados no período.'));return box;}
@@ -2297,7 +2425,7 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
     return box;
   }
   function relCard(tit,filho,nota){var c=el('div','rel-card');c.appendChild(el('h3',null,tit));c.appendChild(filho);if(nota)c.appendChild(el('p','rel-note',nota));return c;}
-  function relStats(itens){var c=el('div','cards');itens.forEach(function(x){var t=el('div','stat');t.appendChild(el('small',null,x[0]));t.appendChild(el('b',null,x[1]));c.appendChild(t);});return c;}
+  function relStats(itens){var c=el('div','cards');relKpis=itens;itens.forEach(function(x){var t=el('div','stat');t.appendChild(el('small',null,x[0]));t.appendChild(el('b',null,x[1]));c.appendChild(t);});return c;}
   function relPeriodo(){
     var v=$('#relPer').value,hoje=new Date(new Date().toLocaleString('en-US',{timeZone:TZ})),f=function(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);};
     var fim=new Date(hoje),ini=new Date(hoje);
@@ -2308,7 +2436,7 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
   }
   function msgRel(er){var m=String(er&&er.message||er||'');return /nao_autorizado/.test(m)?'Sem permissão para este relatório.':'Não consegui carregar o relatório.';}
   function loadRel(){
-    var box=$('#relCorpo');box.textContent='';box.appendChild(el('p','muted','Carregando…'));relLinhas=[];
+    var box=$('#relCorpo');box.textContent='';box.appendChild(el('p','muted','Carregando…'));relLinhas=[];relTabs=[];relKpis=null;
     var per=relPeriodo(),dow=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],pq=(relTipo==='financeiro')?sb.rpc('rel_financeiro',{p_meses:12}):sb.rpc('rel_'+relTipo,{p_ini:per.ini,p_fim:per.fim});
     pq.then(function(r){
       box.textContent='';if(r.error){box.appendChild(el('p','empty',msgRel(r.error)));return;}
@@ -2316,17 +2444,17 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
       if(relTipo==='vendas')relVendas(box,d,dow);else if(relTipo==='produtos')relProdutos(box,d);else if(relTipo==='financeiro')relFin(box,d);else relCli(box,d);
     });
   }
-  function csvAdd(tit,cab,linhas){relLinhas.push([tit]);relLinhas.push(cab);linhas.forEach(function(l){relLinhas.push(l);});relLinhas.push([]);}
+  function csvAdd(tit,cab,linhas){relTabs.push({t:tit,c:cab,l:linhas});relLinhas.push([tit]);relLinhas.push(cab);linhas.forEach(function(l){relLinhas.push(l);});relLinhas.push([]);}
   function relVendas(box,d,dow){
     var rs=d.resumo||{};box.appendChild(relStats([['Pedidos pagos',String(rs.pedidos||0)],['Faturamento',brl(rs.total||0)],['Ticket médio',brl(rs.ticket||0)],['Descontos dados',brl(rs.descontos||0)],['Cancelados',String(rs.cancelados||0)]]));
     var pd=(d.por_dia||[]).map(function(x){return {l:x.dia.slice(8)+'/'+x.dia.slice(5,7),v:+x.total};});
     box.appendChild(relCard('Faturamento por dia',barras(pd,'var(--brand)',brl)));csvAdd('Faturamento por dia',['dia','pedidos','total'],(d.por_dia||[]).map(function(x){return [x.dia,x.pedidos,x.total];}));
     var g=el('div','rel-grid');
-    g.appendChild(relCard('Pedidos por hora',barras((d.por_hora||[]).map(function(x){return {l:x.hora+'h',v:+x.pedidos};}),'var(--info)'),'Mostra os horários de pico para escalar a equipe.'));
-    g.appendChild(relCard('Dia da semana',barras((d.por_semana||[]).map(function(x){return {l:dow[x.dow],v:+x.pedidos};}),'var(--ok)')));
+    g.appendChild(relCard('Pedidos por hora',barras((d.por_hora||[]).map(function(x){return {l:x.hora+'h',v:+x.pedidos};}),'var(--info)',null,380),'Mostra os horários de pico para escalar a equipe.'));
+    g.appendChild(relCard('Dia da semana',barras((d.por_semana||[]).map(function(x){return {l:dow[x.dow],v:+x.pedidos};}),'var(--ok)',null,380)));
     g.appendChild(relCard('Por bairro',hbarras((d.por_bairro||[]).map(function(x){return {l:x.bairro,v:+x.total,extra:x.pedidos+' ped.'};}),brl)));
-    g.appendChild(relCard('Forma de pagamento',hbarras((d.por_pagamento||[]).map(function(x){return {l:(NOME_PAG[x.forma]||x.forma),v:+x.total,extra:x.pedidos+' ped.'};}),brl)));
-    g.appendChild(relCard('Entrega ou retirada',hbarras((d.por_modalidade||[]).map(function(x){return {l:x.modalidade.replace('_',' '),v:+x.total};}),brl)));box.appendChild(g);
+    g.appendChild(relCard('Forma de pagamento',pizza((d.por_pagamento||[]).map(function(x){return {l:(NOME_PAG[x.forma]||x.forma),v:+x.total};}),brl)));
+    g.appendChild(relCard('Entrega ou retirada',pizza((d.por_modalidade||[]).map(function(x){return {l:x.modalidade.replace(/_/g,' '),v:+x.total};}),brl)));box.appendChild(g);
     csvAdd('Por hora',['hora','pedidos','total'],(d.por_hora||[]).map(function(x){return [x.hora,x.pedidos,x.total];}));
     csvAdd('Por bairro',['bairro','pedidos','total'],(d.por_bairro||[]).map(function(x){return [x.bairro,x.pedidos,x.total];}));
     csvAdd('Por pagamento',['forma','pedidos','total'],(d.por_pagamento||[]).map(function(x){return [x.forma,x.pedidos,x.total];}));
@@ -2342,6 +2470,8 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
     var cp=d.com_promocao||{};g.appendChild(relCard('Efeito das promoções',relStats([['Pedidos com desconto',String(cp.pedidos||0)],['Ticket com desconto',cp.ticket_com!=null?brl(cp.ticket_com):'—'],['Ticket sem desconto',cp.ticket_sem!=null?brl(cp.ticket_sem):'—']]),'Compare os tickets: promoções que aumentam o ticket médio compensam o desconto.'));
     box.appendChild(g);
     csvAdd('Opções de montagem',['grupo','opcao','vezes'],(d.opcoes||[]).map(function(x){return [x.grupo,x.opcao,x.vezes];}));
+    csvAdd('Promoções',['promoção','pedidos','desconto','receita'],(d.promocoes||[]).map(function(x){return [x.nome,x.pedidos,x.desconto,x.receita];}));
+    csvAdd('Cupons',['cupom','pedidos','desconto'],(d.cupons||[]).map(function(x){return [x.cupom,x.pedidos,x.desconto];}));
   }
   function relFin(box,d){
     var ms=d.meses||[],rot=ms.map(function(m){return m.mes.slice(5,7)+'/'+m.mes.slice(2,4);}),eq=d.equilibrio||{};
@@ -2350,17 +2480,19 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
     box.appendChild(relStats([['Despesas fixas (média)',brl(eq.fixas_media||0)],['Margem de contribuição',eq.margem_pct!=null?eq.margem_pct+'%':'—'],['Faturamento de equilíbrio',eq.faturamento_necessario!=null?brl(eq.faturamento_necessario):'—']]));
     box.appendChild(el('p','rel-note','Ponto de equilíbrio = quanto precisa vender por mês para cobrir as despesas fixas, usando a margem dos meses fechados.'));
     var g=el('div','rel-grid');
-    g.appendChild(relCard('Despesas por categoria',hbarras((d.despesas_categoria||[]).map(function(x){return {l:x.categoria,v:+x.valor};}),brl)));
+    g.appendChild(relCard('Despesas por categoria',pizza((d.despesas_categoria||[]).map(function(x){return {l:x.categoria,v:+x.valor};}),brl)));
     g.appendChild(relCard('A pagar',hbarras((d.a_pagar||[]).map(function(x){return {l:(x.descricao||'—'),v:+x.valor,extra:x.vencimento?'vence '+x.vencimento.split('-').reverse().join('/'):''};}))));
     g.appendChild(relCard('A receber',hbarras((d.a_receber||[]).map(function(x){return {l:(x.descricao||'—'),v:+x.valor,extra:x.vencimento?'vence '+x.vencimento.split('-').reverse().join('/'):''};}))));
     box.appendChild(g);
     csvAdd('Fluxo mensal',['mes','entradas','taxas','saidas','resultado','despesas_fixas'],ms.map(function(m){return [m.mes,m.entradas,m.taxas,m.saidas,m.resultado,m.fixas];}));
     csvAdd('Despesas por categoria',['categoria','valor'],(d.despesas_categoria||[]).map(function(x){return [x.categoria,x.valor];}));
+    csvAdd('A pagar',['descrição','valor','vencimento'],(d.a_pagar||[]).map(function(x){return [x.descricao,x.valor,x.vencimento];}));
+    csvAdd('A receber',['descrição','valor','vencimento'],(d.a_receber||[]).map(function(x){return [x.descricao,x.valor,x.vencimento];}));
   }
   function relCli(box,d){
     box.appendChild(relStats([['Clientes que compraram',String(d.clientes_ativos||0)],['Novos no período',String(d.novos||0)],['Voltaram a comprar',String(d.recorrentes||0)],['Pontos dados',String((d.pontos||{}).ganhos||0)],['Pontos resgatados',String((d.pontos||{}).resgates||0)]]));
     var g=el('div','rel-grid');
-    g.appendChild(relCard('Segmentos (CRM)',hbarras((d.segmentos||[]).map(function(x){return {l:x.segmento.replace('_',' '),v:+x.clientes};}))));
+    g.appendChild(relCard('Segmentos (CRM)',pizza((d.segmentos||[]).map(function(x){return {l:x.segmento.replace(/_/g,' '),v:+x.clientes};}))));
     g.appendChild(relCard('Melhores clientes',hbarras((d.top_clientes||[]).map(function(x){return {l:x.nome,v:+x.total,extra:x.pedidos+' ped.'};}),brl)));
     box.appendChild(g);
     csvAdd('Melhores clientes',['cliente','pedidos','total'],(d.top_clientes||[]).map(function(x){return [x.nome,x.pedidos,x.total];}));
@@ -2370,11 +2502,38 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
   $('#relSeg').addEventListener('click',function(e){var b=e.target.closest('button[data-rel]');if(!b)return;relTipo=b.dataset.rel;document.querySelectorAll('#relSeg button').forEach(function(x){x.classList.toggle('on',x===b);});loadRel();});
   $('#relCsv').addEventListener('click',function(){if(!relLinhas.length){toast('Nada para exportar.',true);return;}
     baixaArquivo('relatorio-'+relTipo+'-tqr.csv','﻿'+relLinhas.map(function(l){return l.map(csvCel).join(';');}).join('\r\n'),'text/csv;charset=utf-8');});
+  // ----- PDF: imprimirDoc monta o documento A4 (usado pelos relatórios e pelo financeiro) -----
+  var TIT_REL={vendas:'Vendas',produtos:'Produtos',financeiro:'Financeiro',clientes:'Clientes'};
+  function tabelaDoc(t){
+    var tb=document.createElement('table');tb.className='doc-tbl';var th=document.createElement('thead'),tr=document.createElement('tr');
+    var din=t.c.map(function(h){return /total|valor|receita|desconto|taxa|lucro|entrada|sa[ií]da|resultado|fixa/i.test(String(h));});
+    t.c.forEach(function(h){tr.appendChild(el('th',din[t.c.indexOf(h)]?'num':null,String(h)));});th.appendChild(tr);tb.appendChild(th);var bd=document.createElement('tbody');
+    t.l.forEach(function(l){var r=document.createElement('tr');l.forEach(function(v,i){
+      var txt=v==null?'':String(v),cls=null;
+      if(/^\d{4}-\d{2}-\d{2}/.test(txt))txt=txt.slice(0,10).split('-').reverse().join('/');
+      else if(din[i]&&txt!==''&&!isNaN(+txt)){txt=brl(+txt);cls='num';}
+      else if(txt!==''&&!isNaN(+txt)){cls='num';}
+      r.appendChild(el('td',cls,txt));});bd.appendChild(r);});
+    tb.appendChild(bd);return tb;
+  }
+  function imprimirDoc(titulo,sub,corpo){
+    carregaLoja().then(function(){
+      var area=document.getElementById('printArea');if(!area){area=el('div');area.id='printArea';document.body.appendChild(area);}
+      area.className='fmt-a4 rel-print';area.textContent='';
+      var h=el('div','doc-head');h.appendChild(el('b',null,(LOJA&&LOJA.nome)||'#TQR Açaí'));h.appendChild(el('h1',null,titulo));h.appendChild(el('p',null,sub+' · gerado em '+new Date().toLocaleString('pt-BR',{timeZone:TZ,dateStyle:'short',timeStyle:'short'})));area.appendChild(h);
+      corpo(area);
+      var st=document.getElementById('pageStyle');if(!st){st=document.createElement('style');st.id='pageStyle';document.head.appendChild(st);}
+      st.textContent='@page{size:A4;margin:12mm}';setTimeout(function(){window.print();},60);
+    });
+  }
   $('#relPdf').addEventListener('click',function(){
-    var area=document.getElementById('printArea');if(!area){area=el('div');area.id='printArea';document.body.appendChild(area);}
-    area.className='fmt-a4 rel-print';area.textContent='';area.appendChild(el('h2',null,'#TQR Açaí · Relatório de '+relTipo));area.appendChild($('#relCorpo').cloneNode(true));
-    var st=document.getElementById('pageStyle');if(!st){st=document.createElement('style');st.id='pageStyle';document.head.appendChild(st);}
-    st.textContent='@page{size:A4;margin:12mm}';setTimeout(function(){window.print();},50);
+    var modo=$('#relModo').value,per=relPeriodo();
+    imprimirDoc('Relatório de '+TIT_REL[relTipo]+(modo==='resumo'?' (resumido)':' (analítico)'),(relTipo==='financeiro'?'Últimos 12 meses':'Período '+per.ini.split('-').reverse().join('/')+' a '+per.fim.split('-').reverse().join('/')),function(area){
+      var corpo=$('#relCorpo').cloneNode(true);
+      corpo.querySelectorAll('p.muted:first-child').forEach(function(x){x.remove();});
+      if(modo==='resumo'){corpo.querySelectorAll('.rel-card').forEach(function(c,i){if(i>=4||c.querySelector('.hb'))c.remove();});corpo.querySelectorAll('.rel-note').forEach(function(x){x.remove();});area.appendChild(corpo);}
+      else{area.appendChild(corpo);relTabs.forEach(function(t){if(!t.l.length)return;area.appendChild(el('h3','doc-h3',t.t));area.appendChild(tabelaDoc(t));});}
+    });
   });
 
   // ===== Montagem (personalização): grupos de opções, preço adicional, esgotado e ficha técnica =====

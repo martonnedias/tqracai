@@ -137,6 +137,7 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
       <button class="btn sm" data-tab="pedidos" data-perm="pedidos.ver" type="button">Pedidos</button>
       <button class="btn sm" data-tab="novo" data-perm="pedidos.criar" type="button">Novo pedido</button>
       <button class="btn sm" data-tab="clientes" data-perm="clientes.ver" type="button">Clientes</button>
+      <button class="btn sm" data-tab="financeiro" data-perm="financeiro.ver" type="button">Financeiro</button>
       <button class="btn sm" data-tab="produtos" data-perm="produtos.gerir" type="button">Produtos</button>
       <button class="btn sm" data-tab="promocoes" data-perm="promocoes.gerir" type="button">Promoções</button>
       <button class="btn sm" data-tab="config" data-perm="config.gerir" type="button">Configurações</button>
@@ -181,6 +182,39 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
         <label class="fld">Observações<textarea id="nObs" rows="2"></textarea></label>
         <div class="banner" id="nResumo"><span>Escolha os produtos para ver o total.</span></div>
         <button class="btn go" type="submit" id="nGo">Criar pedido</button>
+      </form>
+    </section>
+
+    <section id="tab-financeiro" hidden>
+      <h2>Financeiro</h2>
+      <div class="filters">
+        <label class="fld">Mês<input type="month" id="finMes"></label>
+        <button class="btn sm" type="button" id="finCsv">Exportar CSV</button>
+      </div>
+      <div class="cards" id="finCards"></div>
+      <p class="muted" id="finPE"></p>
+      <h2 style="margin-top:18px">Fluxo de caixa (12 meses)</h2>
+      <div class="list" id="finFluxo"></div>
+      <h2 style="margin-top:18px">Lançamentos do mês</h2>
+      <div class="filters">
+        <select id="finFiltro" aria-label="Filtro"><option value="">Todos</option><option value="entrada">Entradas</option><option value="saida">Saídas</option><option value="pendente">A pagar / a receber</option></select>
+      </div>
+      <div class="list" id="finLista"></div>
+      <form class="card" id="formLanc" autocomplete="off" style="margin-top:12px">
+        <b>Novo lançamento</b>
+        <div class="row2">
+          <label class="fld">Tipo<select id="lcTipo"><option value="saida">Saída (despesa)</option><option value="entrada">Entrada</option></select></label>
+          <label class="fld">Categoria<select id="lcCat" required></select></label>
+        </div>
+        <label class="fld">Descrição<input id="lcDesc" type="text" maxlength="200" placeholder="Ex.: compra de açaí"></label>
+        <div class="row2">
+          <label class="fld">Valor (R$)<input id="lcValor" type="number" min="0.01" step="0.01" required></label>
+          <label class="fld">Data<input id="lcData" type="date" required></label>
+        </div>
+        <label class="chk"><input id="lcPago" type="checkbox" checked><span>Já foi pago / recebido</span></label>
+        <label class="fld" id="lcVencFld" hidden>Vencimento<input id="lcVenc" type="date"></label>
+        <button class="btn go" type="submit" id="lcGo">Lançar</button>
+        <p class="muted">As entradas dos pedidos entram sozinhas quando o pedido é marcado como pago, já com a taxa da forma de pagamento. Cancelar um pedido pago gera o estorno.</p>
       </form>
     </section>
 
@@ -297,6 +331,7 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
           <label class="fld">Pontos por R$ 1 pago<input data-chave="pontos_por_real" type="number" min="0" step="0.01" required></label>
           <label class="fld">Pontos para 1 garrafa grátis<input data-chave="pontos_por_brinde" type="number" min="1" required></label>
         </div>
+        <label class="fld">Pontos do brinde de aniversário <small>(0 desliga; vale uma vez por ano, no mês do aniversário)</small><input data-chave="aniversario_pontos" type="number" min="0" required></label>
         <button class="btn go" type="submit" id="cfgGo">Salvar configurações</button>
       </form>
 
@@ -429,6 +464,7 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
     if(t==='usuarios')loadUsuarios();
     if(t==='config')loadConfig();
     if(t==='produtos')loadProdutos();
+    if(t==='financeiro')initFinanceiro();
     if(t==='promocoes')loadPromocoes();
     if(t==='novo')loadCatalogo().then(montaNovo);
   }
@@ -508,8 +544,8 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
     n.appendChild(el('span','muted',hora(p.criado_em)+(p.origem==='manual'?' · pedido manual':'')));
     var a=el('div','acts');
     var nx=NEXT[p.status],okSt=nx&&(can('pedidos.status')||(can('pedidos.status_entrega')&&(nx==='saiu_entrega'||nx==='entregue')));
-    if(okSt){var b=el('button','btn sm go','Marcar como '+LABEL[NEXT[p.status]].toLowerCase());b.type='button';b.addEventListener('click',function(){confirmar('Alterar status do pedido?',[p.codigo+' · '+(c.nome||'Cliente'),LABEL[p.status]+'  →  '+LABEL[NEXT[p.status]]],'Sim, alterar').then(function(ok){if(ok)mudar(p,NEXT[p.status],b);});});a.appendChild(b);}
-    if(can('pedidos.cancelar')&&p.status!=='cancelado'&&p.status!=='entregue'){var x=el('button','btn sm danger','Cancelar');x.type='button';x.addEventListener('click',function(){confirmar('Cancelar o pedido?',[p.codigo+' · '+(c.nome||'Cliente'),LABEL[p.status]+'  →  '+LABEL.cancelado],'Sim, cancelar',true).then(function(ok){if(ok)mudar(p,'cancelado',x);});});a.appendChild(x);}
+    if(okSt){var b=el('button','btn sm go','Marcar como '+LABEL[NEXT[p.status]].toLowerCase());b.type='button';b.addEventListener('click',function(){confirmar('Alterar status do pedido?',[p.codigo+' · '+(c.nome||'Cliente'),LABEL[p.status]+'  →  '+LABEL[NEXT[p.status]]].concat(NEXT[p.status]==='pago'?['Entra no caixa e gera pontos para o cliente.']:[]),'Sim, alterar').then(function(ok){if(ok)mudar(p,NEXT[p.status],b);});});a.appendChild(b);}
+    if(can('pedidos.cancelar')&&p.status!=='cancelado'&&p.status!=='entregue'){var x=el('button','btn sm danger','Cancelar');x.type='button';x.addEventListener('click',function(){confirmar('Cancelar o pedido?',[p.codigo+' · '+(c.nome||'Cliente'),LABEL[p.status]+'  →  '+LABEL.cancelado].concat(['pago','saiu_entrega','entregue'].indexOf(p.status)>=0?['Pedido já pago: o valor e os pontos serão estornados.']:[]),'Sim, cancelar',true).then(function(ok){if(ok)mudar(p,'cancelado',x);});});a.appendChild(x);}
     if(c.whatsapp){var w=el('a','btn sm wa','WhatsApp');w.target='_blank';w.rel='noopener';
       w.href='https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent('Olá, '+first(c.nome)+'! Aqui é da TQR Açaí 💜 Sobre o seu pedido '+p.codigo+'.');a.appendChild(w);}
     var hb=el('button','btn sm','Histórico');hb.type='button';
@@ -793,7 +829,11 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
   $('#cInativos').addEventListener('click',function(){soInativos=!soInativos;this.classList.toggle('on',soInativos);renderClientes();});
   function loadClientes(){
     sb.from('v_clientes_resumo').select('*').order('ultimo_pedido',{ascending:false,nullsFirst:false}).limit(500).then(function(r){
-      if(r.error){toast('Não consegui carregar os clientes.',true);return;}clientes=r.data||[];renderClientes();});
+      if(r.error){toast('Não consegui carregar os clientes.',true);return;}clientes=r.data||[];renderClientes();
+      sb.from('v_saldo_pontos').select('cliente_id,saldo').then(function(x){
+        if(x.error)return;var m={};(x.data||[]).forEach(function(k){m[k.cliente_id]=k.saldo;});
+        clientes.forEach(function(c){c.saldo=m[c.id];});renderClientes();});
+    });
   }
   function renderClientes(){
     var q=$('#cBusca').value.trim().toLowerCase(),lim=Date.now()-30*864e5,box=$('#listCli');box.textContent='';
@@ -805,6 +845,7 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
       var n=el('article','ped');n.appendChild(el('b',null,c.nome+' · '+fone(c.whatsapp)));
       n.appendChild(el('span',null,c.total_pedidos+' pedido'+(c.total_pedidos===1?'':'s')+' · '+(c.gasto_total==null?'—':brl(c.gasto_total)+' pagos')));
       n.appendChild(el('span','muted',c.ultimo_pedido?'Último pedido: '+hora(c.ultimo_pedido):'Ainda sem pedidos'));
+      if(c.saldo!=null)n.appendChild(el('span',null,'Pontos: '+c.saldo));
       var a=el('div','acts'),w=el('a','btn sm wa','WhatsApp');w.target='_blank';w.rel='noopener';
       w.href='https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent('Olá, '+first(c.nome)+'! Aqui é da TQR Açaí 💜 Tudo bem? Quer garantir suas garrafas geladas hoje?');
       a.appendChild(w);
@@ -823,14 +864,16 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
           el2.hidden=false;
         });
       });
-      a.appendChild(eb);n.appendChild(a);n.appendChild(el2);box.appendChild(n);});
+      a.appendChild(eb);
+      if(c.saldo!=null)a.appendChild(botaoPontos(c,n));
+      n.appendChild(a);n.appendChild(el2);box.appendChild(n);});
   }
 
   // ===== Configurações (formas de pagamento, bairros e chaves do site) =====
   var cfgOriginal={};
   var CFG_ROT={whatsapp_pedidos:'WhatsApp dos pedidos',horario_abre:'Abre às',horario_fecha:'Fecha às',aviso_site:'Texto do aviso',aviso_ativo:'Aviso no site',
     pedido_min:'Mínimo por pedido',pedido_max:'Máximo por pedido',contador_base:'Base do contador',
-    contador_ajuste:'Ajuste do contador',pontos_por_real:'Pontos por R$ 1',pontos_por_brinde:'Pontos por brinde'};
+    contador_ajuste:'Ajuste do contador',pontos_por_real:'Pontos por R$ 1',pontos_por_brinde:'Pontos por brinde',aniversario_pontos:'Pontos do aniversário'};
   function loadConfig(){
     sb.from('configuracoes').select('chave,valor').then(function(r){
       if(r.error){toast('Não consegui carregar as configurações.',true);return;}
@@ -921,7 +964,7 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
   var PERM_ROT={'pedidos.ver':'Ver pedidos','pedidos.criar':'Criar pedido manual','pedidos.status':'Mudar status (confirmar, pago, saiu, entregue)',
     'pedidos.status_entrega':'Só marcar saiu para entrega / entregue','pedidos.cancelar':'Cancelar pedidos','pedidos.editar':'Editar dados do pedido',
     'clientes.ver':'Ver clientes','clientes.editar':'Editar clientes','produtos.gerir':'Produtos e preços','promocoes.gerir':'Promoções',
-    'config.gerir':'Configurações do site','financeiro.ver':'Ver valores e financeiro'};
+    'config.gerir':'Configurações do site','financeiro.ver':'Ver valores e financeiro','financeiro.gerir':'Lançar e editar no financeiro'};
   var usrDados={usuarios:[],perfis:[],permissoes:[]};
   function chamarUsr(corpo){
     return sb.functions.invoke('admin-usuarios',{body:corpo}).then(function(r){
@@ -989,6 +1032,121 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
     if(!ps.length){toast('Marque ao menos uma permissão.',true);return;}
     chamarUsr({acao:'perfil_salvar',id:$('#pId').value,nome:$('#pNome').value,descricao:$('#pDesc').value,permissoes:ps}).then(function(){
       toast('Perfil salvo.');$('#formPerfil').reset();loadUsuarios();}).catch(function(er){toast(msgUsr(er),true);});
+  });
+
+  // ===== Pontos do cliente (resgate, ajuste, aniversário) =====
+  var MOT_ROT={ganho:'Ganho',resgate:'Resgate',estorno:'Estorno',ajuste:'Ajuste',aniversario:'Aniversário'};
+  var ERRO_PTS={saldo_insuficiente:'Saldo de pontos insuficiente.',fora_do_mes:'Só no mês de aniversário do cliente.',ja_concedido:'O brinde deste ano já foi concedido.',
+    sem_data_nascimento:'Cliente sem data de nascimento.',brinde_desligado:'O brinde de aniversário está desligado em Configurações.',motivo_obrigatorio:'Informe o motivo (mín. 3 letras).',nao_autorizado:'Sem permissão.'};
+  function msgPts(er){var m=String(er&&er.message||'');for(var k in ERRO_PTS){if(m.indexOf(k)>=0)return ERRO_PTS[k];}return 'Não consegui concluir.';}
+  function botaoPontos(c,card){
+    var b=el('button','btn sm','Pontos'),box=el('div','hist');b.type='button';box.hidden=true;card.appendChild(box);
+    function carrega(){
+      sb.from('livro_pontos').select('tipo,pontos,motivo,criado_em').eq('cliente_id',c.id).order('criado_em',{ascending:false}).limit(15).then(function(r){
+        box.textContent='';if(r.error){toast('Não consegui carregar os pontos.',true);return;}
+        box.appendChild(el('b',null,'Saldo: '+(c.saldo==null?0:c.saldo)+' pontos'));
+        (r.data||[]).forEach(function(h){box.appendChild(el('span',null,hora(h.criado_em)+' · '+(MOT_ROT[h.tipo]||h.tipo)+' '+(h.pontos>0?'+':'')+h.pontos+(h.motivo?' · '+h.motivo:'')));});
+        if(!can('clientes.editar')){box.hidden=false;return;}
+        var ac=el('div','acts'),rg=el('button','btn sm go','Resgatar 1 garrafa'),an=el('button','btn sm','Brinde de aniversário');rg.type=an.type='button';
+        rg.addEventListener('click',function(){confirmar('Resgatar garrafa grátis?',[c.nome,'Desconta os pontos do brinde do saldo.'],'Sim, resgatar').then(function(ok){
+          if(ok)sb.rpc('admin_resgatar_pontos',{p_cliente:c.id,p_garrafas:1}).then(function(x){if(x.error){toast(msgPts(x.error),true);return;}c.saldo=x.data;toast('Resgate registrado. Saldo: '+x.data);renderClientes();});});});
+        an.addEventListener('click',function(){confirmar('Dar o brinde de aniversário?',[c.nome,'Vale uma vez por ano, no mês do aniversário.'],'Sim, conceder').then(function(ok){
+          if(ok)sb.rpc('admin_conceder_aniversario',{p_cliente:c.id}).then(function(x){if(x.error){toast(msgPts(x.error),true);return;}c.saldo=x.data;toast('Brinde concedido. Saldo: '+x.data);renderClientes();});});});
+        ac.appendChild(rg);ac.appendChild(an);box.appendChild(ac);
+        var f=el('div','row'),pt=document.createElement('input'),mt=document.createElement('input'),ap=el('button','btn sm','Ajustar');
+        pt.type='number';pt.placeholder='±pontos';pt.style.maxWidth='110px';pt.setAttribute('aria-label','Pontos a somar ou tirar');mt.type='text';mt.placeholder='Motivo';mt.maxLength=200;mt.setAttribute('aria-label','Motivo do ajuste');ap.type='button';
+        ap.addEventListener('click',function(){var v=parseInt(pt.value,10);if(!v){toast('Informe os pontos.',true);return;}
+          confirmar('Ajustar pontos?',[c.nome,(v>0?'+':'')+v+' pontos','Motivo: '+(mt.value||'—')],'Aplicar').then(function(ok){
+            if(ok)sb.rpc('admin_ajustar_pontos',{p_cliente:c.id,p_pontos:v,p_motivo:mt.value}).then(function(x){if(x.error){toast(msgPts(x.error),true);return;}c.saldo=x.data;toast('Ajuste aplicado. Saldo: '+x.data);renderClientes();});});});
+        f.appendChild(pt);f.appendChild(mt);f.appendChild(ap);box.appendChild(f);box.hidden=false;
+      });
+    }
+    b.addEventListener('click',function(){if(!box.hidden){box.hidden=true;return;}carrega();});
+    return b;
+  }
+
+  // ===== Financeiro =====
+  var finCats=[],finMes='',finLinhas=[];
+  function mesAtual(){return dia(new Date().toISOString()).slice(0,7);}
+  function limitesMes(m){var a=m+'-01',d=new Date(m+'-01T12:00:00'),f=new Date(d.getFullYear(),d.getMonth()+1,0);return [a,m+'-'+String(f.getDate()).padStart(2,'0')];}
+  function initFinanceiro(){
+    if(!$('#finMes').value)$('#finMes').value=mesAtual();
+    if(!$('#lcData').value)$('#lcData').value=dia(new Date().toISOString());
+    sb.from('categorias_financeiras').select('*').eq('ativo',true).order('ordem').then(function(r){finCats=r.data||[];montaCats();loadFinanceiro();});
+  }
+  function montaCats(){
+    var t=$('#lcTipo').value,s=$('#lcCat');s.textContent='';
+    finCats.filter(function(c){return c.tipo===t;}).forEach(function(c){var o=el('option',null,c.nome+(c.fixa?' (fixa)':''));o.value=c.id;s.appendChild(o);});
+  }
+  $('#lcTipo').addEventListener('change',montaCats);
+  $('#lcPago').addEventListener('change',function(){$('#lcVencFld').hidden=this.checked;});
+  $('#finMes').addEventListener('change',loadFinanceiro);
+  $('#finFiltro').addEventListener('change',renderFinLista);
+  function loadFinanceiro(){
+    var m=$('#finMes').value||mesAtual(),lim=limitesMes(m);finMes=m;
+    Promise.all([
+      sb.from('v_fluxo_mensal').select('*').order('mes',{ascending:false}).limit(12),
+      sb.from('v_garrafas_mes').select('*').order('mes',{ascending:false}).limit(12),
+      sb.from('lancamentos').select('id,tipo,categoria_id,descricao,valor,data,vencimento,pago,taxa,origem,forma_pagamento').gte('data',lim[0]).lte('data',lim[1]).order('data',{ascending:false}).order('criado_em',{ascending:false}).limit(500)
+    ]).then(function(rs){
+      if(rs[0].error||rs[2].error){toast('Não consegui carregar o financeiro.',true);return;}
+      var flx=rs[0].data||[],gar={};(rs[1].data||[]).forEach(function(g){gar[g.mes]=g.garrafas;});
+      var cur=flx.filter(function(x){return String(x.mes).slice(0,7)===m;})[0]||{entradas:0,taxas:0,saidas:0,a_receber:0,a_pagar:0,resultado:0,despesas_fixas:0};
+      var cards=$('#finCards');cards.textContent='';
+      [['Entradas',brl(cur.entradas)],['Taxas de pagamento',brl(cur.taxas)],['Saídas',brl(cur.saidas)],['Resultado',brl(cur.resultado)],['A receber',brl(cur.a_receber)],['A pagar',brl(cur.a_pagar)]].forEach(function(x){
+        var c=el('div','stat');c.appendChild(el('small',null,x[0]));c.appendChild(el('b',null,x[1]));cards.appendChild(c);});
+      var g=gar[m+'-01']||0,pe=$('#finPE');
+      if(g>0){
+        var liq=(+cur.entradas-+cur.taxas)/g,varu=(+cur.saidas-+cur.despesas_fixas)/g,marg=liq-varu;
+        pe.textContent='Garrafas vendidas: '+g+' · receita líquida por garrafa '+brl(liq)+' · custo variável '+brl(varu)+' · margem '+brl(marg)+
+          (marg>0&&+cur.despesas_fixas>0?' · ponto de equilíbrio: '+Math.ceil(+cur.despesas_fixas/marg)+' garrafas no mês (despesas fixas '+brl(cur.despesas_fixas)+')':(+cur.despesas_fixas>0?' · margem não cobre as despesas fixas':' · cadastre despesas fixas (aluguel, pessoal...) para ver o ponto de equilíbrio'));
+      }else pe.textContent='Sem vendas pagas neste mês.';
+      var fx=$('#finFluxo');fx.textContent='';
+      flx.forEach(function(x){var n=el('article','ped');n.appendChild(el('b',null,String(x.mes).slice(0,7)));
+        n.appendChild(el('span',null,'Entradas '+brl(x.entradas)+' · Taxas '+brl(x.taxas)+' · Saídas '+brl(x.saidas)+' · Resultado '+brl(x.resultado)));
+        if(+x.a_pagar||+x.a_receber)n.appendChild(el('span','muted','A receber '+brl(x.a_receber)+' · A pagar '+brl(x.a_pagar)));fx.appendChild(n);});
+      if(!flx.length)fx.appendChild(el('p','empty','Sem movimentação ainda.'));
+      finLinhas=rs[2].data||[];renderFinLista();
+    });
+  }
+  function nomeCat(id){var c=finCats.filter(function(x){return x.id===id;})[0];return c?c.nome:id;}
+  function renderFinLista(){
+    var f=$('#finFiltro').value,box=$('#finLista');box.textContent='';
+    var rows=finLinhas.filter(function(l){return !f||(f==='pendente'?!l.pago:l.tipo===f);});
+    if(!rows.length){box.appendChild(el('p','empty','Nenhum lançamento.'));return;}
+    rows.forEach(function(l){
+      var n=el('article','ped'),top=el('div','top');
+      top.appendChild(el('b',null,(l.tipo==='entrada'?'+ ':'− ')+brl(Math.abs(l.valor))));top.appendChild(el('span','tag '+(l.pago?'pago':'pendente'),l.pago?(l.tipo==='entrada'?'Recebido':'Pago'):(l.tipo==='entrada'?'A receber':'A pagar')));n.appendChild(top);
+      n.appendChild(el('span',null,nomeCat(l.categoria_id)+(l.descricao?' · '+l.descricao:'')));
+      n.appendChild(el('span','muted',l.data.split('-').reverse().join('/')+(l.vencimento&&!l.pago?' · vence '+l.vencimento.split('-').reverse().join('/'):'')+(+l.taxa?' · taxa '+brl(l.taxa):'')+(l.origem!=='manual'?' · automático':'')));
+      if(l.origem==='manual'&&can('financeiro.gerir')){
+        var a=el('div','acts');
+        if(!l.pago){var pg=el('button','btn sm go',l.tipo==='entrada'?'Marcar recebido':'Marcar pago');pg.type='button';
+          pg.addEventListener('click',function(){confirmar('Confirmar?',[l.descricao||nomeCat(l.categoria_id),brl(l.valor)],'Sim').then(function(ok){
+            if(ok)sb.from('lancamentos').update({pago:true,pago_em:dia(new Date().toISOString())}).eq('id',l.id).then(function(x){if(x.error){toast('Não consegui atualizar.',true);return;}toast('Atualizado.');loadFinanceiro();});});});a.appendChild(pg);}
+        var rm=el('button','btn sm danger','Remover');rm.type='button';
+        rm.addEventListener('click',function(){confirmar('Remover lançamento?',[l.descricao||nomeCat(l.categoria_id),brl(l.valor)],'Remover',true).then(function(ok){
+          if(ok)sb.from('lancamentos').delete().eq('id',l.id).then(function(x){if(x.error){toast('Não consegui remover.',true);return;}toast('Lançamento removido.');loadFinanceiro();});});});
+        a.appendChild(rm);n.appendChild(a);}
+      box.appendChild(n);
+    });
+  }
+  $('#formLanc').addEventListener('submit',function(e){
+    e.preventDefault();var pago=$('#lcPago').checked;
+    if(!pago&&!$('#lcVenc').value){toast('Informe o vencimento.',true);return;}
+    $('#lcGo').disabled=true;
+    sb.from('lancamentos').insert({tipo:$('#lcTipo').value,categoria_id:$('#lcCat').value,descricao:$('#lcDesc').value.trim()||null,valor:+$('#lcValor').value,data:$('#lcData').value,
+      pago:pago,pago_em:pago?$('#lcData').value:null,vencimento:pago?null:$('#lcVenc').value}).then(function(r){
+      $('#lcGo').disabled=false;
+      if(r.error){toast('Não consegui lançar. Confira os campos.',true);return;}
+      toast('Lançamento registrado.');$('#lcDesc').value='';$('#lcValor').value='';loadFinanceiro();});
+  });
+  $('#finCsv').addEventListener('click',function(){
+    if(!finLinhas.length){toast('Nada para exportar.',true);return;}
+    var linhas=[['Data','Tipo','Categoria','Descrição','Valor','Taxa','Situação','Vencimento','Origem']];
+    finLinhas.forEach(function(l){linhas.push([l.data,l.tipo,nomeCat(l.categoria_id),l.descricao,Number(l.valor).toFixed(2).replace('.',','),Number(l.taxa).toFixed(2).replace('.',','),l.pago?'pago':'pendente',l.vencimento,l.origem]);});
+    var csv='﻿'+linhas.map(function(l){return l.map(cel).join(';');}).join('\r\n');
+    var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='financeiro-tqr-'+finMes+'.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href);},1000);
   });
 
   // ===== Aviso de pedido novo =====

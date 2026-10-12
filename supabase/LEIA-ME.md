@@ -74,3 +74,7 @@ o site novo cai para o pedido simples se o banco ainda não tiver a migração 0
 - Tudo é **simulado e sem valor fiscal** (`nf_ambiente = homologacao`). Em `producao` a função recusa (`producao_indisponivel`) até um emissor real ser conectado trocando o corpo de `app_private.nota_emitir_interno`.
 - Dados fiscais: Configurações (IE, IM, regime, tipo, série, emissão automática) e NCM/CFOP/CSOSN/origem por produto (padrões são exemplos; confirmar com o contador).
 - Aba Notas fiscais: emitir, cancelar, imprimir cupom 80 mm e baixar CSV/XML do mês para o contador.
+
+## Relatórios (migração 21 — já aplicada)
+- Funções só de leitura, todas exigem `financeiro.ver`: `rel_vendas(ini, fim)`, `rel_produtos(ini, fim)` (lucro só com `custos.ver`), `rel_financeiro(meses)` e `rel_clientes(ini, fim)`. Cada uma devolve um jsonb que a aba Relatórios desenha em SVG (sem biblioteca). Período máximo de 400 dias.
+- Venda = pedido pago, em saída para entrega ou entregue; datas no fuso de Fortaleza. Exportação em CSV e impressão/PDF pelo navegador.

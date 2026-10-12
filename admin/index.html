@@ -360,6 +360,8 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
 .rel-print .pz{grid-template-columns:110px minmax(0,1fr)}.rel-print .pz-svg{width:110px;height:110px}
 @media(max-width:1100px){.fin-grid{grid-template-columns:1fr}.fin-side{position:static}}
 @media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr}.pz{grid-template-columns:1fr;justify-items:center}.pz-leg{width:100%}.cfg-bar{flex-direction:column;align-items:stretch}.cfg-bar .muted{display:none}}
+.novaversao{position:sticky;top:0;z-index:60;display:flex;gap:12px;align-items:center;justify-content:center;padding:8px 14px;background:var(--gold,#e8be62);color:#2a0838;font-size:.875rem;font-weight:600}
+.novaversao[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -418,6 +420,7 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
 </section>
 
 <div id="app" hidden>
+  <div class="novaversao" id="novaVersao" role="status" hidden><span>Há uma nova versão do painel disponível.</span><button class="btn sm go" type="button" id="novaVersaoGo">Atualizar agora</button></div>
   <header class="top"><div class="bar">
     <span class="brand"><img src="../img/rotulo.webp" alt=""><span class="bname"><b>Central TQR</b><small>Gestão do #TQR Açaí</small></span></span>
     <div class="hact" role="toolbar" aria-label="Ações rápidas">
@@ -940,6 +943,42 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
 (function(){
   var URL_='https://elaczoriyaejkixkubxn.supabase.co', KEY='sb_publishable_NscsoGdrovVNuBol72Rh3Q_ov8i8lGv', TZ='America/Fortaleza';
   var sb=supabase.createClient(URL_,KEY,{auth:{persistSession:true,autoRefreshToken:true}});
+  // ===== Atualização automática: qualquer gravação com sucesso recarrega o que está na tela (sem apertar Atualizar) =====
+  var LEITURA=/^(obter_|consultar_|rel_|dados_|minhas_|cmv_|crm_clientes|admin_codigos|simular_|pagamento_publico|tem_|is_|eh_)/;
+  (function(){
+    var f0=sb.from.bind(sb),r0=sb.rpc.bind(sb);
+    sb.from=function(t){
+      var q=f0(t);
+      ['insert','update','delete','upsert'].forEach(function(m){
+        var f=q[m];if(typeof f!=='function')return;
+        q[m]=function(){var r=f.apply(q,arguments);if(r&&typeof r.then==='function'){var th=r.then;r.then=function(a,b){return th.call(r,function(x){if(!x||!x.error)mudou();return a?a(x):x;},b);};}return r;};
+      });
+      return q;
+    };
+    sb.rpc=function(fn){var p=r0.apply(null,arguments);if(!LEITURA.test(fn)&&p&&typeof p.then==='function'){var th=p.then;p.then=function(a,b){return th.call(p,function(x){if(!x||!x.error)mudou();return a?a(x):x;},b);};}return p;};
+    if(sb.functions&&sb.functions.invoke){var i0=sb.functions.invoke.bind(sb.functions);sb.functions.invoke=function(n,o){var p=i0(n,o);var leit=o&&o.body&&(o.body.acao==='listar');if(!leit&&p&&typeof p.then==='function'){var th=p.then;p.then=function(a,b){return th.call(p,function(x){if(!x||!x.error)mudou();return a?a(x):x;},b);};}return p;};}
+  })();
+  var mudouT=null,RECARREGA=['inicio','clientes','crm','financeiro','pagamentos','notas','relatorios','estoque'];
+  function mudou(){clearTimeout(mudouT);mudouT=setTimeout(atualizaSilencioso,900);}
+  function atualizaSilencioso(){
+    if(!document.getElementById('app')||document.getElementById('app').hidden)return;
+    try{loadAll();}catch(e){}
+    if(typeof tabAtual==='string'&&RECARREGA.indexOf(tabAtual)>=0){try{carregaAba(tabAtual);}catch(e){}}
+  }
+  document.addEventListener('visibilitychange',function(){if(!document.hidden){atualizaSilencioso();checaVersao();}});
+  setInterval(function(){if(!document.hidden)atualizaSilencioso();},60000);
+  // ===== Aviso de nova versão do painel =====
+  var versaoBase=null;
+  function checaVersao(){
+    var u=['index.html','ajuda.js'];
+    Promise.all(u.map(function(x){return fetch(x+(x==='index.html'?'':'')+'?v='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).catch(function(){return '';});})).then(function(t){
+      var h=t.join('|').length+':'+t.map(function(x){var n=0;for(var i=0;i<x.length;i+=97)n=(n*31+x.charCodeAt(i))|0;return n;}).join(',');
+      if(t.every(function(x){return !x;}))return;
+      if(versaoBase===null){versaoBase=h;return;}
+      if(h!==versaoBase){var b=document.getElementById('novaVersao');if(b)b.hidden=false;}
+    });
+  }
+  setTimeout(checaVersao,4000);setInterval(function(){if(!document.hidden)checaVersao();},300000);
   var $=function(s){return document.querySelector(s);};
   var LABEL={pendente:'Pendente',confirmado:'Confirmado',pago:'Pago',saiu_entrega:'Saiu para entrega',entregue:'Entregue',cancelado:'Cancelado'};
   var NEXT={pendente:'confirmado',confirmado:'pago',pago:'saiu_entrega',saiu_entrega:'entregue'};
@@ -1007,6 +1046,7 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
 
   // ===== Abas =====
   var tabAtual='';
+  document.addEventListener('click',function(e){if(e.target&&e.target.id==='novaVersaoGo')location.reload();});
   function abrirAba(t){
     tabAtual=t;
     document.querySelectorAll('#tabs button').forEach(function(x){x.classList.toggle('on',x.dataset.tab===t);});

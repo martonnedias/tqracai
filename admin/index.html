@@ -457,6 +457,33 @@ body:has(.login:not([hidden])){background:var(--casca)}
   .filtros-det>summary::after{content:"▾";color:var(--muted)}.filtros-det[open]>summary::after{content:"▴"}
   .filtros-det>summary::-webkit-details-marker{display:none}
 }
+
+/* ===== Pedido manual, Mensagens e Fidelidade ===== */
+.np-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;align-items:start}
+.np-main{display:grid;gap:14px;min-width:0}
+.np-card,.np-sum{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh1);padding:16px;display:grid;gap:12px}
+.np-card h3,.np-sum h3{margin:0;display:flex;align-items:center;gap:10px}
+.np-n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--brand);color:#fff;font-size:.75rem;font-weight:700}
+.np-prods{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.np-prod{display:grid;gap:2px 8px;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"nm st" "pr st";align-items:center;padding:10px 12px;border:1px solid var(--line-strong);border-radius:var(--r-sm);background:var(--surface-2);transition:border-color .15s,background .15s,box-shadow .15s}
+.np-prod.sel{border-color:var(--brand);background:var(--brand-soft);box-shadow:0 0 0 1px var(--brand) inset}
+.np-nm{grid-area:nm;font-weight:600;font-size:.875rem;line-height:1.25}.np-pr{grid-area:pr;color:var(--muted);font-size:.8125rem}
+.np-st{grid-area:st;display:flex;align-items:center;gap:4px}
+.np-st input{width:46px;min-height:34px;text-align:center;padding:2px 4px;border:1px solid var(--line-strong);border-radius:7px;background:#fff;font-weight:650}
+.np-st input::-webkit-outer-spin-button,.np-st input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.np-st input{-moz-appearance:textfield}
+.np-b{width:34px;height:34px;border-radius:8px;border:1px solid var(--line-strong);background:#fff;font-size:1.1rem;font-weight:700;color:var(--brand);cursor:pointer}
+.np-b:hover{background:var(--brand-soft)}
+.np-side{position:sticky;top:76px}
+.np-sum .banner{margin:0;flex-direction:column;align-items:stretch;gap:6px}
+.np-go{min-height:46px;font-size:1rem}
+.msg-camp{max-width:none!important;gap:12px!important}
+.cp-info{align-self:end;padding-bottom:8px;font-weight:600;color:var(--brand)}
+.btn.wa.feito{background:var(--ok-soft);border-color:#bfe3cd;color:var(--ok)}
+.fid-bar{height:7px;border-radius:99px;background:var(--brand-soft);overflow:hidden}.fid-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--ouro-forte),var(--ouro));border-radius:99px}
+@media(max-width:1000px){.np-grid{grid-template-columns:1fr}.np-side{position:sticky;bottom:0;top:auto;z-index:25;order:2}.np-sum{box-shadow:0 -10px 24px -12px rgba(26,10,43,.35)}.np-sum h3{display:none}.np-sum{grid-template-columns:1fr auto;align-items:center}}
+@media(max-width:700px){.np-prods{grid-template-columns:1fr}.np-sum{grid-template-columns:1fr}}
+div.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh1);padding:16px;display:grid;gap:12px;align-content:start}
+div.card>b{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);font-weight:700}
 </style>
 </head>
 <body>
@@ -531,13 +558,18 @@ body:has(.login:not([hidden])){background:var(--casca)}
   <div class="shell">
   <aside class="side"><nav id="tabs" aria-label="Seções do painel">
       <span class="nav-g" role="presentation">Operação</span>
+      <span class="nav-g" role="presentation">Operação</span>
       <button class="btn" data-tab="inicio" data-perm="" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span>Início</span></button>
       <button class="btn" data-tab="pedidos" data-perm="pedidos.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg><span>Pedidos</span></button>
       <button class="btn" data-tab="novo" data-perm="pedidos.criar" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg><span>Novo pedido</span></button>
       <button class="btn" data-tab="pagamentos" data-perm="financeiro.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19M6 15h4"/></svg><span>Pagamentos</span></button>
       <span class="nav-g" role="presentation">Clientes</span>
       <button class="btn" data-tab="clientes" data-perm="clientes.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.4c2 .7 3.5 2.6 3.5 5.6"/></svg><span>Clientes</span></button>
+      <span class="nav-g" role="presentation">Marketing</span>
       <button class="btn" data-tab="crm" data-perm="clientes.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9Z"/></svg><span>CRM</span></button>
+      <button class="btn" data-tab="mensagens" data-perm="clientes.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5Z"/><path d="M8 9h8M8 12h5"/></svg><span>Mensagens</span></button>
+      <button class="btn" data-tab="promocoes" data-perm="promocoes.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8L3 12Z"/><circle cx="7.5" cy="8.5" r="1.2"/></svg><span>Promoções</span></button>
+      <button class="btn" data-tab="fidelidade" data-perm="clientes.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v8h14v-8"/><path d="M12 8c-2-4-6-3-5 0M12 8c2-4 6-3 5 0"/></svg><span>Fidelidade</span></button>
       <span class="nav-g" role="presentation">Gestão</span>
       <button class="btn" data-tab="financeiro" data-perm="financeiro.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6.5 9.5v5M17.5 9.5v5"/></svg><span>Financeiro</span></button>
       <button class="btn" data-tab="relatorios" data-perm="financeiro.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Relatórios</span></button>
@@ -547,7 +579,6 @@ body:has(.login:not([hidden])){background:var(--casca)}
       <span class="nav-g" role="presentation">Catálogo</span>
       <button class="btn" data-tab="produtos" data-perm="produtos.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg><span>Produtos</span></button>
       <button class="btn" data-tab="montagem" data-perm="produtos.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.4 5 5.6.8-4 3.9 1 5.5-5-2.7-5 2.7 1-5.5-4-3.9 5.6-.8z"/></svg><span>Montagem</span></button>
-      <button class="btn" data-tab="promocoes" data-perm="promocoes.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8L3 12Z"/><circle cx="7.5" cy="8.5" r="1.2"/></svg><span>Promoções</span></button>
       <span class="nav-g" role="presentation">Sistema</span>
       <button class="btn" data-tab="config" data-perm="config.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Configurações</span></button>
       <button class="btn" data-tab="usuarios" data-perm="*" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.2 7.8 8 9 4.8-1.2 8-4.5 8-9V6l-8-3Z"/><circle cx="12" cy="10" r="2.5"/><path d="M7.5 16.5c.8-2 2.5-3 4.5-3s3.7 1 4.5 3"/></svg><span>Usuários</span></button>
@@ -613,24 +644,46 @@ body:has(.login:not([hidden])){background:var(--casca)}
     </section>
 
     <section id="tab-novo" hidden>
-      <h2>Novo pedido manual</h2>
-      <form class="card" id="formNovo">
-        <label class="fld">WhatsApp do cliente<input id="nWhats" type="tel" inputmode="tel" required placeholder="(86) 99999-9999"></label>
-        <label class="fld">Nome <small>(só para cliente novo)</small><input id="nNome" type="text" placeholder="Nome do cliente"></label>
-        <div id="nItens" class="perms"></div>
-        <div id="nMontBox" hidden>
-          <button class="btn sm" type="button" id="nMontAdd">+ Montagem (complementos e extras)</button>
-          <div id="nMontList" style="display:grid;gap:10px;margin-top:10px"></div>
+      <div class="phead"><h2>Novo pedido manual</h2><span class="muted">Para pedidos que chegam por telefone, mensagem ou balcão</span></div>
+      <form class="np" id="formNovo" autocomplete="off">
+        <div class="np-grid">
+          <div class="np-main">
+            <section class="np-card">
+              <h3><span class="np-n">1</span>Cliente</h3>
+              <div class="grid2">
+                <label class="fld">WhatsApp do cliente<input id="nWhats" type="tel" inputmode="tel" required placeholder="(86) 99999-9999"></label>
+                <label class="fld">Nome <small>(só para cliente novo)</small><input id="nNome" type="text" placeholder="Nome do cliente"></label>
+              </div>
+            </section>
+            <section class="np-card">
+              <h3><span class="np-n">2</span>Produtos</h3>
+              <div id="nItens" class="np-prods"></div>
+              <div id="nMontBox" hidden>
+                <button class="btn sm" type="button" id="nMontAdd">+ Montagem (complementos e extras)</button>
+                <div id="nMontList" style="display:grid;gap:10px;margin-top:10px"></div>
+              </div>
+            </section>
+            <section class="np-card">
+              <h3><span class="np-n">3</span>Entrega e pagamento</h3>
+              <div class="grid2">
+                <label class="fld">Como recebe<select id="nMod"><option value="retirada">Retirada</option><option value="entrega_bairro">Entrega (bairro com taxa fixa)</option><option value="entrega_app">Entrega por aplicativo</option></select></label>
+                <label class="fld" id="nBairroSelFld" hidden>Bairro<select id="nBairroSel"></select></label>
+                <label class="fld" id="nBairroTxtFld">Bairro<input id="nBairro" type="text"></label>
+                <label class="fld">Pagamento<select id="nPag"></select></label>
+                <label class="fld">Cupom <small>(opcional)</small><input id="nCupom" type="text" maxlength="30" autocomplete="off"></label>
+              </div>
+              <label class="fld">Rua e número<input id="nEnd" type="text"></label>
+              <label class="fld">Observações<textarea id="nObs" rows="2"></textarea></label>
+            </section>
+          </div>
+          <aside class="np-side">
+            <div class="np-sum">
+              <h3>Resumo do pedido</h3>
+              <div class="banner" id="nResumo"><span>Escolha os produtos para ver o total.</span></div>
+              <button class="btn go np-go" type="submit" id="nGo">Criar pedido</button>
+            </div>
+          </aside>
         </div>
-        <label class="fld">Como recebe<select id="nMod"><option value="retirada">Retirada</option><option value="entrega_bairro">Entrega (bairro com taxa fixa)</option><option value="entrega_app">Entrega por aplicativo</option></select></label>
-        <label class="fld" id="nBairroSelFld" hidden>Bairro<select id="nBairroSel"></select></label>
-        <label class="fld">Pagamento<select id="nPag"></select></label>
-        <label class="fld">Cupom <small>(opcional)</small><input id="nCupom" type="text" maxlength="30" autocomplete="off"></label>
-        <label class="fld">Rua e número<input id="nEnd" type="text"></label>
-        <label class="fld" id="nBairroTxtFld">Bairro<input id="nBairro" type="text"></label>
-        <label class="fld">Observações<textarea id="nObs" rows="2"></textarea></label>
-        <div class="banner" id="nResumo"><span>Escolha os produtos para ver o total.</span></div>
-        <button class="btn go" type="submit" id="nGo">Criar pedido</button>
       </form>
     </section>
 
@@ -651,15 +704,6 @@ body:has(.login:not([hidden])){background:var(--casca)}
       <div class="kanban" id="crmKanban"></div>
       <h2>Tarefas de hoje</h2>
       <div class="list" id="crmTarefas"></div>
-      <h2>Mensagens prontas</h2>
-      <p class="muted">Use {nome}, {pontos} e {garrafas}; o painel preenche com os dados do cliente.</p>
-      <div class="list" id="crmMsgs"></div>
-      <form class="card" id="formMsgCrm" autocomplete="off" style="margin-top:12px" hidden>
-        <b>Nova mensagem</b>
-        <label class="fld">Nome<input id="mcNome" type="text" required minlength="2" maxlength="60"></label>
-        <label class="fld">Texto<input id="mcTexto" type="text" required minlength="5" maxlength="600" placeholder="Oi, {nome}! ..."></label>
-        <button class="btn go" type="submit">Criar mensagem</button>
-      </form>
     </section>
 
     <section id="tab-financeiro" hidden>
@@ -834,6 +878,47 @@ body:has(.login:not([hidden])){background:var(--casca)}
       <div class="list" id="listEstoque"></div>
     </section>
 
+    <section id="tab-mensagens" hidden>
+      <div class="phead"><h2>Mensagens</h2></div>
+      <p class="muted">Modelos de mensagem para WhatsApp e campanhas rápidas. O envio é sempre feito por você: o painel abre o WhatsApp com o texto pronto e registra o contato no CRM.</p>
+      <div class="card msg-camp" id="campanha">
+        <b>Campanha rápida</b>
+        <div class="grid3">
+          <label class="fld">Mensagem<select id="cpMsg"></select></label>
+          <label class="fld">Para quem<select id="cpSeg">
+            <option value="aniv">Aniversariantes do mês</option><option value="pontos">Com brinde para resgatar</option><option value="risco">Em risco</option><option value="inativo">Inativos</option><option value="vip">VIP</option><option value="novo">Novos</option><option value="recorrente">Recorrentes</option><option value="todos">Todos os clientes</option></select></label>
+          <div class="cp-info" id="cpInfo"></div>
+        </div>
+        <div class="list lcompact" id="cpLista"></div>
+      </div>
+      <div class="phead" style="margin-top:22px"><h3 style="margin:0">Modelos de mensagem</h3></div>
+      <p class="muted">Use {nome}, {pontos} e {garrafas}; o painel preenche com os dados do cliente.</p>
+      <div class="list" id="crmMsgs"></div>
+      <form class="card" id="formMsgCrm" autocomplete="off" style="margin-top:12px" hidden>
+        <b>Novo modelo</b>
+        <label class="fld">Nome<input id="mcNome" type="text" required minlength="2" maxlength="60"></label>
+        <label class="fld">Texto<textarea id="mcTexto" required minlength="5" maxlength="600" rows="3" placeholder="Oi, {nome}! ..."></textarea></label>
+        <button class="btn go" type="submit">Criar modelo</button>
+      </form>
+    </section>
+
+    <section id="tab-fidelidade" hidden>
+      <div class="phead"><h2>Fidelidade</h2></div>
+      <p class="muted">Programa de pontos: o cliente ganha pontos a cada pedido pago e troca por brinde. Defina as regras e veja quem está perto do próximo brinde.</p>
+      <div class="cards cards-6" id="fidCards"></div>
+      <form class="card cfg-card cfgform" id="formFid" autocomplete="off" novalidate style="max-width:900px">
+        <b>Regras do programa</b>
+        <div class="grid3">
+          <label class="fld">Pontos por R$ 1 pago<input data-chave="pontos_por_real" type="number" min="0" step="0.01" required></label>
+          <label class="fld">Pontos para 1 garrafa grátis<input data-chave="pontos_por_brinde" type="number" min="1" required></label>
+          <label class="fld">Brinde de aniversário <small>(pontos; 0 desliga)</small><input data-chave="aniversario_pontos" type="number" min="0" required></label>
+        </div>
+        <div class="cfg-bar"><span class="muted">Vale para o site e para o painel assim que você salvar.</span><button class="btn go" type="submit" id="fidGo">Salvar regras</button></div>
+      </form>
+      <h3>Perto do próximo brinde</h3>
+      <div class="list lcompact" id="fidLista"></div>
+    </section>
+
     <section id="tab-promocoes" hidden>
       <h2>Promoções</h2>
       <p class="muted">Cada pedido recebe uma promoção: a mais vantajosa para o cliente entre as que valem naquele momento. Cupom só vale se o cliente digitar o código.</p>
@@ -910,12 +995,12 @@ body:has(.login:not([hidden])){background:var(--casca)}
       <div class="phead"><h2>Configurações</h2></div>
       <div class="seg cfg-seg" id="cfgSeg" role="tablist" aria-label="Seções das configurações">
         <button class="btn sm on" type="button" data-cfg="loja">Loja e site</button>
-        <button class="btn sm" type="button" data-cfg="pedidos">Pedidos e pontos</button>
+        <button class="btn sm" type="button" data-cfg="pedidos">Pedidos</button>
         <button class="btn sm" type="button" data-cfg="empresa">Empresa e fiscal</button>
         <button class="btn sm" type="button" data-cfg="pagamento">Pagamento</button>
         <button class="btn sm" type="button" data-cfg="entrega">Entrega</button>
       </div>
-      <form class="card cfg-card" id="formCfg" autocomplete="off" novalidate>
+      <form class="card cfg-card cfgform" id="formCfg" autocomplete="off" novalidate>
         <div class="cfg-pane" data-pane="loja">
           <b>Funcionamento</b>
           <div class="grid3">
@@ -940,12 +1025,6 @@ body:has(.login:not([hidden])){background:var(--casca)}
           <div class="grid2">
             <label class="fld">Mínimo de garrafas<input data-chave="pedido_min" type="number" min="1" max="999" required></label>
             <label class="fld">Máximo de garrafas<input data-chave="pedido_max" type="number" min="1" max="999" required></label>
-          </div>
-          <b>Programa de pontos</b>
-          <div class="grid3">
-            <label class="fld">Pontos por R$ 1 pago<input data-chave="pontos_por_real" type="number" min="0" step="0.01" required></label>
-            <label class="fld">Pontos para 1 garrafa grátis<input data-chave="pontos_por_brinde" type="number" min="1" required></label>
-            <label class="fld">Brinde de aniversário <small>(pontos; 0 desliga)</small><input data-chave="aniversario_pontos" type="number" min="0" required></label>
           </div>
         </div>
         <div class="cfg-pane" data-pane="empresa" hidden>
@@ -1196,6 +1275,7 @@ body:has(.login:not([hidden])){background:var(--casca)}
     if(t==='financeiro')initFinanceiro();
     if(t==='pagamentos')loadGateway();
     if(t==='notas')loadNotas();
+    if(t==='mensagens'||t==='fidelidade'){loadCrm();loadConfig();}
     if(t==='relatorios')loadRel();
     if(t==='promocoes')loadPromocoes();
     if(t==='inicio')renderInicio();
@@ -1392,8 +1472,13 @@ body:has(.login:not([hidden])){background:var(--casca)}
   function montaNovo(){
     var box=$('#nItens');box.textContent='';
     catalogo.produtos.filter(function(p){return p.ativo&&p.preco!=null;}).forEach(function(p,i){
-      var l=el('label','fld',p.nome+' ('+brl(p.preco)+')'),inp=document.createElement('input');inp.type='number';inp.min=0;inp.max=100;inp.value=i===0?1:0;inp.dataset.pid=p.id;
-      inp.addEventListener('input',function(){nSync();simNovo();});l.appendChild(inp);box.appendChild(l);
+      var l=el('div','np-prod'),inp=document.createElement('input');inp.type='number';inp.min=0;inp.max=100;inp.value=i===0?1:0;inp.dataset.pid=p.id;inp.setAttribute('aria-label','Quantidade de '+p.nome);
+      var st=el('div','np-st'),mn=el('button','np-b','−'),pl=el('button','np-b','+');mn.type=pl.type='button';mn.setAttribute('aria-label','Diminuir '+p.nome);pl.setAttribute('aria-label','Aumentar '+p.nome);
+      function sync(){l.classList.toggle('sel',(+inp.value||0)>0);}
+      function muda(d){inp.value=Math.max(0,Math.min(100,(+inp.value||0)+d));sync();inp.dispatchEvent(new Event('input',{bubbles:true}));}
+      mn.addEventListener('click',function(){muda(-1);});pl.addEventListener('click',function(){muda(1);});
+      inp.addEventListener('input',function(){sync();nSync();simNovo();});sync();
+      l.appendChild(el('span','np-nm',p.nome));l.appendChild(el('span','np-pr',brl(p.preco)));st.appendChild(mn);st.appendChild(inp);st.appendChild(pl);l.appendChild(st);box.appendChild(l);
     });
     var pg=$('#nPag');pg.textContent='';var o0=el('option',null,'A definir');o0.value='';pg.appendChild(o0);
     catalogo.formas.forEach(function(f){var o=el('option',null,f.nome);o.value=f.id;pg.appendChild(o);});
@@ -1741,7 +1826,7 @@ body:has(.login:not([hidden])){background:var(--casca)}
     sb.from('configuracoes').select('chave,valor').then(function(r){
       if(r.error){toast('Não consegui carregar as configurações.',true);return;}
       cfgOriginal={};(r.data||[]).forEach(function(x){cfgOriginal[x.chave]=x.valor;});
-      document.querySelectorAll('#formCfg [data-chave]').forEach(function(i){
+      document.querySelectorAll('.cfgform [data-chave]').forEach(function(i){
         var v=cfgOriginal[i.dataset.chave];if(v==null)return;
         if(i.dataset.bool)i.checked=(v==='true');else i.value=v;
       });
@@ -1756,27 +1841,31 @@ body:has(.login:not([hidden])){background:var(--casca)}
     $('#formCfg').hidden=CFG_FORM.indexOf(k)<0;
   }
   $('#cfgSeg').addEventListener('click',function(e){var b=e.target.closest('button[data-cfg]');if(b)showCfg(b.dataset.cfg);});
-  $('#formCfg').addEventListener('submit',function(e){
-    e.preventDefault();
-    var bad=null;document.querySelectorAll('#formCfg [data-chave]').forEach(function(i){if(!bad&&i.type!=='checkbox'&&!i.checkValidity())bad=i;});
-    if(bad){var pn=bad.closest('.cfg-pane');if(pn)showCfg(pn.dataset.pane);bad.reportValidity();return;}
-    var mud=[];
-    document.querySelectorAll('#formCfg [data-chave]').forEach(function(i){
-      var k=i.dataset.chave,v=i.dataset.bool?String(i.checked):String(i.value).trim();
-      if(cfgOriginal[k]!==undefined&&cfgOriginal[k]!==v)mud.push({chave:k,valor:v,antes:cfgOriginal[k]});
-    });
-    if(!mud.length){toast('Nada mudou.');return;}
-    confirmar('Salvar configurações?',mud.map(function(m){return (CFG_ROT[m.chave]||m.chave)+': '+(m.antes||'(vazio)')+'  →  '+(m.valor||'(vazio)');}),'Salvar').then(function(ok){
-      if(!ok)return;
-      $('#cfgGo').disabled=true;
-      Promise.all(mud.map(function(m){return sb.from('configuracoes').update({valor:m.valor}).eq('chave',m.chave);})).then(function(rs){
-        $('#cfgGo').disabled=false;
-        var bad=rs.filter(function(r){return r.error;});
-        if(bad.length){toast('Algum valor foi recusado. Confira os campos.',true);}else toast('Configurações salvas.');
-        loadConfig();
+  function bindCfgForm(sel,btnSel){
+    $(sel).addEventListener('submit',function(e){
+      e.preventDefault();
+      var campos=document.querySelectorAll(sel+' [data-chave]'),bad=null;
+      campos.forEach(function(i){if(!bad&&i.type!=='checkbox'&&!i.checkValidity())bad=i;});
+      if(bad){var pn=bad.closest('.cfg-pane');if(pn&&sel==='#formCfg')showCfg(pn.dataset.pane);bad.reportValidity();return;}
+      var mud=[];
+      campos.forEach(function(i){
+        var k=i.dataset.chave,v=i.dataset.bool?String(i.checked):String(i.value).trim();
+        if(cfgOriginal[k]!==undefined&&cfgOriginal[k]!==v)mud.push({chave:k,valor:v,antes:cfgOriginal[k]});
+      });
+      if(!mud.length){toast('Nada mudou.');return;}
+      confirmar('Salvar configurações?',mud.map(function(m){return (CFG_ROT[m.chave]||m.chave)+': '+(m.antes||'(vazio)')+'  →  '+(m.valor||'(vazio)');}),'Salvar').then(function(ok){
+        if(!ok)return;
+        $(btnSel).disabled=true;
+        Promise.all(mud.map(function(m){return sb.from('configuracoes').update({valor:m.valor}).eq('chave',m.chave);})).then(function(rs){
+          $(btnSel).disabled=false;
+          var bad2=rs.filter(function(r){return r.error;});
+          if(bad2.length){toast('Algum valor foi recusado. Confira os campos.',true);}else toast('Configurações salvas.');
+          loadConfig();
+        });
       });
     });
-  });
+  }
+  bindCfgForm('#formCfg','#cfgGo');bindCfgForm('#formFid','#fidGo');
   function campo(rot,tipo,val,extra){
     var l=el('label','fld',rot),i=document.createElement('input');i.type=tipo;i.value=val==null?'':val;
     if(extra)Object.keys(extra).forEach(function(k){i.setAttribute(k,extra[k]);});l.appendChild(i);return [l,i];
@@ -2962,18 +3051,69 @@ body:has(.login:not([hidden])){background:var(--casca)}
     if(!lista.length){box.appendChild(el('p','empty','Nenhuma tarefa para hoje. Abra a ficha de um cliente para criar.'));return;}
     var art=el('article','ped');lista.forEach(function(t){art.appendChild(linhaTarefa(t,function(){},true));});box.appendChild(art);
   }
+  // ===== Mensagens: campanha rápida (segmento + modelo, envio manual pelo WhatsApp) =====
+  var cpEnviados={};
+  function segCampanha(c,k){
+    if(k==='aniv')return !!c.aniversario_mes;
+    if(k==='pontos')return +c.saldo_pontos>=crmBrinde;
+    if(k==='todos')return true;
+    if(k==='risco')return c.segmento==='em_risco';
+    return c.segmento===k;
+  }
+  function renderCampanha(){
+    var sm=$('#cpMsg');if(!sm)return;var atual=sm.value;sm.textContent='';
+    crmMsgs.filter(function(m){return m.ativo;}).forEach(function(m){var o=el('option',null,m.nome);o.value=m.id;sm.appendChild(o);});
+    if(atual)sm.value=atual;
+    var msg=crmMsgs.filter(function(m){return m.id===sm.value;})[0],seg=$('#cpSeg').value;
+    var lista=crm.filter(function(c){return segCampanha(c,seg);});
+    $('#cpInfo').textContent=lista.length+' cliente'+(lista.length===1?'':'s')+' neste grupo';
+    var box=$('#cpLista');box.textContent='';
+    if(!msg){box.appendChild(el('p','empty','Crie ou ative um modelo de mensagem abaixo.'));return;}
+    if(!lista.length){box.appendChild(el('p','empty','Ninguém neste grupo agora.'));return;}
+    lista.slice(0,50).forEach(function(c){
+      var n=el('article','ped'),top=el('div','top'),dc=diasDesde(c.ultimo_contato);
+      top.appendChild(el('b',null,c.nome||fone(c.whatsapp)));n.appendChild(top);
+      n.appendChild(el('span','muted',fone(c.whatsapp)+(dc!=null?' · último contato '+(dc===0?'hoje':'há '+dc+' dias'):' · sem contato registrado')));
+      var ac=el('div','acts'),k=msg.id+':'+c.id,b=el('button','btn sm wa',cpEnviados[k]?'Enviado ✓':'Enviar no WhatsApp');b.type='button';if(cpEnviados[k])b.classList.add('feito');
+      b.addEventListener('click',function(){
+        window.open('https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent(msgPronta(msg.texto,c)),'_blank','noopener');
+        cpEnviados[k]=1;b.textContent='Enviado ✓';b.classList.add('feito');
+        if(can('clientes.editar'))sb.rpc('crm_registrar',{p_cliente:c.id,p_tipo:'whatsapp',p_texto:'Campanha: '+msg.nome});
+      });
+      ac.appendChild(b);n.appendChild(ac);box.appendChild(n);
+    });
+    if(lista.length>50)box.appendChild(el('p','muted','Mostrando 50 de '+lista.length+'. Use o CRM para ver o resto.'));
+  }
+  document.addEventListener('change',function(e){if(e.target&&(e.target.id==='cpMsg'||e.target.id==='cpSeg'))renderCampanha();});
+  // ===== Fidelidade =====
+  function renderFidelidade(){
+    var cards=$('#fidCards');if(!cards)return;cards.textContent='';
+    var circ=crm.reduce(function(t,c){return t+(+c.saldo_pontos||0);},0);
+    [['Clientes com brinde',String(crm.filter(function(c){return +c.saldo_pontos>=crmBrinde;}).length)],['Pontos em circulação',circ.toLocaleString('pt-BR')],['Pontos por brinde',String(crmBrinde)],['Aniversariantes do mês',String(crm.filter(function(c){return c.aniversario_mes;}).length)]].forEach(function(x){var t=el('div','stat');t.appendChild(el('small',null,x[0]));t.appendChild(el('b',null,x[1]));cards.appendChild(t);});
+    var box=$('#fidLista');box.textContent='';
+    var perto=crm.filter(function(c){var r=(+c.saldo_pontos||0)%crmBrinde;return +c.saldo_pontos>0&&(+c.saldo_pontos>=crmBrinde||r>=crmBrinde*.6);}).sort(function(a,b){return (+b.saldo_pontos)-(+a.saldo_pontos);}).slice(0,12);
+    if(!perto.length){box.appendChild(el('p','empty','Ninguém perto do brinde ainda.'));return;}
+    perto.forEach(function(c){
+      var sd=+c.saldo_pontos||0,pr=Math.min(100,Math.round((sd%crmBrinde||(sd>=crmBrinde?crmBrinde:0))/crmBrinde*100)),n=el('article','ped'),top=el('div','top');
+      top.appendChild(el('b',null,c.nome||fone(c.whatsapp)));top.appendChild(el('span','tag '+(sd>=crmBrinde?'pago':'pendente'),sd>=crmBrinde?'Brinde disponível':'Falta pouco'));n.appendChild(top);
+      n.appendChild(el('span','muted',sd+' pontos · '+(sd>=crmBrinde?Math.floor(sd/crmBrinde)+' brinde(s) para resgatar':'faltam '+(crmBrinde-sd%crmBrinde)+' para o próximo')));
+      var bar=el('div','fid-bar'),i=document.createElement('i');i.style.width=pr+'%';bar.appendChild(i);n.appendChild(bar);
+      box.appendChild(n);
+    });
+  }
   function renderMsgsCrm(){
     var box=$('#crmMsgs');box.textContent='';
     crmMsgs.forEach(function(m){
       var n=el('article','ped'),top=el('div','top');top.appendChild(el('b',null,m.nome));top.appendChild(el('span','tag '+(m.ativo?'pago':'cancelado'),m.ativo?'Ativa':'Oculta'));n.appendChild(top);
       if(!can('config.gerir')){n.appendChild(el('span','muted',m.texto));box.appendChild(n);return;}
-      var tx=campo('Texto','text',m.texto,{maxlength:600});n.appendChild(tx[0]);
+      var txl=el('label','fld','Texto'),txa=document.createElement('textarea');txa.rows=3;txa.maxLength=600;txa.value=m.texto;txl.appendChild(txa);var tx=[txl,txa];n.appendChild(txl);
       var ac=el('div','acts'),sv=el('button','btn sm go','Salvar'),at=el('button','btn sm',m.ativo?'Ocultar':'Mostrar');sv.type=at.type='button';
       sv.addEventListener('click',function(){sb.from('mensagens_crm').update({texto:tx[1].value.trim()}).eq('id',m.id).then(function(x){if(x.error){toast(msgCrm(x.error),true);return;}toast('Mensagem salva.');loadCrm();});});
       at.addEventListener('click',function(){sb.from('mensagens_crm').update({ativo:!m.ativo}).eq('id',m.id).then(function(x){if(x.error){toast(msgCrm(x.error),true);return;}loadCrm();});});
       ac.appendChild(sv);ac.appendChild(at);n.appendChild(ac);box.appendChild(n);
     });
     $('#formMsgCrm').hidden=!can('config.gerir');
+    renderCampanha();renderFidelidade();
   }
   $('#formMsgCrm').addEventListener('submit',function(e){
     e.preventDefault();

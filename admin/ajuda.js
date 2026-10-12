@@ -61,6 +61,10 @@ window.TQR_AJUDA = {
       passos: ['Em "Gateway", escolha o modo: Desligado (Pix manual), Teste (simulado, sem dinheiro) ou Asaas (real, depois de configurar a chave na função de borda).', 'Em "Pedidos aguardando pagamento", use "Gerar cobrança Pix" e envie o Pix copia e cola ao cliente (botão WhatsApp).', 'Quando o pagamento é aprovado, o pedido vira "pago" sozinho: caixa, pontos e estoque seguem o fluxo normal e a taxa real do gateway substitui a estimada.', 'No modo Teste, use "Simular pagamento aprovado" para ver todo o caminho funcionando.', 'Estornar cancela o pedido (se ainda não saiu) e devolve caixa, pontos e estoque.'],
       dicas: ['Com o gateway ligado, o site mostra o Pix na tela depois do pedido e confirma sozinho quando o cliente paga.', 'As chaves do gateway nunca ficam no painel nem no banco: só nos segredos da função de borda.', 'Cobranças em "disputa" ou pagas depois do cancelamento aparecem em destaque na conciliação.'],
       faq: [['O cliente pagou mas o pedido não mudou.', 'Veja se a cobrança está "Aprovada" aqui. Se estiver aguardando, o gateway ainda não avisou; confira no painel do gateway.'], ['Posso testar sem gastar?', 'Sim: modo Teste. Nada é cobrado e o Pix exibido é de mentira.']] },
+    { id: 'notas', titulo: 'Notas fiscais', perm: 'financeiro.ver', resumo: 'Emissão de nota em homologação (simulada), impressão do cupom, cancelamento e exportação para o contador.',
+      passos: ['Preencha os dados fiscais em Configurações (CNPJ, razão social, inscrições, regime) e NCM/CFOP/CSOSN de cada produto na aba Produtos, com ajuda do contador.', 'Em "Pedidos pagos sem nota", clique em "Emitir nota (homologação)". Se preferir, ligue a emissão automática em Configurações.', 'Use "Imprimir cupom" para o cupom de 80 mm e "Cancelar nota" informando o motivo (mínimo 15 letras).', 'No fim do mês escolha o mês e baixe o CSV e os XMLs para enviar ao contador.', 'O recibo comum dos pedidos continua sem valor fiscal; só a nota emitida em produção tem valor fiscal.'],
+      dicas: ['Hoje tudo é SIMULADO: nenhuma nota vai para a SEFAZ. Isso permite testar o fluxo inteiro antes de decidir emitir.', 'Os valores padrão de NCM, CFOP e CSOSN são exemplos; confirme com o contador antes de emitir de verdade.', 'Para emitir de verdade será preciso certificado digital, CSC e um emissor homologado (ex.: Focus NFe ou eNotas); o sistema já guarda tudo que eles pedem.'],
+      faq: [['Preciso emitir nota?', 'Depende do enquadramento da empresa. Converse com o contador; o sistema funciona com ou sem nota.']] },
     { id: 'usuarios', titulo: 'Usuários', perm: '*', resumo: 'Quem acessa o painel e o que cada pessoa pode fazer.',
       passos: ['Crie o usuário com nome, e-mail, perfil e uma senha temporária; peça para a pessoa ativar a verificação em duas etapas.', 'Desative quem saiu da equipe: a pessoa deixa de entrar.', 'Crie perfis personalizados marcando exatamente as permissões que cada função precisa.'],
       dicas: ['Só o perfil Dono gerencia usuários e perfis.', 'Perfis de sistema (dono, gerente, atendente, entregador) não podem ser editados.'],
@@ -72,6 +76,16 @@ window.TQR_AJUDA = {
   ],
 
   campos: {
+    'Inscrição estadual': 'Número da inscrição estadual da empresa, se tiver. O contador informa.',
+    'Inscrição municipal': 'Número da inscrição municipal, se tiver.',
+    'Regime tributário': 'Como a empresa paga impostos (ex.: Simples Nacional). Confirme com o contador.',
+    'Tipo de nota': 'NFC-e é a nota de consumidor final, a mais comum em venda no balcão e delivery.',
+    'Série': 'Série da numeração das notas. Normalmente 1.',
+    'Ambiente': 'Homologação = notas de teste, sem valor fiscal.',
+    'NCM': 'Código de 8 dígitos que classifica o produto na nota. O contador define.',
+    'CFOP': 'Código de 4 dígitos da operação (venda dentro do estado costuma ser 5102).',
+    'CSOSN': 'Código de tributação no Simples Nacional. O contador define.',
+    'Origem': 'Origem da mercadoria (0 = nacional).',
     // Pagamentos
     'Modo': 'Desligado = Pix manual como hoje. Teste = cobranças simuladas, sem dinheiro. Asaas = cobrança real (precisa da chave nos segredos da função de borda).',
     // Impressão e dados da loja

@@ -68,3 +68,9 @@ o site novo cai para o pedido simples se o banco ainda não tiver a migração 0
 - **Modo teste** roda inteiro no banco: gera Pix simulado, "Simular pagamento aprovado/recusa" e estorno. Aprovar marca o pedido como pago e os gatilhos existentes geram caixa, pontos e baixa de estoque; a taxa real (quando o gateway informa) substitui a estimada.
 - **Gateway real (Asaas):** publique a função `supabase/functions/pagamentos` com `supabase functions deploy pagamentos --no-verify-jwt` e defina os segredos `GATEWAY_API_KEY`, `GATEWAY_WEBHOOK_TOKEN` e `GATEWAY_URL` (sandbox: `https://sandbox.asaas.com/api/v3`). No Asaas, cadastre o webhook `https://elaczoriyaejkixkubxn.supabase.co/functions/v1/pagamentos?webhook=asaas` com o mesmo token. O webhook é idempotente (`pagamento_eventos`). O adaptador segue a documentação pública e deve ser validado no sandbox antes de ligar o modo `asaas`.
 - No site, o Pix aparece na tela após o pedido só quando o gateway não está `nenhum`; consulta por `pagamento_publico(codigo, whatsapp)`.
+
+## Nota fiscal em homologação (migração 20 — já aplicada)
+- `notas_fiscais` guarda cada nota (numeração, chave, itens, XML simulado); `nota_emitir(pedido)` e `nota_cancelar(nota, motivo)` exigem `financeiro.gerir`. Só pedidos pagos recebem nota; uma nota ativa por pedido.
+- Tudo é **simulado e sem valor fiscal** (`nf_ambiente = homologacao`). Em `producao` a função recusa (`producao_indisponivel`) até um emissor real ser conectado trocando o corpo de `app_private.nota_emitir_interno`.
+- Dados fiscais: Configurações (IE, IM, regime, tipo, série, emissão automática) e NCM/CFOP/CSOSN/origem por produto (padrões são exemplos; confirmar com o contador).
+- Aba Notas fiscais: emitir, cancelar, imprimir cupom 80 mm e baixar CSV/XML do mês para o contador.

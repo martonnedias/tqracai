@@ -303,6 +303,7 @@ dialog#dlgImprimir::backdrop{background:rgba(29,23,38,.5)}dialog#dlgImprimir h3{
       <button class="btn" data-tab="crm" data-perm="clientes.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9Z"/></svg><span>CRM</span></button>
       <button class="btn" data-tab="financeiro" data-perm="financeiro.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6.5 9.5v5M17.5 9.5v5"/></svg><span>Financeiro</span></button>
       <button class="btn" data-tab="pagamentos" data-perm="financeiro.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19M6 15h4"/></svg><span>Pagamentos</span></button>
+      <button class="btn" data-tab="notas" data-perm="financeiro.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg><span>Notas fiscais</span></button>
       <button class="btn" data-tab="produtos" data-perm="produtos.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg><span>Produtos</span></button>
       <button class="btn" data-tab="montagem" data-perm="produtos.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.4 5 5.6.8-4 3.9 1 5.5-5-2.7-5 2.7 1-5.5-4-3.9 5.6-.8z"/></svg><span>Montagem</span></button>
       <button class="btn" data-tab="custos" data-perm="custos.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5M4 19h16"/><path d="m8 15 3-4 3 2 5-7"/></svg><span>Custos</span></button>
@@ -461,6 +462,19 @@ dialog#dlgImprimir::backdrop{background:rgba(29,23,38,.5)}dialog#dlgImprimir h3{
       <div class="list" id="pagList"></div>
       <h3>Conciliação</h3>
       <div class="list" id="pagConc"></div>
+    </section>
+
+    <section id="tab-notas" hidden>
+      <h2>Notas fiscais</h2>
+      <div class="banner" id="nfModo"></div>
+      <p class="muted">Emissão simulada para testar todo o fluxo (emitir, imprimir, cancelar, exportar para o contador). Nenhuma nota vai para a SEFAZ nem tem valor fiscal. Os dados fiscais da empresa ficam em Configurações; NCM/CFOP/CSOSN de cada produto, na aba Produtos.</p>
+      <div class="cards" id="nfCards"></div>
+      <div class="row"><label class="fld">Mês para o contador<input type="month" id="nfMes"></label>
+        <button class="btn sm" id="nfCsv" type="button">Baixar CSV</button><button class="btn sm" id="nfXml" type="button">Baixar XMLs</button></div>
+      <h3>Pedidos pagos sem nota</h3>
+      <div class="list" id="nfPend"></div>
+      <h3>Notas emitidas</h3>
+      <div class="list" id="nfList"></div>
     </section>
 
     <section id="tab-produtos" hidden>
@@ -655,6 +669,20 @@ dialog#dlgImprimir::backdrop{background:rgba(29,23,38,.5)}dialog#dlgImprimir h3{
         </div>
         <label class="fld">Endereço da loja<input data-chave="loja_endereco" type="text" maxlength="160"></label>
         <label class="fld">Mensagem do recibo<input data-chave="loja_rodape" type="text" maxlength="120"></label>
+        <b>Dados fiscais (nota fiscal)</b>
+        <div class="row2">
+          <label class="fld">Inscrição estadual<input data-chave="nf_ie" type="text" maxlength="30"></label>
+          <label class="fld">Inscrição municipal<input data-chave="nf_im" type="text" maxlength="30"></label>
+        </div>
+        <div class="row2">
+          <label class="fld">Regime tributário<select data-chave="nf_regime"><option value="simples">Simples Nacional</option><option value="presumido">Lucro presumido</option><option value="real">Lucro real</option></select></label>
+          <label class="fld">Tipo de nota<select data-chave="nf_tipo"><option value="nfce">NFC-e (consumidor)</option><option value="nfe">NF-e</option></select></label>
+        </div>
+        <div class="row2">
+          <label class="fld">Série<input data-chave="nf_serie" type="text" maxlength="3"></label>
+          <label class="fld">Ambiente<select data-chave="nf_ambiente"><option value="homologacao">Homologação (simulada)</option></select></label>
+        </div>
+        <label class="chk"><input data-chave="nf_emissao_auto" data-bool="1" type="checkbox"><span>Emitir nota automaticamente quando o pedido for pago</span></label>
         <button class="btn go" type="submit" id="cfgGo">Salvar configurações</button>
       </form>
 
@@ -803,6 +831,7 @@ dialog#dlgImprimir::backdrop{background:rgba(29,23,38,.5)}dialog#dlgImprimir h3{
     if(t==='produtos')loadProdutos();
     if(t==='financeiro')initFinanceiro();
     if(t==='pagamentos')loadGateway();
+    if(t==='notas')loadNotas();
     if(t==='promocoes')loadPromocoes();
     if(t==='inicio')renderInicio();
     if(t==='ajuda'){renderAjuda();}
@@ -1113,6 +1142,8 @@ dialog#dlgImprimir::backdrop{background:rgba(29,23,38,.5)}dialog#dlgImprimir h3{
         var nm=campo('Nome','text',p.nome,{maxlength:80,required:''}),pr=campo('Preço R$','number',p.preco,{min:0,step:'0.01',required:''}),vol=campo('Volume ml','number',p.volume_ml,{min:1}),
             ord=campo('Ordem','number',p.ordem,{step:1}),cat=campo('Categoria','text',p.categoria,{maxlength:40}),ds=campo('Descrição curta','text',p.descricao,{maxlength:200});
         n.appendChild(nm[0]);var g=el('div','row2');g.appendChild(pr[0]);g.appendChild(vol[0]);n.appendChild(g);
+        var nc=campo('NCM','text',p.ncm,{maxlength:8,pattern:'[0-9]{8}'}),cf=campo('CFOP','text',p.cfop,{maxlength:4,pattern:'[0-9]{4}'}),cs=campo('CSOSN','text',p.csosn,{maxlength:3,pattern:'[0-9]{2,3}'}),og=campo('Origem','text',p.origem_mercadoria,{maxlength:1,pattern:'[0-8]'});
+        var gf=el('div','row2');[nc[0],cf[0],cs[0],og[0]].forEach(function(x){gf.appendChild(x);});n.appendChild(gf);
         var g2=el('div','row2');g2.appendChild(ord[0]);g2.appendChild(cat[0]);n.appendChild(g2);n.appendChild(ds[0]);
         var ft=campo('Trocar foto','file',null,{accept:'image/jpeg,image/png,image/webp'});ft[1].value='';n.appendChild(ft[0]);
         var ck=el('label','chk'),cb=document.createElement('input');cb.type='checkbox';cb.checked=p.ativo;ck.appendChild(cb);ck.appendChild(el('span',null,'Aparece no site'));n.appendChild(ck);
@@ -1120,7 +1151,7 @@ dialog#dlgImprimir::backdrop{background:rgba(29,23,38,.5)}dialog#dlgImprimir h3{
         sv.addEventListener('click',function(){
           var antes=+p.preco,novo=+pr[1].value;
           function grava(url){
-            var campos={nome:nm[1].value.trim(),preco:novo,volume_ml:parseInt(vol[1].value,10)||null,ordem:parseInt(ord[1].value,10)||0,categoria:cat[1].value.trim()||null,descricao:ds[1].value.trim()||null,ativo:cb.checked};
+            var campos={nome:nm[1].value.trim(),preco:novo,volume_ml:parseInt(vol[1].value,10)||null,ordem:parseInt(ord[1].value,10)||0,categoria:cat[1].value.trim()||null,descricao:ds[1].value.trim()||null,ativo:cb.checked,ncm:nc[1].value.trim()||'21069090',cfop:cf[1].value.trim()||'5102',csosn:cs[1].value.trim()||'102',origem_mercadoria:og[1].value.trim()||'0'};
             if(url)campos.foto_url=url;
             sb.from('produtos').update(campos).eq('id',p.id).then(function(x){if(x.error){toast('Não consegui salvar o produto.',true);return;}toast('Produto salvo.');loadProdutos();});
           }
@@ -2042,6 +2073,82 @@ dialog#dlgImprimir::backdrop{background:rgba(29,23,38,.5)}dialog#dlgImprimir h3{
     confirmar('Mudar o modo do gateway?',[v==='teste'?'Teste: o site mostrará um Pix SIMULADO para pedidos com Pix. Use só para experimentar.':v==='nenhum'?'Desligado: volta ao Pix manual.':'Asaas: exige a função de borda com a chave configurada.'],'Sim, mudar').then(function(s){
       if(s)sb.from('configuracoes').update({valor:v}).eq('chave','gateway_ativo').then(function(r){if(r.error){toast('Não consegui salvar o modo.',true);return;}toast('Modo salvo.');loadGateway();});});
   });
+
+  // ===== Notas fiscais (homologação) =====
+  var NF_ROT={emitida:'Emitida',cancelada:'Cancelada',rejeitada:'Rejeitada'};
+  function msgNf(er){var m=String(er&&er.message||er||'');if(/pedido_nao_pago/.test(m))return 'Só pedidos pagos recebem nota.';if(/nota_ja_emitida/.test(m))return 'Esse pedido já tem nota emitida.';if(/producao_indisponivel/.test(m))return 'Emissão em produção ainda não está conectada (use homologação).';if(/motivo_curto/.test(m))return 'Explique o motivo (mínimo 15 letras).';if(/nao_autorizado/.test(m))return 'Sem permissão.';return 'Não consegui concluir: '+m;}
+  function baixaArquivo(nome,txt,tipo){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:tipo}));a.download=nome;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href);},1000);}
+  function mesIni(m){return m+'-01T00:00:00-03:00';}
+  function mesFim(m){var p=m.split('-'),y=+p[0],mo=+p[1];if(mo===12){y++;mo=1;}else mo++;return y+'-'+(mo<10?'0':'')+mo+'-01T00:00:00-03:00';}
+  function loadNotas(){
+    var hoje=new Date().toLocaleDateString('sv-SE',{timeZone:TZ}).slice(0,7);if(!$('#nfMes').value)$('#nfMes').value=hoje;
+    $('#nfModo').textContent='HOMOLOGAÇÃO: notas simuladas, sem valor fiscal. A emissão real depende dos dados do contador e de um emissor homologado.';
+    Promise.all([
+      sb.from('notas_fiscais').select('id,pedido_id,numero,serie,ambiente,status,chave,protocolo,valor_total,emitente,destinatario,itens,motivo_cancelamento,emitido_em,pedidos(codigo)').order('emitido_em',{ascending:false}).limit(80),
+      sb.from('pedidos').select('id,codigo,total,status,criado_em').in('status',['pago','saiu_entrega','entregue']).order('criado_em',{ascending:false}).limit(100)
+    ]).then(function(r){renderNotas(r[0].data||[],r[1].data||[]);});
+  }
+  function renderNotas(notas,pagos){
+    var ativas=notas.filter(function(n){return n.status==='emitida';}),com={};ativas.forEach(function(n){com[n.pedido_id]=1;});
+    var sem=pagos.filter(function(p){return !com[p.id];});
+    var cards=$('#nfCards');cards.textContent='';
+    [['Notas emitidas',String(ativas.length)],['Valor emitido',brl(ativas.reduce(function(t,n){return t+(+n.valor_total||0);},0))],['Pagos sem nota',String(sem.length)],['Canceladas',String(notas.length-ativas.length)]].forEach(function(x){var c=el('div','stat');c.appendChild(el('small',null,x[0]));c.appendChild(el('b',null,x[1]));cards.appendChild(c);});
+    var bp=$('#nfPend');bp.textContent='';
+    if(!sem.length)bp.appendChild(el('p','empty','Todos os pedidos pagos recentes já têm nota.'));
+    sem.forEach(function(p){
+      var n=el('article','ped'),top=el('div','top');top.appendChild(el('b',null,p.codigo+' · '+brl(p.total)));top.appendChild(el('span','tag '+p.status,p.status));n.appendChild(top);
+      if(can('financeiro.gerir')){var ac=el('div','acts'),b=el('button','btn sm go','Emitir nota (homologação)');b.type='button';
+        b.addEventListener('click',function(){b.disabled=true;sb.rpc('nota_emitir',{p_pedido:p.id}).then(function(x){if(x.error){toast(msgNf(x.error),true);b.disabled=false;return;}toast('Nota emitida (simulada).');loadNotas();});});
+        ac.appendChild(b);n.appendChild(ac);}
+      bp.appendChild(n);
+    });
+    var bl=$('#nfList');bl.textContent='';
+    if(!notas.length)bl.appendChild(el('p','empty','Nenhuma nota ainda.'));
+    notas.forEach(function(nf){
+      var n=el('article','ped'),top=el('div','top'),cod=nf.pedidos&&nf.pedidos.codigo||'';
+      top.appendChild(el('b',null,'Nº '+nf.numero+' · série '+nf.serie+' · '+cod+' · '+brl(nf.valor_total)));top.appendChild(el('span','tag '+(nf.status==='emitida'?'pago':'cancelado'),NF_ROT[nf.status]));n.appendChild(top);
+      n.appendChild(el('span','muted',dh(nf.emitido_em)+' · '+(nf.ambiente==='homologacao'?'HOMOLOGAÇÃO (sem valor fiscal)':'produção')+(nf.motivo_cancelamento?' · motivo: '+nf.motivo_cancelamento:'')));
+      n.appendChild(el('span','muted','Chave: '+(nf.chave||'')));
+      var ac=el('div','acts'),pr=el('button','btn sm','Imprimir cupom');pr.type='button';pr.addEventListener('click',function(){imprimirNota(nf,cod);});ac.appendChild(pr);
+      if(nf.status==='emitida'&&can('financeiro.gerir')){var cn=el('button','btn sm danger','Cancelar nota');cn.type='button';
+        cn.addEventListener('click',function(){var mt=window.prompt('Motivo do cancelamento (mínimo 15 letras):');if(mt==null)return;
+          confirmar('Cancelar esta nota?',['Nº '+nf.numero+' · '+cod,'Motivo: '+mt],'Sim, cancelar',true).then(function(s){if(s)sb.rpc('nota_cancelar',{p_nota:nf.id,p_motivo:mt}).then(function(x){if(x.error){toast(msgNf(x.error),true);return;}toast('Nota cancelada.');loadNotas();});});});
+        ac.appendChild(cn);}
+      n.appendChild(ac);bl.appendChild(n);
+    });
+  }
+  function imprimirNota(nf,cod){
+    carregaLoja().then(function(){
+      var lj=LOJA||{},e=nf.emitente||{},d=el('section','doc doc-recibo');
+      function h(t,c){d.appendChild(el('div',c||'doc-h',t));}
+      function l(a,b){var r=el('div','doc-l');r.appendChild(el('span',null,a));if(b!=null)r.appendChild(el('b',null,b));d.appendChild(r);}
+      h(e.nome||lj.nome||'#TQR Açaí','doc-t');if(e.razao)h(e.razao,'doc-s');if(e.cnpj)h('CNPJ '+e.cnpj,'doc-s');if(e.ie)h('IE '+e.ie,'doc-s');if(e.endereco)h(e.endereco,'doc-s');
+      d.appendChild(el('hr','doc-sep'));h('CUPOM FISCAL ELETRÔNICO (NFC-e)','doc-t2');
+      if(nf.ambiente==='homologacao')h('EMITIDA EM AMBIENTE DE HOMOLOGAÇÃO – SEM VALOR FISCAL','doc-obs');
+      if(nf.status==='cancelada')h('*** NOTA CANCELADA ***','doc-obs');
+      l('Nº / Série',nf.numero+' / '+nf.serie);l('Emissão',dh(nf.emitido_em));l('Pedido',cod);d.appendChild(el('hr','doc-sep'));
+      (nf.itens||[]).forEach(function(i){var r=el('div','doc-l');r.appendChild(el('span',null,i.quantidade+'× '+i.descricao+(i.brinde?' (brinde)':'')));r.appendChild(el('b',null,brl(+i.valor)));d.appendChild(r);});
+      d.appendChild(el('hr','doc-sep'));var t=el('div','doc-l doc-total');t.appendChild(el('span',null,'TOTAL'));t.appendChild(el('b',null,brl(nf.valor_total)));d.appendChild(t);
+      d.appendChild(el('hr','doc-sep'));h('Chave de acesso','doc-s');h(String(nf.chave||'').replace(/(.{4})/g,'$1 ').trim(),'doc-s');if(nf.protocolo)h('Protocolo '+nf.protocolo,'doc-s');
+      var area=document.getElementById('printArea');if(!area){area=el('div');area.id='printArea';document.body.appendChild(area);}
+      area.className='fmt-80';area.textContent='';area.appendChild(d);
+      var st=document.getElementById('pageStyle');if(!st){st=document.createElement('style');st.id='pageStyle';document.head.appendChild(st);}
+      st.textContent='@page{size:80mm auto;margin:2mm}';setTimeout(function(){window.print();},50);
+    });
+  }
+  function csvCel(v){v=v==null?'':String(v);return /[";\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}
+  function notasDoMes(){
+    var m=$('#nfMes').value;if(!m){toast('Escolha o mês.',true);return Promise.resolve(null);}
+    return sb.from('notas_fiscais').select('numero,serie,ambiente,status,chave,valor_total,emitido_em,xml,destinatario,pedidos(codigo)').gte('emitido_em',mesIni(m)).lt('emitido_em',mesFim(m)).order('numero').then(function(r){
+      if(r.error){toast('Não consegui carregar as notas.',true);return null;}if(!(r.data||[]).length){toast('Nenhuma nota nesse mês.',true);return null;}return r.data;});
+  }
+  $('#nfCsv').addEventListener('click',function(){notasDoMes().then(function(rows){if(!rows)return;
+    var L=['numero;serie;ambiente;status;pedido;emissao;valor;chave'];
+    rows.forEach(function(n){L.push([n.numero,n.serie,n.ambiente,n.status,n.pedidos&&n.pedidos.codigo,n.emitido_em,String(n.valor_total).replace('.',','),n.chave].map(csvCel).join(';'));});
+    baixaArquivo('notas-tqr-'+$('#nfMes').value+'.csv','﻿'+L.join('\r\n'),'text/csv;charset=utf-8');});});
+  $('#nfXml').addEventListener('click',function(){notasDoMes().then(function(rows){if(!rows)return;
+    var x='<?xml version="1.0" encoding="UTF-8"?>\n<notas>\n'+rows.filter(function(n){return n.status==='emitida';}).map(function(n){return (n.xml||'').replace(/^<\?xml[^>]*\?>/,'');}).join('\n')+'\n</notas>\n';
+    baixaArquivo('notas-xml-tqr-'+$('#nfMes').value+'.xml',x,'application/xml');});});
 
   // ===== Montagem (personalização): grupos de opções, preço adicional, esgotado e ficha técnica =====
   var grupos=[],opcoesAll=[],custoOp={},recOp={},prodsMont=[];

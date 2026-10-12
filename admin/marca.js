@@ -21,6 +21,8 @@ window.TQR_MARCA = {
   textos: {
     filaVazia: 'Nenhum pedido na fila. Bora vender?',
     pulsoVazio: 'O dia ainda não começou. Os pedidos aparecem aqui, na hora em que chegam.',
+    montagemTitulo: 'Monte o seu açaí',
+    exemploCompra: 'compra de açaí',
     loginSub: 'Gestão do #TQR Açaí · acesso da equipe'
   }
 };

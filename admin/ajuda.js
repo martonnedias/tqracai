@@ -13,6 +13,10 @@ window.TQR_AJUDA = {
       passos: ['Chegou pedido novo: um aviso aparece (se "Avisos" estiver ligado) e o cartão entra como Pendente.', 'Clique em "Marcar como confirmado", depois "pago", "saiu para entrega" e "entregue". Cada mudança pede confirmação.', 'No Kanban, arraste o cartão para a coluna seguinte. Só avança; para desfazer, fale com o dono.', 'Use os filtros (status, dia, pagamento) e a busca por nome, bairro ou código.', 'Para cancelar, use "Cancelar". Se o pedido já estava pago, o valor e os pontos são estornados.', '"Histórico" mostra quando cada status mudou. "WhatsApp" abre a conversa com o cliente.'],
       dicas: ['Marcar como pago lança a entrada no caixa, dá pontos ao cliente e baixa o estoque dos insumos.', 'Cartão vermelho no Kanban = pedido parado há tempo demais naquela etapa.', 'O entregador só enxerga e move "saiu para entrega" e "entregue".'],
       faq: [['Marquei pago sem querer, e agora?', 'Cancele o pedido: o sistema estorna o caixa, os pontos e o estoque. Depois crie o pedido de novo, se for o caso.', ], ['Posso reabrir um pedido cancelado?', 'Não. Um pedido cancelado não volta. Crie um novo pedido manual.']] },
+    { id: 'impressao', titulo: 'Impressão', perm: 'pedidos.ver', resumo: 'Comanda de produção, cupom de entrega e recibo do pedido.',
+      passos: ['No cartão do pedido (lista ou Kanban), clique em "Imprimir".', 'Escolha o documento (comanda, cupom de entrega, recibo ou os três) e o formato do papel (térmica 80 mm ou A4). Confira a prévia.', 'Clique em "Imprimir" e escolha a impressora na janela do navegador.', '"Imprimir fila do dia" (na tela de Pedidos) imprime as comandas de todos os pedidos confirmados e pagos, do mais antigo para o mais novo.', 'Os dados da loja que saem no recibo ficam em Configurações, em "Dados da loja".'],
+      dicas: ['A comanda tem letra grande e mostra a montagem de cada garrafa e as observações do cliente.', 'O cupom de entrega mostra se o pedido já está pago ou quanto cobrar.', 'O recibo é um comprovante do pedido e não tem valor fiscal.', 'Na impressora térmica, escolha o papel de 80 mm e desligue cabeçalho e rodapé do navegador na janela de impressão.', 'O formato escolhido fica lembrado neste computador.'],
+      faq: [['A impressão sai cortada ou com margens grandes.', 'Na janela de impressão do navegador, desative "Cabeçalhos e rodapés" e escolha margens "Nenhuma" ou "Mínimas".'], ['Não aparece a impressora térmica.', 'Instale o driver dela no computador. O painel usa a impressão normal do navegador.']] },
     { id: 'novo', titulo: 'Novo pedido', perm: 'pedidos.criar', resumo: 'Lance um pedido feito por telefone ou presencialmente.',
       passos: ['Informe o WhatsApp do cliente. Se já for cliente, o nome vem do cadastro; se for novo, preencha o nome.', 'Escolha as quantidades de cada produto. Se houver complementos, use "+ Montagem" para escolher as opções por garrafa.', 'Escolha como recebe (retirada, entrega com taxa de bairro ou entrega por aplicativo), o pagamento e, se houver, o cupom.', 'Confira o total calculado na caixa de resumo e clique em "Criar pedido".'],
       dicas: ['O total é calculado pelo servidor, igual ao do site: promoções e cupons valem do mesmo jeito.', 'Cliente novo precisa de nome com ao menos 3 letras.'],
@@ -64,6 +68,15 @@ window.TQR_AJUDA = {
   ],
 
   campos: {
+    // Impressão e dados da loja
+    'Documento': 'O que será impresso: comanda (cozinha), cupom de entrega (entregador), recibo (cliente) ou os três.',
+    'Formato do papel': 'Térmica 80 mm para impressora de cupom; A4 para folha comum. Fica lembrado neste computador.',
+    'Nome da loja': 'Nome que aparece no topo do recibo.',
+    'Razão social': 'Nome empresarial, como no CNPJ. Sai no recibo e será usado na nota fiscal.',
+    'CNPJ': 'CNPJ da loja. Sai no recibo e será usado na nota fiscal.',
+    'Telefone da loja': 'Telefone ou WhatsApp que aparece no recibo.',
+    'Endereço da loja': 'Endereço que aparece no recibo.',
+    'Mensagem do recibo': 'Frase no fim do recibo. Ex.: Obrigado pela preferência!',
     // Pedido manual
     'WhatsApp do cliente': 'Número com DDD. É a identificação do cliente: se já existir, o nome e o histórico vêm do cadastro. Ex.: (86) 99999-9999.',
     'Nome': 'Como o cliente ou o item é chamado. Para cliente novo, use ao menos 3 letras.',

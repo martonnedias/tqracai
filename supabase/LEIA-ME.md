@@ -58,3 +58,7 @@ o site novo cai para o pedido simples se o banco ainda não tiver a migração 0
 - `crm_clientes()` devolve cada cliente com segmento automático (novo, recorrente, VIP, em risco, inativo) a partir dos pedidos; os limites ficam em Configurações do banco: `crm_vip_pedidos` (5), `crm_risco_dias` (30), `crm_inativo_dias` (60). Gasto e ticket médio só aparecem para quem tem `financeiro.ver`.
 - Funil em Kanban na aba CRM (arrastar muda a etapa à mão; arrastar para a etapa automática volta ao automático), etiquetas, tarefas com data, anotações/contatos (`crm_registrar`) e mensagens prontas editáveis com {nome}, {pontos}, {garrafas}.
 - Permissões: ver = `clientes.ver`; editar = `clientes.editar`; editar mensagens prontas = `config.gerir`. O envio é sempre manual: o painel abre o WhatsApp e só registra que houve contato.
+
+## Impressão (migração 18 — já aplicada)
+- Dados da loja (nome, razão social, CNPJ, telefone, endereço, rodapé) ficam em Configurações > Dados da loja e são lidos por `dados_loja()` (só equipe).
+- Botão "Imprimir" no pedido (lista e Kanban): comanda de produção, cupom de entrega e recibo, em bobina térmica 80 mm ou A4. "Imprimir fila do dia" imprime todas as comandas ativas. O recibo traz "sem valor fiscal".

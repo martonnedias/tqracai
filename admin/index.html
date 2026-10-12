@@ -150,6 +150,27 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 .nm-ops{display:flex;flex-wrap:wrap;gap:8px}
 .nm-op{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-strong);border-radius:999px;padding:6px 12px;font-size:.84rem;cursor:pointer;background:var(--surface)}
 .nm-op.off{opacity:.45;cursor:not-allowed}.nm-op:has(input:checked){border-color:var(--brand);background:var(--brand-soft)}
+/* impressão */
+dialog#dlgImprimir{background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:14px;padding:22px;max-width:min(560px,94vw);width:100%;margin:auto;max-height:92vh;overflow:auto;box-shadow:0 24px 60px -20px rgba(30,15,50,.4)}
+dialog#dlgImprimir::backdrop{background:rgba(29,23,38,.5)}dialog#dlgImprimir h3{font-size:1.0625rem}
+.pr-preview{background:#e9e6ef;border-radius:var(--r-sm);padding:12px;max-height:48vh;overflow:auto;display:grid;gap:12px;justify-items:center}
+.doc{background:#fff;color:#000;font:13px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:10px 12px;width:100%}
+.fmt-80 .doc{max-width:302px}.fmt-a4 .doc{max-width:560px;font-size:15px}
+.doc-t{font-size:1.25em;font-weight:700;text-align:center}.doc-t2{font-weight:700;text-align:center}.doc-s{text-align:center;font-size:.85em}
+.doc-cod{font-size:2em;font-weight:800;text-align:center}.doc-l{display:flex;justify-content:space-between;gap:8px}
+.doc-sep{border:0;border-top:1px dashed #000;margin:6px 0}.doc-it{font-size:1.35em;font-weight:700;margin:3px 0}
+.doc-mt{font-weight:800;margin-top:6px;text-transform:uppercase}.doc-op{padding-left:10px;font-size:1.05em}
+.doc-obs{font-weight:700;border:2px solid #000;padding:4px 6px;margin-top:4px}.doc-cobr{font-size:1.8em;font-weight:800;text-align:center;margin:6px 0}
+.doc-total{font-size:1.2em;font-weight:800;margin-top:4px}
+#printArea{display:none}
+@media print{
+  body>*:not(#printArea){display:none!important}
+  #printArea{display:block!important}
+  body{background:#fff}
+  .doc{break-inside:avoid;page-break-after:always;padding:0;max-width:none;width:100%}
+  .doc:last-child{page-break-after:auto}
+  .fmt-a4 .doc{font-size:14px}
+}
 /* ajuda e início */
 .fl{display:inline-flex;align-items:center;gap:6px}
 .info{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;border:1px solid var(--line-strong);background:var(--surface);color:var(--brand);font:700 .7rem/1 var(--font);cursor:pointer;padding:0;vertical-align:middle;flex:none}
@@ -332,6 +353,7 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
         <select id="fPag" aria-label="Pagamento"><option value="">Pagamento: todos</option><option value="pix">Pix</option><option value="cartao">Cartão</option></select>
         <input type="search" id="fBusca" placeholder="Buscar nome, bairro ou código" aria-label="Buscar">
         <button class="btn sm" type="button" id="fCsv">Exportar CSV</button>
+        <button class="btn sm" type="button" id="fPrintFila">Imprimir fila do dia</button>
         <div class="seg" id="viewToggle" role="group" aria-label="Modo de exibição"><button class="btn sm on" type="button" data-v="lista">Lista</button><button class="btn sm" type="button" data-v="kanban">Kanban</button></div>
       </div>
       <div class="list" id="listPed"></div>
@@ -604,6 +626,15 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
           <label class="fld">Pontos para 1 garrafa grátis<input data-chave="pontos_por_brinde" type="number" min="1" required></label>
         </div>
         <label class="fld">Pontos do brinde de aniversário <small>(0 desliga; vale uma vez por ano, no mês do aniversário)</small><input data-chave="aniversario_pontos" type="number" min="0" required></label>
+        <b>Dados da loja (impressos e nota fiscal)</b>
+        <label class="fld">Nome da loja<input data-chave="loja_nome" type="text" maxlength="60"></label>
+        <label class="fld">Razão social<input data-chave="loja_razao" type="text" maxlength="100"></label>
+        <div class="row2">
+          <label class="fld">CNPJ<input data-chave="loja_cnpj" type="text" maxlength="20" placeholder="00.000.000/0000-00"></label>
+          <label class="fld">Telefone da loja<input data-chave="loja_telefone" type="text" maxlength="30"></label>
+        </div>
+        <label class="fld">Endereço da loja<input data-chave="loja_endereco" type="text" maxlength="160"></label>
+        <label class="fld">Mensagem do recibo<input data-chave="loja_rodape" type="text" maxlength="120"></label>
         <button class="btn go" type="submit" id="cfgGo">Salvar configurações</button>
       </form>
 
@@ -654,6 +685,15 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
   </div>
   </div>
 </div>
+<dialog id="dlgImprimir" aria-labelledby="prTitulo">
+  <h3 id="prTitulo">Imprimir</h3>
+  <div class="row2" style="margin:10px 0">
+    <label class="fld">Documento<select id="prDoc"><option value="comanda">Comanda de produção</option><option value="entrega">Cupom de entrega</option><option value="recibo">Recibo do pedido</option><option value="todos">Os três</option></select></label>
+    <label class="fld">Formato do papel<select id="prFmt"><option value="80">Térmica 80 mm</option><option value="a4">Folha A4</option></select></label>
+  </div>
+  <div class="pr-preview fmt-80" id="prPreview"></div>
+  <div class="da" style="margin-top:14px;display:flex;gap:10px;justify-content:flex-end"><button class="btn" type="button" id="prFechar">Fechar</button><button class="btn go" type="button" id="prGo">Imprimir</button></div>
+</dialog>
 <dialog id="dlgFicha"><div id="fichaBody"></div><div class="da" style="margin-top:14px"><button class="btn" type="button" id="fichaFechar">Fechar</button></div></dialog>
 <dialog id="dlg" aria-labelledby="dlgT">
   <h3 id="dlgT"></h3>
@@ -788,7 +828,7 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
   $('#fBusca').addEventListener('input',renderPedidos);
 
   function loadPedidos(){
-    sb.from('pedidos').select('id,codigo,status,total,forma_pagamento,endereco,bairro,observacao,origem,criado_em,atualizado_em,modalidade,subtotal,desconto,taxa_entrega,cupom,extras,montagens,clientes(nome,whatsapp),itens_pedido(quantidade,nome_produto,brinde)')
+    sb.from('pedidos').select('id,codigo,status,total,forma_pagamento,endereco,bairro,observacao,origem,criado_em,atualizado_em,modalidade,subtotal,desconto,taxa_entrega,cupom,extras,montagens,clientes(nome,whatsapp),itens_pedido(quantidade,nome_produto,brinde,preco_unitario,subtotal)')
       .order('criado_em',{ascending:false}).limit(300).then(function(r){
         if(r.error){toast('Não consegui carregar os pedidos.',true);return;}
         avisar(r.data||[]);pedidos=r.data||[];renderPedidos();
@@ -818,6 +858,7 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
     if(p.observacao)n.appendChild(el('span','muted','Obs.: '+p.observacao));
     var a=el('div','acts'),nx=NEXT[p.status];
     if(nx&&podeMover(p,nx)){var b=el('button','btn sm go','Avançar');b.type='button';b.setAttribute('aria-label','Avançar '+p.codigo+' para '+LABEL[nx]);b.addEventListener('click',function(){pedirMover(p,nx);});a.appendChild(b);}
+    var pk=el('button','btn sm','Imprimir');pk.type='button';pk.addEventListener('click',function(){abrirImpressao(p,'comanda');});a.appendChild(pk);
     if(c.whatsapp){var w=el('a','btn sm wa','WhatsApp');w.target='_blank';w.rel='noopener';w.href='https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent('Olá, '+first(c.nome)+'! Aqui é da TQR Açaí 💜 Sobre o seu pedido '+p.codigo+'.');a.appendChild(w);}
     if(a.childNodes.length)n.appendChild(a);
     if(KCOLS.indexOf(p.status)>=0&&KCOLS.some(function(s){return podeMover(p,s);})){
@@ -892,6 +933,7 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
     if(can('pedidos.cancelar')&&p.status!=='cancelado'&&p.status!=='entregue'){var x=el('button','btn sm danger','Cancelar');x.type='button';x.addEventListener('click',function(){confirmar('Cancelar o pedido?',[p.codigo+' · '+(c.nome||'Cliente'),LABEL[p.status]+'  →  '+LABEL.cancelado].concat(['pago','saiu_entrega','entregue'].indexOf(p.status)>=0?['Pedido já pago: o valor e os pontos serão estornados.']:[]),'Sim, cancelar',true).then(function(ok){if(ok)mudar(p,'cancelado',x);});});a.appendChild(x);}
     if(c.whatsapp){var w=el('a','btn sm wa','WhatsApp');w.target='_blank';w.rel='noopener';
       w.href='https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent('Olá, '+first(c.nome)+'! Aqui é da TQR Açaí 💜 Sobre o seu pedido '+p.codigo+'.');a.appendChild(w);}
+    var pb=el('button','btn sm','Imprimir');pb.type='button';pb.addEventListener('click',function(){abrirImpressao(p,'comanda');});a.appendChild(pb);
     var hb=el('button','btn sm','Histórico');hb.type='button';
     var hl=el('div','hist');hl.hidden=true;
     hb.addEventListener('click',function(){
@@ -2301,6 +2343,90 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
     });
   }
 
+  // ===== Impressão: comanda de produção, cupom de entrega e recibo =====
+  var LOJA=null,printSel=null,printDoc='comanda';
+  var DOC_ROT={comanda:'Comanda de produção',entrega:'Cupom de entrega',recibo:'Recibo do pedido'};
+  function carregaLoja(){return LOJA?Promise.resolve(LOJA):sb.rpc('dados_loja').then(function(r){LOJA=(r&&r.data)||{};return LOJA;});}
+  function fmtPrint(){var f='80';try{f=localStorage.getItem('tqr_print_fmt')||'80';}catch(e){}return f==='a4'?'a4':'80';}
+  function ehPago(p){return ['pago','saiu_entrega','entregue'].indexOf(p.status)>=0;}
+  function linhaDoc(tag,cls,txt){return el(tag,cls,txt);}
+  function docPedido(p,tipo,loja){
+    var c=p.clientes||{},d=el('section','doc doc-'+tipo),entrega=p.modalidade&&p.modalidade!=='retirada';
+    function h(t,cls){d.appendChild(el('div',cls||'doc-h',t));}
+    function l(a,b){var r=el('div','doc-l');r.appendChild(el('span',null,a));if(b!=null)r.appendChild(el('b',null,b));d.appendChild(r);}
+    function sep(){d.appendChild(el('hr','doc-sep'));}
+    var hr=new Date(p.criado_em).toLocaleString('pt-BR',{timeZone:TZ,day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    if(tipo==='recibo'){
+      h(loja.nome||'#TQR Açaí','doc-t');if(loja.razao)h(loja.razao,'doc-s');if(loja.cnpj)h('CNPJ '+loja.cnpj,'doc-s');if(loja.endereco)h(loja.endereco,'doc-s');if(loja.telefone)h(loja.telefone,'doc-s');
+      sep();h('RECIBO DO PEDIDO','doc-t2');h('Documento sem valor fiscal','doc-s');sep();
+      l('Pedido',p.codigo);l('Data',hr);l('Cliente',(c.nome||'—'));if(c.whatsapp)l('WhatsApp',fone(c.whatsapp));sep();
+      (p.itens_pedido||[]).forEach(function(i){
+        var r=el('div','doc-l');r.appendChild(el('span',null,i.quantidade+'× '+(i.nome_produto||'Item')+(i.brinde?' (brinde)':'')));r.appendChild(el('b',null,i.brinde?'grátis':brl(+i.subtotal)));d.appendChild(r);});
+      (p.montagens||[]).forEach(function(m){d.appendChild(el('div','doc-s','  '+m.quantidade+'× com '+(m.opcoes||[]).map(function(o){return o.nome;}).join(', ')));});
+      sep();
+      if(+p.subtotal>0||+p.desconto>0||+p.taxa_entrega>0||+p.extras>0){
+        l('Itens',brl(p.subtotal));if(+p.extras>0)l('Adicionais',brl(p.extras));if(+p.desconto>0)l('Desconto','− '+brl(p.desconto));if(+p.taxa_entrega>0)l('Entrega',brl(p.taxa_entrega));}
+      var t=el('div','doc-l doc-total');t.appendChild(el('span',null,'TOTAL'));t.appendChild(el('b',null,brl(p.total)));d.appendChild(t);
+      l('Pagamento',(NOME_PAG[p.forma_pagamento]||p.forma_pagamento||'a definir')+(ehPago(p)?' · pago':' · a pagar'));
+      sep();h(loja.rodape||'Obrigado pela preferência!','doc-s');
+      return d;
+    }
+    h(tipo==='comanda'?'COMANDA':'ENTREGA','doc-t');
+    h(p.codigo,'doc-cod');h((p.modalidade==='retirada'?'RETIRADA':entrega?'ENTREGA':'')+' · '+hr,'doc-s');sep();
+    if(tipo==='comanda'){
+      l('Cliente',(c.nome||'—'));sep();
+      (p.itens_pedido||[]).forEach(function(i){d.appendChild(el('div','doc-it',i.quantidade+'× '+(i.nome_produto||'Item')+(i.brinde?' (BRINDE)':'')));});
+      (p.montagens||[]).forEach(function(m){
+        d.appendChild(el('div','doc-mt','MONTAGEM: '+m.quantidade+'× '+m.nome_produto));
+        var por={};(m.opcoes||[]).forEach(function(o){(por[o.grupo]=por[o.grupo]||[]).push(o.nome);});
+        Object.keys(por).forEach(function(g){d.appendChild(el('div','doc-op',g+': '+por[g].join(', ')));});});
+      if(p.observacao){sep();d.appendChild(el('div','doc-obs','OBS.: '+p.observacao));}
+      sep();l('Pagamento',(NOME_PAG[p.forma_pagamento]||p.forma_pagamento||'a definir')+(ehPago(p)?' · PAGO':''));
+    }else{
+      l('Cliente',(c.nome||'—'));if(c.whatsapp)l('Telefone',fone(c.whatsapp));sep();
+      if(entrega){d.appendChild(el('div','doc-it',p.endereco||'Endereço não informado'));if(p.bairro)d.appendChild(el('div','doc-it',p.bairro));}
+      else d.appendChild(el('div','doc-it','Cliente retira na loja'));
+      if(p.observacao){sep();d.appendChild(el('div','doc-obs',p.observacao));}
+      sep();
+      d.appendChild(el('div','doc-cobr',ehPago(p)?'PAGO':'COBRAR '+brl(p.total)));
+      l('Forma',(NOME_PAG[p.forma_pagamento]||p.forma_pagamento||'a definir'));
+      var its=(p.itens_pedido||[]).reduce(function(a,i){return a+i.quantidade;},0);l('Garrafas',String(its));
+    }
+    return d;
+  }
+  function montaImpressao(lista,tipos,loja,alvo){
+    alvo.textContent='';
+    lista.forEach(function(p){tipos.forEach(function(t){alvo.appendChild(docPedido(p,t,loja));});});
+  }
+  function abrirImpressao(lista,doc){
+    lista=[].concat(lista);if(!lista.length){toast('Nenhum pedido para imprimir.',true);return;}
+    printSel=lista;printDoc=doc||'comanda';
+    carregaLoja().then(function(){
+      $('#prTitulo').textContent=lista.length===1?'Imprimir pedido '+lista[0].codigo:'Imprimir '+lista.length+' pedidos';
+      $('#prDoc').value=printDoc;$('#prFmt').value=fmtPrint();atualizaPrint();
+      var d=$('#dlgImprimir');if(d.showModal)d.showModal();else d.setAttribute('open','');
+    });
+  }
+  function tiposDoc(v){return v==='todos'?['comanda','entrega','recibo']:[v];}
+  function atualizaPrint(){
+    var f=$('#prFmt').value;printDoc=$('#prDoc').value;
+    var pv=$('#prPreview');pv.className='pr-preview fmt-'+f;montaImpressao(printSel||[],tiposDoc(printDoc),LOJA||{},pv);
+  }
+  $('#prDoc').addEventListener('change',atualizaPrint);
+  $('#prFmt').addEventListener('change',function(){try{localStorage.setItem('tqr_print_fmt',$('#prFmt').value);}catch(e){}atualizaPrint();});
+  $('#prFechar').addEventListener('click',function(){var d=$('#dlgImprimir');if(d.close)d.close();else d.removeAttribute('open');});
+  $('#prGo').addEventListener('click',function(){
+    var f=$('#prFmt').value,area=document.getElementById('printArea');
+    if(!area){area=el('div');area.id='printArea';document.body.appendChild(area);}
+    area.className='fmt-'+f;montaImpressao(printSel||[],tiposDoc($('#prDoc').value),LOJA||{},area);
+    var st=document.getElementById('pageStyle');if(!st){st=document.createElement('style');st.id='pageStyle';document.head.appendChild(st);}
+    st.textContent=f==='a4'?'@page{size:A4;margin:12mm}':'@page{size:80mm auto;margin:2mm}';
+    setTimeout(function(){window.print();},50);
+  });
+  $('#fPrintFila').addEventListener('click',function(){
+    var fila=pedidos.filter(function(p){return p.status==='confirmado'||p.status==='pago';}).sort(function(a,b){return new Date(a.criado_em)-new Date(b.criado_em);});
+    if(!fila.length){toast('Nenhum pedido confirmado ou pago na fila.');return;}abrirImpressao(fila,'comanda');
+  });
   observaAjuda();
   sb.auth.onAuthStateChange(function(ev){if(ev==='SIGNED_OUT')show('viewLogin');});
   start();

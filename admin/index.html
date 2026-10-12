@@ -150,6 +150,29 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 .nm-ops{display:flex;flex-wrap:wrap;gap:8px}
 .nm-op{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-strong);border-radius:999px;padding:6px 12px;font-size:.84rem;cursor:pointer;background:var(--surface)}
 .nm-op.off{opacity:.45;cursor:not-allowed}.nm-op:has(input:checked){border-color:var(--brand);background:var(--brand-soft)}
+/* ajuda e início */
+.fl{display:inline-flex;align-items:center;gap:6px}
+.info{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;border:1px solid var(--line-strong);background:var(--surface);color:var(--brand);font:700 .7rem/1 var(--font);cursor:pointer;padding:0;vertical-align:middle;flex:none}
+.info:hover,.info[aria-expanded=true]{background:var(--brand);color:#fff;border-color:var(--brand)}
+.chk .info{margin-left:2px}
+.info-pop{position:fixed;z-index:60;background:var(--text);color:#fff;font-size:.8125rem;line-height:1.45;padding:10px 12px;border-radius:var(--r-sm);box-shadow:0 12px 30px -10px rgba(0,0,0,.45)}
+.helpbtn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;margin-left:10px;border-radius:50%;border:1px solid var(--line-strong);background:var(--surface);color:var(--brand);font:700 .8rem/1 var(--font);cursor:pointer;vertical-align:middle}
+.helpbtn:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+.aj{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);margin-bottom:10px}
+.aj summary{padding:14px 16px;cursor:pointer;list-style:none}.aj summary::-webkit-details-marker{display:none}
+.aj summary::before{content:"›";display:inline-block;margin-right:10px;color:var(--brand);transition:transform .15s}
+.aj[open] summary::before{transform:rotate(90deg)}
+.aj-c{padding:0 18px 16px 34px;display:grid;gap:4px;font-size:.9rem}
+.aj-c h4,.sub{font-size:.9rem;margin:12px 0 4px}.aj-c ol,.aj-c ul{padding-left:20px;display:grid;gap:4px}
+.aj-q{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 12px}.aj-q p{color:var(--muted);font-size:.875rem;margin-top:2px}
+.inicio-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px;align-items:start}
+@media(max-width:959px){.inicio-grid{grid-template-columns:1fr}}
+.alertas{display:grid;gap:8px;margin-bottom:12px}
+.alerta{display:block;width:100%;text-align:left;padding:12px 14px;border-radius:var(--r);border:1px solid var(--line);background:var(--surface);font-size:.9rem;cursor:pointer}
+.alerta.atencao{background:var(--warn-soft);border-color:#ecd49a;color:var(--warn)}.alerta.ruim{background:var(--bad-soft);border-color:#e6b9bc;color:var(--bad)}
+.primeiro{background:var(--brand-soft);border:1px solid var(--brand-line);border-radius:var(--r);padding:16px;display:grid;gap:10px}
+.passo{display:block;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:9px 12px;font-size:.875rem;cursor:pointer}
+.passo.ok{color:var(--muted);text-decoration:line-through}
 /* kanban de pedidos */
 .seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:var(--r-sm);overflow:hidden;background:var(--surface)}
 .seg .btn{border:0;border-radius:0;min-height:36px}
@@ -252,6 +275,7 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 
   <div class="shell">
   <aside class="side"><nav id="tabs" aria-label="Seções do painel">
+      <button class="btn" data-tab="inicio" data-perm="" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span>Início</span></button>
       <button class="btn" data-tab="pedidos" data-perm="pedidos.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg><span>Pedidos</span></button>
       <button class="btn" data-tab="novo" data-perm="pedidos.criar" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg><span>Novo pedido</span></button>
       <button class="btn" data-tab="clientes" data-perm="clientes.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.4c2 .7 3.5 2.6 3.5 5.6"/></svg><span>Clientes</span></button>
@@ -264,6 +288,7 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
       <button class="btn" data-tab="promocoes" data-perm="promocoes.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8L3 12Z"/><circle cx="7.5" cy="8.5" r="1.2"/></svg><span>Promoções</span></button>
       <button class="btn" data-tab="config" data-perm="config.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Configurações</span></button>
       <button class="btn" data-tab="usuarios" data-perm="*" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.2 7.8 8 9 4.8-1.2 8-4.5 8-9V6l-8-3Z"/><circle cx="12" cy="10" r="2.5"/><path d="M7.5 16.5c.8-2 2.5-3 4.5-3s3.7 1 4.5 3"/></svg><span>Usuários</span></button>
+      <button class="btn" data-tab="ajuda" data-perm="" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><path d="M12 17h.01"/></svg><span>Ajuda</span></button>
     </nav></aside>
   <div class="content">
 
@@ -276,6 +301,28 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
   </section>
 
   <main class="wrap">
+    <section id="tab-inicio" hidden>
+      <h2 id="inicioSaudacao">Início</h2>
+      <div class="cards" id="inicioCards"></div>
+      <div class="inicio-grid">
+        <div>
+          <h3 class="sub">Precisa de atenção</h3>
+          <div class="alertas" id="inicioAlertas"></div>
+          <h3 class="sub">Atalhos</h3>
+          <div class="acts" id="inicioAtalhos"></div>
+        </div>
+        <div class="primeiro" id="inicioPrimeiro" hidden></div>
+      </div>
+    </section>
+
+    <section id="tab-ajuda" hidden>
+      <h2>Ajuda</h2>
+      <p class="muted">Guia de cada tela, passo a passo e dúvidas comuns. Nos formulários, toque no ícone <b>i</b> ao lado do campo para ver o que ele significa.</p>
+      <div class="filters"><input type="search" id="ajudaBusca" placeholder="Buscar na ajuda (ex.: cancelar pedido, margem)" aria-label="Buscar na ajuda"></div>
+      <div id="ajudaMods"></div>
+      <div id="ajudaGlosBox"><h2>Glossário</h2><div class="list" id="ajudaGlos"></div></div>
+    </section>
+
     <section id="tab-pedidos" hidden>
       <div class="banner" id="mfaBanner" hidden><span>Ative a verificação em duas etapas para proteger o painel.</span><button class="btn sm go" type="button" id="mfaGo">Ativar agora</button></div>
       <div class="cards" id="stats"></div>
@@ -615,6 +662,7 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 </dialog>
 <div id="toast" role="status" hidden></div>
 
+<script src="ajuda.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
 <script>
 (function(){
@@ -625,7 +673,7 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
   var NEXT={pendente:'confirmado',confirmado:'pago',pago:'saiu_entrega',saiu_entrega:'entregue'};
   var ABERTOS=['pendente','confirmado','pago','saiu_entrega'];
   var MOD_ROT={retirada:'Retirada',entrega_bairro:'Entrega (taxa do bairro)',entrega_app:'Entrega por aplicativo'},NOME_PAG={pix:'Pix',cartao:'Cartão'},catalogo={produtos:[],bairros:[],formas:[]};
-  var perms=[],pedidos=[],visiveis=[],clientes=[],soInativos=false,timer,vistos=null;
+  var nomeUsuario='',perms=[],pedidos=[],visiveis=[],clientes=[],soInativos=false,timer,vistos=null;
 
   function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;}
   function brl(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
@@ -674,8 +722,8 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
       var m=r.data;
       if(r.error||!m){show('viewDenied');return;}
       perms=m.permissoes||[];
-      $('#userTag').textContent=(m.nome||'')+(m.perfil?' · '+m.perfil:'');
-      document.querySelectorAll('#tabs button').forEach(function(b){b.hidden=!can(b.dataset.perm);});
+      nomeUsuario=m.nome||'';$('#userTag').textContent=(m.nome||'')+(m.perfil?' · '+m.perfil:'');
+      document.querySelectorAll('#tabs button').forEach(function(b){b.hidden=b.dataset.perm?!can(b.dataset.perm):false;});
       show('app');clearInterval(timer);
       var primeira=document.querySelector('#tabs button:not([hidden])');
       if(primeira)abrirAba(primeira.dataset.tab);
@@ -695,6 +743,8 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
     if(t==='produtos')loadProdutos();
     if(t==='financeiro')initFinanceiro();
     if(t==='promocoes')loadPromocoes();
+    if(t==='inicio')renderInicio();
+    if(t==='ajuda'){renderAjuda();}
     if(t==='montagem')loadMontagem();
     if(t==='custos')loadCustos();
     if(t==='estoque')loadEstoque();
@@ -2136,6 +2186,122 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
   $('#crmBusca').addEventListener('input',renderCrm);$('#crmTag').addEventListener('change',renderCrm);
   $('#crmFiltros').addEventListener('click',function(e){var b=e.target.closest('button[data-f]');if(!b)return;crmFiltro=b.dataset.f;renderCrm();});
 
+  // ===== Ajuda: dicas nos campos ("i") e aba Ajuda =====
+  var AJ=window.TQR_AJUDA||{modulos:[],campos:{},glossario:[]};
+  var CHAVES=Object.keys(AJ.campos).sort(function(a,b){return b.length-a.length;});
+  function normRot(t){return String(t||'').replace(/\s+/g,' ').replace(/[*:]+$/,'').trim();}
+  function dicaPara(rot){var r=normRot(rot);if(!r)return null;if(AJ.campos[r])return AJ.campos[r];for(var i=0;i<CHAVES.length;i++){if(r.indexOf(CHAVES[i])===0)return AJ.campos[CHAVES[i]];}return null;}
+  var popInfo=null,popBtn=null;
+  function fechaInfo(){if(popInfo)popInfo.hidden=true;if(popBtn){popBtn.setAttribute('aria-expanded','false');popBtn=null;}}
+  function abreInfo(btn,txt){
+    if(!popInfo){popInfo=el('div','info-pop');popInfo.id='infoPop';popInfo.setAttribute('role','tooltip');document.body.appendChild(popInfo);}
+    if(popBtn===btn&&!popInfo.hidden){fechaInfo();return;}
+    fechaInfo();popInfo.textContent=txt;popInfo.hidden=false;btn.setAttribute('aria-expanded','true');popBtn=btn;
+    var r=btn.getBoundingClientRect(),w=Math.min(300,window.innerWidth-24);popInfo.style.width=w+'px';
+    var x=Math.max(12,Math.min(r.left,window.innerWidth-w-12)),y=r.bottom+8;
+    if(y+popInfo.offsetHeight>window.innerHeight-12)y=Math.max(12,r.top-popInfo.offsetHeight-8);
+    popInfo.style.left=x+'px';popInfo.style.top=y+'px';
+  }
+  function criaBotaoInfo(txt,rot){
+    var b=el('button','info','i');b.type='button';b.setAttribute('aria-label','O que é: '+rot);b.setAttribute('aria-expanded','false');
+    b.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();abreInfo(b,txt);});return b;
+  }
+  function addInfo(root){
+    root.querySelectorAll('label.fld:not([data-info]),div.fld:not([data-info]),label.chk:not([data-info])').forEach(function(f){
+      f.setAttribute('data-info','1');
+      var rot='',alvo=null;
+      if(f.classList.contains('chk')){var sp=f.querySelector('span');if(!sp)return;rot=sp.textContent;alvo=sp;}
+      else{for(var i=0;i<f.childNodes.length;i++){var n=f.childNodes[i];if(n.nodeType===3&&n.textContent.trim()){alvo=n;rot=n.textContent;break;}}}
+      var tx=dicaPara(rot);if(!tx||!alvo)return;
+      if(f.classList.contains('chk')){f.appendChild(criaBotaoInfo(tx,normRot(rot)));return;}
+      var w=el('span','fl');alvo.parentNode.insertBefore(w,alvo);w.appendChild(alvo);w.appendChild(criaBotaoInfo(tx,normRot(rot)));
+    });
+  }
+  document.addEventListener('click',function(e){if(popInfo&&!popInfo.hidden&&!e.target.closest('.info')&&!e.target.closest('.info-pop'))fechaInfo();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')fechaInfo();});
+  window.addEventListener('scroll',fechaInfo,true);window.addEventListener('resize',fechaInfo);
+  var obsTmr=null;
+  function observaAjuda(){
+    var m=document.querySelector('main');if(!m||!window.MutationObserver)return;
+    new MutationObserver(function(){clearTimeout(obsTmr);obsTmr=setTimeout(function(){addInfo(m);addAtalhoAjuda(m);},60);}).observe(m,{childList:true,subtree:true});
+    addInfo(m);addAtalhoAjuda(m);
+  }
+  function addAtalhoAjuda(m){
+    m.querySelectorAll('section[id^=tab-]').forEach(function(sec){
+      var id=sec.id.replace('tab-','');if(id==='ajuda'||id==='inicio')return;
+      var h=sec.querySelector('h2');if(!h||h.querySelector('.helpbtn'))return;
+      if(!AJ.modulos.some(function(x){return x.id===id;}))return;
+      var b=el('button','helpbtn','?');b.type='button';b.setAttribute('aria-label','Ajuda desta tela');b.title='Ajuda desta tela';
+      b.addEventListener('click',function(){abrirAba('ajuda');abreModuloAjuda(id);});h.appendChild(b);
+    });
+  }
+  function moduloVisivel(m){return !m.perm||can(m.perm);}
+  function textoModulo(m){return [m.titulo,m.resumo].concat(m.passos||[],m.dicas||[],(m.faq||[]).map(function(q){return q[0]+' '+q[1];})).join(' ').toLowerCase();}
+  function renderAjuda(){
+    var box=$('#ajudaMods'),q=($('#ajudaBusca').value||'').trim().toLowerCase();box.textContent='';var n=0;
+    AJ.modulos.filter(moduloVisivel).forEach(function(m){
+      if(q&&textoModulo(m).indexOf(q)<0)return;n++;
+      var d=document.createElement('details');d.id='aj-'+m.id;d.className='aj';if(q)d.open=true;
+      var s=document.createElement('summary');s.appendChild(el('b',null,m.titulo));s.appendChild(el('span','muted',' — '+m.resumo));d.appendChild(s);
+      var c=el('div','aj-c');
+      if((m.passos||[]).length){c.appendChild(el('h4',null,'Passo a passo'));var ol=document.createElement('ol');m.passos.forEach(function(p){ol.appendChild(el('li',null,p));});c.appendChild(ol);}
+      if((m.dicas||[]).length){c.appendChild(el('h4',null,'Dicas e cuidados'));var ul=document.createElement('ul');m.dicas.forEach(function(p){ul.appendChild(el('li',null,p));});c.appendChild(ul);}
+      if((m.faq||[]).length){c.appendChild(el('h4',null,'Perguntas frequentes'));m.faq.forEach(function(p){var f=el('div','aj-q');f.appendChild(el('b',null,p[0]));f.appendChild(el('p',null,p[1]));c.appendChild(f);});}
+      d.appendChild(c);box.appendChild(d);
+    });
+    if(!n)box.appendChild(el('p','empty','Nada encontrado para "'+q+'". Tente outra palavra.'));
+    var g=$('#ajudaGlos');g.textContent='';
+    AJ.glossario.filter(function(t){return !q||(t[0]+' '+t[1]).toLowerCase().indexOf(q)>=0;}).forEach(function(t){var r=el('div','aj-q');r.appendChild(el('b',null,t[0]));r.appendChild(el('p',null,t[1]));g.appendChild(r);});
+    $('#ajudaGlosBox').hidden=!g.childNodes.length;
+  }
+  function abreModuloAjuda(id){
+    $('#ajudaBusca').value='';renderAjuda();
+    var d=document.getElementById('aj-'+id);if(d){d.open=true;setTimeout(function(){d.scrollIntoView({behavior:'smooth',block:'start'});},50);}
+  }
+  $('#ajudaBusca').addEventListener('input',renderAjuda);
+
+  // ===== Início: visão do dia, alertas e atalhos =====
+  var ATALHOS=[['pedidos','Pedidos','pedidos.ver'],['novo','Novo pedido','pedidos.criar'],['crm','CRM','clientes.ver'],['financeiro','Financeiro','financeiro.ver'],['estoque','Estoque','estoque.ver'],['custos','Custos','custos.ver'],['promocoes','Promoções','promocoes.gerir'],['config','Configurações','config.gerir']];
+  function renderInicio(){
+    var hr=+new Intl.DateTimeFormat('en-GB',{timeZone:TZ,hour:'2-digit',hourCycle:'h23'}).format(new Date());
+    $('#inicioSaudacao').textContent=(hr<12?'Bom dia':hr<18?'Boa tarde':'Boa noite')+(nomeUsuario?', '+first(nomeUsuario):'')+'.';
+    var cards=$('#inicioCards');cards.textContent='';
+    if(can('pedidos.ver')){
+      sb.from('v_resumo_dia').select('*').eq('dia',dia(new Date().toISOString())).maybeSingle().then(function(r){
+        var d=r.data||{pedidos:0,garrafas:0,faturamento:0,a_receber:0};cards.textContent='';
+        [['Pedidos hoje',d.pedidos],['Garrafas hoje',d.garrafas],['Faturamento (pago)',d.faturamento==null?null:brl(d.faturamento)],['A receber',d.a_receber==null?null:brl(d.a_receber)]].forEach(function(x){
+          if(x[1]==null)return;var s=el('div','stat');s.appendChild(el('small',null,x[0]));s.appendChild(el('b',null,String(x[1])));cards.appendChild(s);});
+      });
+    }
+    var al=$('#inicioAlertas');al.textContent='';
+    function alerta(txt,tab,tipo){var b=el('button','alerta '+(tipo||''),txt);b.type='button';b.addEventListener('click',function(){abrirAba(tab);});al.appendChild(b);}
+    if(can('pedidos.ver')){
+      var parados=pedidos.filter(function(p){return (p.status==='pendente'&&idadeMin(p.atualizado_em||p.criado_em)>10)||(p.status==='confirmado'&&idadeMin(p.atualizado_em||p.criado_em)>60);}).length;
+      var novos=pedidos.filter(function(p){return p.status==='pendente';}).length;
+      if(parados)alerta(parados+' pedido(s) parado(s) há muito tempo','pedidos','ruim');else if(novos)alerta(novos+' pedido(s) pendente(s) para confirmar','pedidos','atencao');
+    }
+    if(can('estoque.ver'))sb.from('insumos').select('nome,estoque_atual,estoque_minimo,ativo').eq('ativo',true).then(function(r){
+      var b=(r.data||[]).filter(function(i){return +i.estoque_minimo>0&&+i.estoque_atual<=+i.estoque_minimo;});if(b.length)alerta(b.length+' insumo(s) para repor: '+b.slice(0,3).map(function(i){return i.nome;}).join(', ')+(b.length>3?'…':''),'estoque','atencao');});
+    if(can('clientes.ver'))sb.from('tarefas_crm').select('id,vence_em').eq('feita',false).lte('vence_em',dia(new Date().toISOString())).then(function(r){var n=(r.data||[]).length;if(n)alerta(n+' tarefa(s) de CRM para hoje','crm','atencao');});
+    if(can('financeiro.ver'))sb.from('lancamentos').select('id,vencimento,pago').eq('pago',false).not('vencimento','is',null).lte('vencimento',dia(new Date(Date.now()+3*864e5).toISOString())).then(function(r){var n=(r.data||[]).length;if(n)alerta(n+' conta(s) a pagar ou receber vencendo em até 3 dias','financeiro','atencao');});
+    var at=$('#inicioAtalhos');at.textContent='';
+    ATALHOS.forEach(function(a){if(!can(a[2]))return;var b=el('button','btn',a[1]);b.type='button';b.addEventListener('click',function(){abrirAba(a[0]);});at.appendChild(b);});
+    renderPrimeiroUso();
+  }
+  function renderPrimeiroUso(){
+    var box=$('#inicioPrimeiro');box.hidden=true;if(!can('*'))return;
+    Promise.all([sb.from('produtos').select('id',{count:'exact',head:true}),sb.from('bairros_entrega').select('id',{count:'exact',head:true}),sb.from('insumos').select('id',{count:'exact',head:true}),
+      sb.from('produto_receitas').select('id',{count:'exact',head:true}).eq('ativo',true),sb.from('configuracoes').select('valor').eq('chave','whatsapp_pedidos').maybeSingle()]).then(function(rs){
+      var n=function(i){return (rs[i]&&rs[i].count)||0;},wa=rs[4]&&rs[4].data&&rs[4].data.valor;
+      var itens=[['Cadastrar os produtos e preços',n(0)>0,'produtos'],['Cadastrar os bairros de entrega e as taxas',n(1)>0,'config'],['Cadastrar os insumos e registrar as compras',n(2)>0,'custos'],['Montar a ficha técnica dos produtos',n(3)>0,'custos'],
+        ['Trocar o WhatsApp de teste pelo número real da loja',!!wa&&wa!=='5586994144709','config'],['Ativar a verificação em duas etapas',!$('#mfaBanner').hidden?false:true,'pedidos'],['Fazer um pedido de teste e conferir tudo',pedidos.length>0,'novo']];
+      var feitos=itens.filter(function(x){return x[1];}).length;if(feitos===itens.length)return;
+      box.textContent='';box.hidden=false;box.appendChild(el('b',null,'Primeiros passos ('+feitos+' de '+itens.length+')'));
+      var ul=el('div','perms');itens.forEach(function(x){var b=el('button','passo'+(x[1]?' ok':''),(x[1]?'Feito: ':'')+x[0]);b.type='button';b.addEventListener('click',function(){abrirAba(x[2]);});ul.appendChild(b);});box.appendChild(ul);
+    });
+  }
+
+  observaAjuda();
   sb.auth.onAuthStateChange(function(ev){if(ev==='SIGNED_OUT')show('viewLogin');});
   start();
 })();

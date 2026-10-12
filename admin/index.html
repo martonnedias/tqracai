@@ -40,6 +40,7 @@ header.top{position:sticky;top:0;z-index:30;background:var(--surface);border-bot
 /* estrutura */
 .shell{display:grid;grid-template-columns:var(--side) minmax(0,1fr);align-items:start}
 .side{position:sticky;top:var(--top);height:calc(100vh - var(--top));overflow-y:auto;background:var(--surface);border-right:1px solid var(--line);padding:16px 12px}
+.nbadge{margin-left:auto;min-width:20px;padding:1px 7px;border-radius:999px;background:var(--bad);color:#fff;font-size:.72rem;font-weight:700;text-align:center}.nbadge[hidden]{display:none}
 .nav-g{display:block;margin:14px 12px 4px;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .nav-g:first-child{margin-top:0}
 nav#tabs{display:grid;gap:2px}
@@ -374,7 +375,7 @@ dialog#dlgImprimir::backdrop{background:rgba(29,23,38,.5)}dialog#dlgImprimir h3{
         <select id="fStatus" aria-label="Status"></select>
         <input type="date" id="fDia" aria-label="Dia">
         <select id="fPag" aria-label="Pagamento"><option value="">Pagamento: todos</option><option value="pix">Pix</option><option value="cartao">Cartão</option></select>
-        <input type="search" id="fBusca" placeholder="Buscar nome, bairro ou código" aria-label="Buscar">
+        <input type="search" id="fBusca" placeholder="Buscar pedido" aria-label="Buscar">
         <button class="btn sm" type="button" id="fCsv">Exportar CSV</button>
         <button class="btn sm" type="button" id="fPrintFila">Imprimir fila do dia</button>
         <div class="seg" id="viewToggle" role="group" aria-label="Modo de exibição"><button class="btn sm on" type="button" data-v="lista">Lista</button><button class="btn sm" type="button" data-v="kanban">Kanban</button></div>
@@ -912,11 +913,12 @@ dialog#dlgImprimir::backdrop{background:rgba(29,23,38,.5)}dialog#dlgImprimir h3{
   ['fStatus','fDia','fPag'].forEach(function(i){$('#'+i).addEventListener('change',renderPedidos);});
   $('#fBusca').addEventListener('input',renderPedidos);
 
+  function badgePedidos(){var b=document.querySelector('#tabs button[data-tab=pedidos]');if(!b)return;var n=pedidos.filter(function(p){return p.status==='pendente';}).length,bd=b.querySelector('.nbadge');if(!bd){bd=document.createElement('b');bd.className='nbadge';b.appendChild(bd);}bd.textContent=n>99?'99+':String(n);bd.hidden=!n;bd.setAttribute('aria-label',n+' pedidos pendentes');}
   function loadPedidos(){
     sb.from('pedidos').select('id,codigo,status,total,forma_pagamento,endereco,bairro,observacao,origem,criado_em,atualizado_em,modalidade,subtotal,desconto,taxa_entrega,cupom,extras,montagens,clientes(nome,whatsapp),itens_pedido(quantidade,nome_produto,brinde,preco_unitario,subtotal)')
       .order('criado_em',{ascending:false}).limit(300).then(function(r){
         if(r.error){toast('Não consegui carregar os pedidos.',true);return;}
-        avisar(r.data||[]);pedidos=r.data||[];renderPedidos();
+        avisar(r.data||[]);pedidos=r.data||[];renderPedidos();badgePedidos();
       });
   }
   // ===== Kanban de pedidos =====
@@ -2191,6 +2193,7 @@ dialog#dlgImprimir::backdrop{background:rgba(29,23,38,.5)}dialog#dlgImprimir h3{
   function sv(tag,at,txt){var n=document.createElementNS(SVGNS,tag);Object.keys(at||{}).forEach(function(k){n.setAttribute(k,at[k]);});if(txt!=null)n.textContent=txt;return n;}
   function curto(v){v=+v||0;return v>=1000?(v/1000).toFixed(v>=10000?0:1).replace('.',',')+' mil':String(Math.round(v));}
   function barras(dados,cor,fmt){   // dados: [{l,v}]
+    if(!dados.some(function(d){return d.v>0;}))return el('p','empty','Sem vendas neste período.');
     var W=640,H=200,pl=34,pb=24,pt=10,n=dados.length||1,mx=Math.max.apply(null,dados.map(function(d){return d.v;}).concat([1])),bw=(W-pl)/n;
     var g=sv('svg',{viewBox:'0 0 '+W+' '+H,class:'chart',role:'img','aria-label':'Gráfico de barras'});
     [0,.5,1].forEach(function(f){var y=pt+(H-pt-pb)*(1-f);g.appendChild(sv('line',{x1:pl,x2:W,y1:y,y2:y,stroke:'var(--line)'}));g.appendChild(sv('text',{x:pl-4,y:y+3,'text-anchor':'end'},curto(mx*f)));});
@@ -2682,6 +2685,7 @@ dialog#dlgImprimir::backdrop{background:rgba(29,23,38,.5)}dialog#dlgImprimir h3{
     Promise.all([sb.from('produtos').select('id',{count:'exact',head:true}),sb.from('bairros_entrega').select('id',{count:'exact',head:true}),sb.from('insumos').select('id',{count:'exact',head:true}),
       sb.from('produto_receitas').select('id',{count:'exact',head:true}).eq('ativo',true),sb.from('configuracoes').select('valor').eq('chave','whatsapp_pedidos').maybeSingle()]).then(function(rs){
       var n=function(i){return (rs[i]&&rs[i].count)||0;},wa=rs[4]&&rs[4].data&&rs[4].data.valor;
+      if(wa==='5586994144709'){var al0=$('#inicioAlertas'),bw=document.createElement('button');bw.type='button';bw.className='alerta ruim';bw.textContent='O WhatsApp dos pedidos ainda é o número de teste. Troque pelo número real antes de divulgar o site.';bw.addEventListener('click',function(){abrirAba('config');});al0.insertBefore(bw,al0.firstChild);}
       var itens=[['Cadastrar os produtos e preços',n(0)>0,'produtos'],['Cadastrar os bairros de entrega e as taxas',n(1)>0,'config'],['Cadastrar os insumos e registrar as compras',n(2)>0,'custos'],['Montar a ficha técnica dos produtos',n(3)>0,'custos'],
         ['Trocar o WhatsApp de teste pelo número real da loja',!!wa&&wa!=='5586994144709','config'],['Ativar a verificação em duas etapas',!$('#mfaBanner').hidden?false:true,'pedidos'],['Fazer um pedido de teste e conferir tudo',pedidos.length>0,'novo']];
       var feitos=itens.filter(function(x){return x[1];}).length;if(feitos===itens.length)return;

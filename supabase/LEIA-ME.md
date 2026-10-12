@@ -32,3 +32,9 @@ o site novo cai para o pedido simples se o banco ainda não tiver a migração 0
 
 - `supabase/opcional/exigir_mfa_no_painel.sql`: só quando todos os usuários do painel tiverem ativado a verificação em duas etapas.
 - `supabase/opcional/fechar_criar_pedido_anonimo.sql`: só depois de publicar e testar a função `criar-pedido` com o Turnstile.
+
+## Dados fictícios de demonstração (migrações 09 e 10 — já aplicadas)
+- Produtos de exemplo (granola, zero, 500 ml, cupuaçu), 8 bairros com taxas, forma "Dinheiro" e taxa de 3,99% no cartão, cupons `BEMVINDO10` e `SEXTOU5`, frete grátis ≥ R$ 80, brinde ≥ R$ 150, "Leve 4 pague 3" (desligada).
+- 6 clientes `(exemplo)` com WhatsApp `55869990000xx` e observação `[EXEMPLO]`, 5 endereços, 16 pedidos em vários status (gerando caixa e pontos), despesas de 3 meses e 2 contas a pagar.
+- O contador do site foi neutralizado em `contador_ajuste` (-43) para as vendas de exemplo não alterarem o número público.
+- Catálogo (produtos, bairros, formas, promoções): edite/exclua pelo painel. Pedidos, clientes e lançamentos de exemplo: rode `supabase/opcional/remover_dados_ficticios.sql` no SQL Editor (também zera `contador_ajuste`).

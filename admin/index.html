@@ -7,69 +7,155 @@
 <title>Painel TQR Açaí</title>
 <link rel="icon" href="../img/rotulo.webp">
 <style>
-:root{--bg:#16051f;--bg2:#1f0a2c;--card:#2b1040;--gold:#e8be62;--gold-light:#fbe2a0;--text:#f6eefa;--muted:#cdb9d8;--wa:#0f7a40;--red:#e0262b;--line:rgba(232,190,98,.18)}
+:root{
+  color-scheme:light;
+  --bg:#f5f4f8;--surface:#fff;--surface-2:#faf9fc;--line:#e7e4ee;--line-strong:#d3cedd;
+  --text:#1d1726;--muted:#655d72;
+  --brand:#59298a;--brand-hover:#491f73;--brand-soft:#f0e9f8;--brand-line:#d9c8ec;
+  --ok:#14703f;--ok-soft:#e4f4eb;--warn:#7d5200;--warn-soft:#fcf0d4;--info:#1b57a6;--info-soft:#e3edfa;
+  --bad:#b0222a;--bad-soft:#fbe6e7;--wa:#12823f;
+  --r:10px;--r-sm:8px;--top:56px;--side:232px;
+  --font:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
 *{box-sizing:border-box;margin:0}
-body{font:400 1rem/1.5 Poppins,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+html{-webkit-text-size-adjust:100%}
+body{font:400 .9375rem/1.5 var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
 [hidden]{display:none!important}
 button,input,select,textarea{font:inherit;color:inherit}
-a{color:var(--gold-light)}
-:focus-visible{outline:2px solid var(--gold-light);outline-offset:2px}
-.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
-header{position:sticky;top:0;z-index:5;background:rgba(22,5,31,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-.bar{display:flex;align-items:center;gap:12px;padding:10px 0}
-.bar img{width:40px;height:40px;border-radius:50%}
-.bar b{font-size:1.05rem}.bar .sp{flex:1}
-nav{display:flex;gap:6px;overflow-x:auto;padding:0 0 10px}
-nav button{white-space:nowrap}
-.btn{min-height:44px;padding:10px 16px;border-radius:999px;border:1.5px solid var(--gold);background:transparent;color:var(--gold-light);font-weight:600;cursor:pointer}
-.btn:hover{background:rgba(232,190,98,.1)}
-.btn.on{background:var(--gold);color:#2a0838}
-.btn.go{background:var(--gold);color:#2a0838;border-color:var(--gold)}
-.btn.wa{background:var(--wa);border-color:var(--wa);color:#fff;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
-.btn.danger{border-color:#ff6b6b;color:#ff9b9b}
-.btn.sm{min-height:44px;padding:8px 14px;font-size:.9rem}
-main{padding:18px 0 80px}
-h2{font-size:1.2rem;margin:4px 0 12px}
-.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
-@media(min-width:760px){.cards{grid-template-columns:repeat(4,1fr)}}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
-.stat small{color:var(--muted);display:block;font-size:.8rem}
-.stat b{font-size:1.4rem;color:var(--gold-light)}
-.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center}
-.filters input,.filters select,.fld input,.fld select,.fld textarea{background:#1a0724;border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:11px 12px;min-height:44px}
-.filters input[type=search]{flex:1;min-width:150px}
+a{color:var(--brand);text-underline-offset:3px}
+::selection{background:var(--brand-line);color:var(--text)}
+input,textarea{caret-color:var(--brand)}
+input[type=checkbox],input[type=radio]{accent-color:var(--brand)}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+::-webkit-scrollbar{height:8px;width:10px}::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:8px;border:2px solid var(--bg)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+/* barra superior */
+header.top{position:sticky;top:0;z-index:30;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:8px;min-height:var(--top);padding:8px 16px;flex-wrap:wrap}
+.bar .brand{display:flex;align-items:center;gap:10px;margin-right:auto;font-weight:650;font-size:1rem;letter-spacing:-.01em}
+.bar .brand img{width:32px;height:32px;border-radius:8px;object-fit:cover}
+#userTag{font-size:.8125rem;margin-right:6px}
+
+/* estrutura */
+.shell{display:grid;grid-template-columns:var(--side) minmax(0,1fr);align-items:start}
+.side{position:sticky;top:var(--top);height:calc(100vh - var(--top));overflow-y:auto;background:var(--surface);border-right:1px solid var(--line);padding:16px 12px}
+nav#tabs{display:grid;gap:2px}
+nav#tabs .btn{display:flex;align-items:center;gap:12px;justify-content:flex-start;width:100%;min-height:40px;padding:8px 12px;border:0;background:transparent;color:var(--text);font-weight:500;border-radius:var(--r-sm);text-align:left}
+nav#tabs .btn svg{flex:none;width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;color:var(--muted)}
+nav#tabs .btn:hover{background:var(--surface-2)}
+nav#tabs .btn.on{background:var(--brand-soft);color:var(--brand);font-weight:650}
+nav#tabs .btn.on svg{color:var(--brand)}
+.content{min-width:0;padding:0 28px}
+.content>.wrap,main.wrap{max-width:1000px;padding:0}
+main{padding:28px 0 96px}
+#codSec{padding-top:20px}
+
+/* botões */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:8px 16px;border-radius:var(--r-sm);border:1px solid var(--line-strong);background:var(--surface);color:var(--text);font-weight:550;font-size:.9rem;line-height:1.2;cursor:pointer;text-decoration:none;transition:background-color .15s,border-color .15s,color .15s}
+.btn:hover{background:var(--surface-2);border-color:#bdb5ca}
+.btn:active{background:var(--brand-soft)}
+.btn.sm{min-height:36px;padding:6px 12px;font-size:.8125rem}
+.btn.on{background:var(--brand-soft);border-color:var(--brand-line);color:var(--brand)}
+.btn.go{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.go:hover{background:var(--brand-hover);border-color:var(--brand-hover)}
+.btn.wa{background:var(--wa);border-color:var(--wa);color:#fff}
+.btn.wa:hover{background:#0e6b34;border-color:#0e6b34}
+.btn.danger{background:var(--surface);border-color:#e6b9bc;color:var(--bad)}
+.btn.danger:hover{background:var(--bad-soft);border-color:var(--bad)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+h2{font-size:1.25rem;font-weight:700;letter-spacing:-.015em;margin:0 0 14px}
+h2:not(:first-child){margin-top:32px}
+main>section>.muted:first-of-type{margin:-6px 0 16px;max-width:68ch}
+
+/* indicadores: faixa única com divisórias */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));background:var(--surface);border:1px solid var(--line);border-radius:var(--r);margin-bottom:20px;overflow:hidden}
+.stat{padding:14px 18px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);margin:0 -1px -1px 0}
+.stat small{display:block;color:var(--muted);font-size:.78rem;font-weight:550}
+.stat b{display:block;margin-top:2px;font-size:1.375rem;font-weight:700;letter-spacing:-.02em;color:var(--text)}
+
+/* filtros e campos */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;align-items:center}
+.filters input[type=search]{flex:1;min-width:180px}
+.filters input,.filters select,.fld input,.fld select,.fld textarea,.row input,.row select{background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r-sm);padding:8px 12px;min-height:40px;color:var(--text);transition:border-color .15s,box-shadow .15s}
+.filters input:hover,.filters select:hover,.fld input:hover,.fld select:hover,.fld textarea:hover{border-color:#bdb5ca}
+.filters input:focus,.filters select:focus,.fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(89,41,138,.16)}
+::placeholder{color:#8a8296;opacity:1}
+.fld{display:grid;gap:6px;font-weight:600;font-size:.8125rem;color:var(--text)}
+.fld small{font-weight:400;color:var(--muted)}
+.fld input,.fld select,.fld textarea{width:100%;font-weight:400;font-size:.9375rem}
+.fld textarea{resize:vertical}
+.fld input[type=file]{padding:6px 8px}
+
+/* listas e cartões */
 .list{display:grid;gap:12px}
 @media(min-width:900px){.list{grid-template-columns:repeat(2,1fr)}}
-.ped{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;gap:8px}
+.ped{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:8px;align-content:start}
 .ped .top{display:flex;justify-content:space-between;gap:8px;align-items:center}
-.cod{font-weight:800;color:var(--gold-light)}
-.tag{font-size:.78rem;font-weight:700;border-radius:999px;padding:3px 10px;border:1px solid var(--line);white-space:nowrap}
-.tag.pendente{color:#fbe2a0;border-color:#e8be62}.tag.confirmado{color:#a8c8ff;border-color:#a8c8ff}.tag.pago{color:#7cf0a8;border-color:#7cf0a8}
-.tag.saiu_entrega{color:#ffd29a;border-color:#ffd29a}.tag.entregue{color:var(--muted)}.tag.cancelado{color:#ff9b9b;border-color:#ff9b9b}
-.muted{color:var(--muted);font-size:.9rem}
-.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
-.fld{display:grid;gap:6px;font-weight:600;font-size:.88rem;color:var(--muted)}
-.fld input,.fld select,.fld textarea{width:100%;color:#fff}
-form.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;gap:12px;max-width:560px}
-.login{max-width:380px;margin:12vh auto;padding:0 16px}
-.login form{display:grid;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
-.empty{padding:30px 10px;text-align:center;color:var(--muted)}
-.qr{display:block;width:200px;height:200px;background:#fff;border-radius:12px;padding:8px;margin:0 auto}
-.secret{word-break:break-all;font-family:ui-monospace,monospace;font-size:.85rem;color:var(--gold-light);text-align:center}
-.banner{background:rgba(232,190,98,.12);border:1px solid var(--gold);border-radius:14px;padding:12px 14px;margin-bottom:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between}
-.hist{display:grid;gap:2px;font-size:.85rem;color:var(--muted);padding-left:4px}
-dialog#dlg{background:var(--card);color:var(--text);border:1px solid var(--gold);border-radius:18px;padding:22px;max-width:min(420px,92vw);width:100%}
-dialog#dlg::backdrop{background:rgba(0,0,0,.65)}
-dialog#dlg h3{margin-bottom:8px;font-size:1.1rem}
-dialog#dlg .de{display:grid;gap:4px;margin:10px 0 16px;color:var(--muted);font-size:.95rem}
-dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
-.sitelink{display:block;text-align:center;margin-top:4px}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.chk{display:flex;gap:8px;align-items:center}.chk input{width:auto;min-height:0}
-.row{display:flex;gap:8px}.row input{flex:1}
-.perms{display:grid;gap:6px}.perms label{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--text)}
+.cod{font-weight:700;letter-spacing:-.01em}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:650;border-radius:999px;padding:2px 10px;background:#eeecf2;color:#463f52;white-space:nowrap}
+.tag::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.tag.pendente{background:var(--warn-soft);color:var(--warn)}
+.tag.confirmado{background:var(--info-soft);color:var(--info)}
+.tag.pago{background:var(--ok-soft);color:var(--ok)}
+.tag.saiu_entrega{background:var(--brand-soft);color:var(--brand)}
+.tag.entregue{background:#eeecf2;color:#463f52}
+.tag.cancelado{background:var(--bad-soft);color:var(--bad)}
+.muted{color:var(--muted);font-size:.875rem}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.acts+.list{margin-top:16px}
+form.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:14px;max-width:600px;align-content:start}
+form.card>b{font-size:.9375rem;font-weight:700;letter-spacing:-.01em;padding-top:2px}
+form.card>b:not(:first-child){margin-top:10px;padding-top:16px;border-top:1px solid var(--line)}
+form.card .card{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-sm)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:end}
+.chk{display:flex;gap:10px;align-items:center;font-size:.9rem}
+.chk input{width:auto;min-height:0}
+.row{display:flex;gap:8px;align-items:center}.row input,.row select{flex:1;min-width:0}
+.perms{display:grid;gap:8px}
+.perms label{display:flex;gap:10px;align-items:center;font-size:.9rem;color:var(--text);font-weight:400}
 .perms input{width:auto;min-height:0}
-#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--gold);color:#2a0838;font-weight:700;padding:12px 18px;border-radius:12px;z-index:20;max-width:90vw}
-#toast.err{background:#ff6b6b}
+.empty{padding:40px 12px;text-align:center;color:var(--muted);background:var(--surface);border:1px dashed var(--line-strong);border-radius:var(--r);grid-column:1/-1}
+.hist{display:grid;gap:2px;font-size:.8125rem;color:var(--muted);padding:8px 0 0;border-top:1px solid var(--line);margin-top:4px}
+.banner{background:var(--brand-soft);border:1px solid var(--brand-line);border-radius:var(--r);padding:12px 16px;margin-bottom:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between;font-size:.9rem}
+.qr{display:block;width:200px;height:200px;background:#fff;border:1px solid var(--line);border-radius:var(--r-sm);padding:8px;margin:0 auto}
+.secret{word-break:break-all;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8125rem;color:var(--text);text-align:center}
+
+/* telas de acesso */
+body:has(.login:not([hidden])){background:var(--bg)}
+.login{max-width:400px;margin:10vh auto;padding:0 16px}
+.login form{display:grid;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:28px;box-shadow:0 8px 24px -12px rgba(40,20,70,.18)}
+.login .logo{width:44px;height:44px;border-radius:10px;object-fit:cover}
+.login h2{margin:0}
+.sitelink{display:block;text-align:center;font-size:.875rem}
+
+/* confirmação e aviso */
+dialog#dlg{background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:14px;padding:24px;max-width:min(440px,92vw);width:100%;margin:auto;box-shadow:0 24px 60px -20px rgba(30,15,50,.4)}
+dialog#dlg::backdrop{background:rgba(29,23,38,.5)}
+dialog#dlg h3{margin-bottom:8px;font-size:1.0625rem;letter-spacing:-.01em}
+dialog#dlg .de{display:grid;gap:4px;margin:8px 0 20px;color:var(--muted);font-size:.9rem}
+dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--text);color:#fff;font-weight:550;font-size:.9rem;padding:11px 18px;border-radius:var(--r-sm);z-index:50;max-width:90vw;box-shadow:0 10px 30px -10px rgba(0,0,0,.4)}
+#toast.err{background:var(--bad)}
+
+/* celular e tablet */
+@media(max-width:959px){
+  header.top{position:static}
+  .shell{display:block}
+  .side{position:sticky;top:0;z-index:20;height:auto;overflow:visible;border-right:0;border-bottom:1px solid var(--line);padding:0 12px}
+  nav#tabs{display:flex;gap:2px;overflow-x:auto;padding:6px 0}
+  nav#tabs .btn{width:auto;white-space:nowrap;min-height:44px;padding:8px 12px}
+  .content{padding:0 16px}
+  main{padding:20px 0 80px}
+  #userTag{display:none}
+  .bar{gap:6px;padding:10px 16px}
+  .bar .brand{flex:1}
+  .bar .btn.sm{min-height:40px;padding:6px 10px;font-size:.78rem}
+  .filters input,.filters select,.fld input,.fld select,.fld textarea{min-height:44px}
+}
+@media(max-width:520px){.row2{grid-template-columns:1fr}.login form{padding:22px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
@@ -77,6 +163,7 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
 
 <section class="login" id="viewLogin" hidden>
   <form id="loginForm">
+    <img class="logo" src="../img/rotulo.webp" alt="">
     <h2>Painel TQR Açaí</h2>
     <label class="fld">E-mail<input type="email" id="lEmail" autocomplete="username" required></label>
     <label class="fld">Senha<input type="password" id="lPass" autocomplete="current-password" required></label>
@@ -126,24 +213,27 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
 </section>
 
 <div id="app" hidden>
-  <header><div class="wrap">
-    <div class="bar"><img src="../img/rotulo.webp" alt=""><b>Painel TQR Açaí</b><span class="sp"></span><span class="muted" id="userTag"></span>
-      <a class="btn sm" href="../" target="_blank" rel="noopener" id="btnSite">Abrir site</a>
-      <button class="btn sm" id="btnAlert" type="button" aria-pressed="false">🔔 Avisos: desligados</button>
-      <button class="btn sm" id="btnSeg" type="button">Segurança</button>
-      <button class="btn sm" id="btnRefresh" type="button">Atualizar</button>
-      <button class="btn sm" id="btnOut" type="button">Sair</button></div>
-    <nav id="tabs">
-      <button class="btn sm" data-tab="pedidos" data-perm="pedidos.ver" type="button">Pedidos</button>
-      <button class="btn sm" data-tab="novo" data-perm="pedidos.criar" type="button">Novo pedido</button>
-      <button class="btn sm" data-tab="clientes" data-perm="clientes.ver" type="button">Clientes</button>
-      <button class="btn sm" data-tab="financeiro" data-perm="financeiro.ver" type="button">Financeiro</button>
-      <button class="btn sm" data-tab="produtos" data-perm="produtos.gerir" type="button">Produtos</button>
-      <button class="btn sm" data-tab="promocoes" data-perm="promocoes.gerir" type="button">Promoções</button>
-      <button class="btn sm" data-tab="config" data-perm="config.gerir" type="button">Configurações</button>
-      <button class="btn sm" data-tab="usuarios" data-perm="*" type="button">Usuários</button>
-    </nav>
+  <header class="top"><div class="bar">
+    <span class="brand"><img src="../img/rotulo.webp" alt="">Painel TQR Açaí</span><span class="muted" id="userTag"></span>
+    <a class="btn sm" href="../" target="_blank" rel="noopener" id="btnSite">Abrir site</a>
+    <button class="btn sm" id="btnAlert" type="button" aria-pressed="false">Avisos: desligados</button>
+    <button class="btn sm" id="btnSeg" type="button">Segurança</button>
+    <button class="btn sm" id="btnRefresh" type="button">Atualizar</button>
+    <button class="btn sm" id="btnOut" type="button">Sair</button>
   </div></header>
+
+  <div class="shell">
+  <aside class="side"><nav id="tabs" aria-label="Seções do painel">
+      <button class="btn" data-tab="pedidos" data-perm="pedidos.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg><span>Pedidos</span></button>
+      <button class="btn" data-tab="novo" data-perm="pedidos.criar" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg><span>Novo pedido</span></button>
+      <button class="btn" data-tab="clientes" data-perm="clientes.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.4c2 .7 3.5 2.6 3.5 5.6"/></svg><span>Clientes</span></button>
+      <button class="btn" data-tab="financeiro" data-perm="financeiro.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6.5 9.5v5M17.5 9.5v5"/></svg><span>Financeiro</span></button>
+      <button class="btn" data-tab="produtos" data-perm="produtos.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg><span>Produtos</span></button>
+      <button class="btn" data-tab="promocoes" data-perm="promocoes.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8L3 12Z"/><circle cx="7.5" cy="8.5" r="1.2"/></svg><span>Promoções</span></button>
+      <button class="btn" data-tab="config" data-perm="config.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Configurações</span></button>
+      <button class="btn" data-tab="usuarios" data-perm="*" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.2 7.8 8 9 4.8-1.2 8-4.5 8-9V6l-8-3Z"/><circle cx="12" cy="10" r="2.5"/><path d="M7.5 16.5c.8-2 2.5-3 4.5-3s3.7 1 4.5 3"/></svg><span>Usuários</span></button>
+    </nav></aside>
+  <div class="content">
 
   <section class="wrap" id="codSec" hidden aria-live="polite">
     <div class="banner" style="flex-direction:column;align-items:stretch;margin:12px 0 0">
@@ -379,6 +469,8 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
       </form>
     </section>
   </main>
+  </div>
+  </div>
 </div>
 <dialog id="dlg" aria-labelledby="dlgT">
   <h3 id="dlgT"></h3>
@@ -1151,7 +1243,7 @@ dialog#dlg .da{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
 
   // ===== Aviso de pedido novo =====
   var alertaOn=false;try{alertaOn=localStorage.getItem('tqr_alerta')==='1';}catch(e){}
-  function pintaAlerta(){var b=$('#btnAlert');b.textContent='🔔 Avisos: '+(alertaOn?'ligados':'desligados');b.setAttribute('aria-pressed',alertaOn);b.classList.toggle('on',alertaOn);}
+  function pintaAlerta(){var b=$('#btnAlert');b.textContent='Avisos: '+(alertaOn?'ligados':'desligados');b.setAttribute('aria-pressed',alertaOn);b.classList.toggle('on',alertaOn);}
   pintaAlerta();
   var ctx=null;
   function bip(){

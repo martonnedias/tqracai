@@ -58,3 +58,23 @@ o site novo cai para o pedido simples se o banco ainda não tiver a migração 0
 - `crm_clientes()` devolve cada cliente com segmento automático (novo, recorrente, VIP, em risco, inativo) a partir dos pedidos; os limites ficam em Configurações do banco: `crm_vip_pedidos` (5), `crm_risco_dias` (30), `crm_inativo_dias` (60). Gasto e ticket médio só aparecem para quem tem `financeiro.ver`.
 - Funil em Kanban na aba CRM (arrastar muda a etapa à mão; arrastar para a etapa automática volta ao automático), etiquetas, tarefas com data, anotações/contatos (`crm_registrar`) e mensagens prontas editáveis com {nome}, {pontos}, {garrafas}.
 - Permissões: ver = `clientes.ver`; editar = `clientes.editar`; editar mensagens prontas = `config.gerir`. O envio é sempre manual: o painel abre o WhatsApp e só registra que houve contato.
+
+## Impressão (migração 18 — já aplicada)
+- Dados da loja (nome, razão social, CNPJ, telefone, endereço, rodapé) ficam em Configurações > Dados da loja e são lidos por `dados_loja()` (só equipe).
+- Botão "Imprimir" no pedido (lista e Kanban): comanda de produção, cupom de entrega e recibo, em bobina térmica 80 mm ou A4. "Imprimir fila do dia" imprime todas as comandas ativas. O recibo traz "sem valor fiscal".
+
+## Pagamentos (migração 19 — já aplicada)
+- Tabelas `pagamentos` e `pagamento_eventos`; gateway em Configurações do banco: `gateway_ativo` = `nenhum` (padrão, Pix manual) | `teste` | `asaas`. A aba Pagamentos troca o modo.
+- **Modo teste** roda inteiro no banco: gera Pix simulado, "Simular pagamento aprovado/recusa" e estorno. Aprovar marca o pedido como pago e os gatilhos existentes geram caixa, pontos e baixa de estoque; a taxa real (quando o gateway informa) substitui a estimada.
+- **Gateway real (Asaas):** publique a função `supabase/functions/pagamentos` com `supabase functions deploy pagamentos --no-verify-jwt` e defina os segredos `GATEWAY_API_KEY`, `GATEWAY_WEBHOOK_TOKEN` e `GATEWAY_URL` (sandbox: `https://sandbox.asaas.com/api/v3`). No Asaas, cadastre o webhook `https://elaczoriyaejkixkubxn.supabase.co/functions/v1/pagamentos?webhook=asaas` com o mesmo token. O webhook é idempotente (`pagamento_eventos`). O adaptador segue a documentação pública e deve ser validado no sandbox antes de ligar o modo `asaas`.
+- No site, o Pix aparece na tela após o pedido só quando o gateway não está `nenhum`; consulta por `pagamento_publico(codigo, whatsapp)`.
+
+## Nota fiscal em homologação (migração 20 — já aplicada)
+- `notas_fiscais` guarda cada nota (numeração, chave, itens, XML simulado); `nota_emitir(pedido)` e `nota_cancelar(nota, motivo)` exigem `financeiro.gerir`. Só pedidos pagos recebem nota; uma nota ativa por pedido.
+- Tudo é **simulado e sem valor fiscal** (`nf_ambiente = homologacao`). Em `producao` a função recusa (`producao_indisponivel`) até um emissor real ser conectado trocando o corpo de `app_private.nota_emitir_interno`.
+- Dados fiscais: Configurações (IE, IM, regime, tipo, série, emissão automática) e NCM/CFOP/CSOSN/origem por produto (padrões são exemplos; confirmar com o contador).
+- Aba Notas fiscais: emitir, cancelar, imprimir cupom 80 mm e baixar CSV/XML do mês para o contador.
+
+## Relatórios (migração 21 — já aplicada)
+- Funções só de leitura, todas exigem `financeiro.ver`: `rel_vendas(ini, fim)`, `rel_produtos(ini, fim)` (lucro só com `custos.ver`), `rel_financeiro(meses)` e `rel_clientes(ini, fim)`. Cada uma devolve um jsonb que a aba Relatórios desenha em SVG (sem biblioteca). Período máximo de 400 dias.
+- Venda = pedido pago, em saída para entrega ou entregue; datas no fuso de Fortaleza. Exportação em CSV e impressão/PDF pelo navegador.

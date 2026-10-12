@@ -139,6 +139,23 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--text);color:#fff;font-weight:550;font-size:.9rem;padding:11px 18px;border-radius:var(--r-sm);z-index:50;max-width:90vw;box-shadow:0 10px 30px -10px rgba(0,0,0,.4)}
 #toast.err{background:var(--bad)}
 
+/* kanban de pedidos */
+.seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:var(--r-sm);overflow:hidden;background:var(--surface)}
+.seg .btn{border:0;border-radius:0;min-height:36px}
+.seg .btn+.btn{border-left:1px solid var(--line-strong)}
+.kanban{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(185px,1fr);gap:12px;overflow-x:auto;align-items:start;padding-bottom:12px;scroll-snap-type:x proximity}
+.kcol{background:#efedf4;border:1px solid var(--line);border-radius:var(--r);display:grid;gap:8px;padding:10px;align-content:start;scroll-snap-align:start;min-height:140px}
+.kcol.over{outline:2px dashed var(--brand);outline-offset:-4px;background:var(--brand-soft)}
+.kcol>header{position:static;background:none;border:0;display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:2px 4px 6px}
+.kcol>header b{font-size:.875rem}.kcol>header span{font-size:.78rem;color:var(--muted)}
+.kcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 12px;display:grid;gap:4px;font-size:.875rem}
+.kcard[draggable=true]{cursor:grab}.kcard.drag{opacity:.45}
+.kcard .top{display:flex;justify-content:space-between;gap:6px;align-items:center}
+.kcard .late{color:var(--bad);font-weight:600}
+.kcard .acts{margin-top:4px}
+.kcard .btn.sm{min-height:32px;padding:4px 10px}
+.kvazio{font-size:.8125rem;color:var(--muted);text-align:center;padding:14px 4px}
+
 /* celular e tablet */
 @media(max-width:959px){
   header.top{position:static}
@@ -256,8 +273,10 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
         <select id="fPag" aria-label="Pagamento"><option value="">Pagamento: todos</option><option value="pix">Pix</option><option value="cartao">Cartão</option></select>
         <input type="search" id="fBusca" placeholder="Buscar nome, bairro ou código" aria-label="Buscar">
         <button class="btn sm" type="button" id="fCsv">Exportar CSV</button>
+        <div class="seg" id="viewToggle" role="group" aria-label="Modo de exibição"><button class="btn sm on" type="button" data-v="lista">Lista</button><button class="btn sm" type="button" data-v="kanban">Kanban</button></div>
       </div>
       <div class="list" id="listPed"></div>
+      <div class="kanban" id="kanban" hidden></div>
     </section>
 
     <section id="tab-novo" hidden>
@@ -673,23 +692,83 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
   $('#fBusca').addEventListener('input',renderPedidos);
 
   function loadPedidos(){
-    sb.from('pedidos').select('id,codigo,status,total,forma_pagamento,endereco,bairro,observacao,origem,criado_em,modalidade,subtotal,desconto,taxa_entrega,cupom,extras,montagens,clientes(nome,whatsapp),itens_pedido(quantidade,nome_produto,brinde)')
+    sb.from('pedidos').select('id,codigo,status,total,forma_pagamento,endereco,bairro,observacao,origem,criado_em,atualizado_em,modalidade,subtotal,desconto,taxa_entrega,cupom,extras,montagens,clientes(nome,whatsapp),itens_pedido(quantidade,nome_produto,brinde)')
       .order('criado_em',{ascending:false}).limit(300).then(function(r){
         if(r.error){toast('Não consegui carregar os pedidos.',true);return;}
         avisar(r.data||[]);pedidos=r.data||[];renderPedidos();
       });
   }
+  // ===== Kanban de pedidos =====
+  var viewPed='lista';try{viewPed=localStorage.getItem('tqr_view_ped')==='kanban'?'kanban':'lista';}catch(e){}
+  var KCOLS=['pendente','confirmado','pago','saiu_entrega','entregue'],KATRASO={pendente:10,confirmado:60,pago:45};
+  function idadeMin(iso){return Math.max(0,Math.round((Date.now()-new Date(iso).getTime())/60000));}
+  function idadeTxt(m){return m<1?'agora':m<60?'há '+m+' min':m<1440?'há '+Math.floor(m/60)+' h '+(m%60?m%60+' min':''):'há '+Math.floor(m/1440)+' d';}
+  function podeMover(p,alvo){
+    var i=KCOLS.indexOf(p.status),j=KCOLS.indexOf(alvo);if(i<0||j<=i)return false;
+    return can('pedidos.status')||(can('pedidos.status_entrega')&&(alvo==='saiu_entrega'||alvo==='entregue'));
+  }
+  function pedirMover(p,alvo){
+    var c=p.clientes||{};
+    confirmar('Alterar status do pedido?',[p.codigo+' · '+(c.nome||'Cliente'),LABEL[p.status]+'  →  '+LABEL[alvo]].concat(alvo==='pago'||(p.status==='pendente'||p.status==='confirmado')&&(alvo==='saiu_entrega'||alvo==='entregue')?['Entra no caixa e gera pontos para o cliente.']:[]),'Sim, alterar').then(function(ok){if(ok)mudar(p,alvo,{});});
+  }
+  function cardKanban(p){
+    var c=p.clientes||{},n=el('article','kcard'),top=el('div','top');
+    top.appendChild(el('b',null,p.codigo));var m=idadeMin(p.atualizado_em||p.criado_em),lim=KATRASO[p.status],tm=el('span',lim&&m>lim?'late':'muted',idadeTxt(m));top.appendChild(tm);n.appendChild(top);
+    n.appendChild(el('span',null,(c.nome||'Cliente')));
+    var its=(p.itens_pedido||[]).filter(function(i){return i.nome_produto;}).map(function(i){return i.quantidade+'× '+i.nome_produto+(i.brinde?' (brinde)':'');});
+    if(its.length)n.appendChild(el('span','muted',its.join(' · ')));
+    (p.montagens||[]).forEach(function(mo){n.appendChild(el('span','muted','Montagem: '+mo.quantidade+'× com '+(mo.opcoes||[]).map(function(o){return o.nome;}).join(', ')));});
+    n.appendChild(el('span',null,brl(p.total)+(p.forma_pagamento?' · '+(NOME_PAG[p.forma_pagamento]||p.forma_pagamento):'')+(p.modalidade?' · '+(p.modalidade==='retirada'?'Retirada':p.bairro||'Entrega'):'')));
+    if(p.observacao)n.appendChild(el('span','muted','Obs.: '+p.observacao));
+    var a=el('div','acts'),nx=NEXT[p.status];
+    if(nx&&podeMover(p,nx)){var b=el('button','btn sm go','Avançar');b.type='button';b.setAttribute('aria-label','Avançar '+p.codigo+' para '+LABEL[nx]);b.addEventListener('click',function(){pedirMover(p,nx);});a.appendChild(b);}
+    if(c.whatsapp){var w=el('a','btn sm wa','WhatsApp');w.target='_blank';w.rel='noopener';w.href='https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent('Olá, '+first(c.nome)+'! Aqui é da TQR Açaí 💜 Sobre o seu pedido '+p.codigo+'.');a.appendChild(w);}
+    if(a.childNodes.length)n.appendChild(a);
+    if(KCOLS.indexOf(p.status)>=0&&KCOLS.some(function(s){return podeMover(p,s);})){
+      n.draggable=true;
+      n.addEventListener('dragstart',function(e){e.dataTransfer.setData('text/plain',p.id);e.dataTransfer.effectAllowed='move';n.classList.add('drag');dragPed=p;});
+      n.addEventListener('dragend',function(){n.classList.remove('drag');dragPed=null;document.querySelectorAll('.kcol.over').forEach(function(x){x.classList.remove('over');});});
+    }
+    return n;
+  }
+  var dragPed=null;
+  function renderKanban(rows){
+    var box=$('#kanban');box.textContent='';var d=$('#fDia').value,hoje=dia(new Date().toISOString());
+    KCOLS.forEach(function(st){
+      var col=el('section','kcol'),lista=rows.filter(function(p){
+        if(p.status!==st)return false;
+        if(st==='entregue'&&!d)return dia(p.atualizado_em||p.criado_em)===hoje;
+        return true;});
+      var h=el('header'),soma=lista.reduce(function(t,p){return t+ +p.total;},0);h.appendChild(el('b',null,LABEL[st]+' ('+lista.length+')'));h.appendChild(el('span',null,brl(soma)));col.appendChild(h);
+      if(!lista.length)col.appendChild(el('div','kvazio',st==='entregue'?'Nenhuma entrega hoje.':'Nada por aqui.'));
+      lista.forEach(function(p){col.appendChild(cardKanban(p));});
+      col.addEventListener('dragover',function(e){if(dragPed&&podeMover(dragPed,st)){e.preventDefault();col.classList.add('over');}});
+      col.addEventListener('dragleave',function(){col.classList.remove('over');});
+      col.addEventListener('drop',function(e){e.preventDefault();col.classList.remove('over');if(dragPed&&podeMover(dragPed,st))pedirMover(dragPed,st);});
+      box.appendChild(col);
+    });
+  }
+  $('#viewToggle').addEventListener('click',function(e){
+    var b=e.target.closest('button[data-v]');if(!b)return;viewPed=b.dataset.v;try{localStorage.setItem('tqr_view_ped',viewPed);}catch(x){}
+    document.querySelectorAll('#viewToggle button').forEach(function(x){x.classList.toggle('on',x.dataset.v===viewPed);});renderPedidos();
+  });
+  document.querySelectorAll('#viewToggle button').forEach(function(x){x.classList.toggle('on',x.dataset.v===viewPed);});
   function renderPedidos(){
     var st=$('#fStatus').value,d=$('#fDia').value,pg=$('#fPag').value,q=$('#fBusca').value.trim().toLowerCase(),box=$('#listPed');
     var rows=pedidos.filter(function(p){
-      if(st==='abertos'&&ABERTOS.indexOf(p.status)<0)return false;
-      if(st!=='abertos'&&st!=='todos'&&p.status!==st)return false;
+      if(viewPed!=='kanban'){
+        if(st==='abertos'&&ABERTOS.indexOf(p.status)<0)return false;
+        if(st!=='abertos'&&st!=='todos'&&p.status!==st)return false;
+      }
       if(d&&dia(p.criado_em)!==d)return false;
       if(pg&&p.forma_pagamento!==pg)return false;
       if(q){var h=[p.codigo,p.bairro,p.clientes&&p.clientes.nome,p.clientes&&p.clientes.whatsapp].join(' ').toLowerCase();if(h.indexOf(q)<0)return false;}
       return true;
     });
     visiveis=rows;box.textContent='';
+    $('#kanban').hidden=viewPed!=='kanban';box.hidden=viewPed==='kanban';
+    $('#fStatus').hidden=viewPed==='kanban';
+    if(viewPed==='kanban'){renderKanban(rows);return;}
     if(!rows.length){box.appendChild(el('p','empty','Nenhum pedido com esses filtros.'));return;}
     rows.forEach(function(p){box.appendChild(card(p));});
   }

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Painel TQR Açaí</title>
+<title>Central TQR · #TQR Açaí</title>
 <link rel="icon" href="../img/rotulo.webp">
 <style>
 :root{
@@ -243,6 +243,77 @@ dialog#dlgImprimir::backdrop{background:rgba(29,23,38,.5)}dialog#dlgImprimir h3{
 }
 @media(max-width:520px){.row2{grid-template-columns:1fr}.login form{padding:22px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===== visual premium (Central TQR) ===== */
+:root{--side-bg:#1a0a2b;--side-line:rgba(255,255,255,.07);--side-text:#d8cce8;--side-muted:#8e7ba8;--gold:#e8be62;--r:12px;--r-sm:8px;--top:60px;--side:244px;
+  --sh1:0 1px 2px rgba(31,14,52,.06),0 1px 1px rgba(31,14,52,.04);--sh2:0 12px 28px -14px rgba(31,14,52,.28)}
+body{background:linear-gradient(180deg,#f7f5fb 0,#f3f1f8 100%) fixed}
+header.top{background:rgba(255,255,255,.92);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(255,255,255,.8) inset}
+.bar{min-height:var(--top);padding:0 20px;gap:10px;flex-wrap:nowrap}
+.bar .brand{gap:12px;flex:1;min-width:0}
+.bar .brand img{width:36px;height:36px;border-radius:10px;box-shadow:0 0 0 1px var(--line),0 4px 10px -4px rgba(89,41,138,.45)}
+.bname{display:grid;line-height:1.15;min-width:0}.bname b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bname b{font-size:1.02rem;font-weight:750;letter-spacing:-.02em;color:var(--text)}
+.bname small{font-size:.72rem;font-weight:500;color:var(--muted);letter-spacing:.01em;white-space:nowrap}
+.hact{display:flex;gap:2px;align-items:center;padding:0 10px;margin-right:2px;border-right:1px solid var(--line);border-left:1px solid var(--line)}
+.hbtn{display:inline-flex;align-items:center;gap:7px;min-height:34px;padding:0 10px;border:0;border-radius:var(--r-sm);background:transparent;color:#4a4256;font-size:.8125rem;font-weight:550;text-decoration:none;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s}
+.hbtn svg{width:17px;height:17px;flex:none;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.hbtn:hover{background:var(--brand-soft);color:var(--brand)}
+#btnAlert::before{content:"";width:8px;height:8px;border-radius:50%;background:#b9b2c6;flex:none}
+#btnAlert.on{color:var(--ok);background:var(--ok-soft)}#btnAlert.on::before{background:var(--ok);box-shadow:0 0 0 3px rgba(20,112,63,.2)}
+.hbtn.out{color:var(--bad)}.hbtn.out:hover{background:var(--bad-soft);color:var(--bad)}
+.uchip{display:inline-flex;align-items:center;gap:9px;padding:3px 12px 3px 3px;border:1px solid var(--line);border-radius:999px;background:var(--surface);max-width:240px}
+.avatar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),#8a4fc4);color:#fff;font-size:.8rem;font-weight:700;flex:none}
+#userTag{font-size:.8125rem;font-weight:600;color:var(--text);margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.side{background:linear-gradient(180deg,var(--side-bg),#240f3b);border-right:0;padding:18px 12px 28px;scrollbar-width:thin;scrollbar-color:#4a3566 transparent}
+.nav-g{color:var(--side-muted);margin:18px 12px 6px;font-size:.66rem;letter-spacing:.12em}.nav-g:first-child{margin-top:2px}
+nav#tabs .btn{min-height:38px;padding:7px 12px;color:var(--side-text);font-size:.875rem;font-weight:500;border-radius:9px;gap:11px}
+nav#tabs .btn svg{color:var(--side-muted);width:17px;height:17px}
+nav#tabs .btn:hover{background:rgba(255,255,255,.07);color:#fff}nav#tabs .btn:hover svg{color:#fff}
+nav#tabs .btn.on{background:linear-gradient(90deg,rgba(232,190,98,.2),rgba(232,190,98,.06));color:#fff;font-weight:650;box-shadow:inset 0 0 0 1px rgba(232,190,98,.28)}
+nav#tabs .btn.on svg{color:var(--gold)}
+.nbadge{background:var(--gold);color:#2a0838}
+.content{padding:0 32px}.content>.wrap,main.wrap{max-width:1080px}
+main{padding:26px 0 96px}
+h2{font-size:1.45rem;letter-spacing:-.025em;margin:0 0 6px}
+main>section>h2+.muted{margin:0 0 20px;max-width:72ch;font-size:.9rem}
+h3{font-size:.95rem;font-weight:700;letter-spacing:-.01em;margin:22px 0 10px}
+.btn{min-height:36px;padding:6px 14px;font-size:.875rem;border-radius:var(--r-sm);box-shadow:var(--sh1)}
+.btn.sm{min-height:32px;padding:4px 11px;font-size:.8125rem}
+.btn.go{background:linear-gradient(180deg,#6a31a0,var(--brand));border-color:#4a1f73;box-shadow:0 1px 2px rgba(60,20,100,.35),inset 0 1px 0 rgba(255,255,255,.18)}
+.btn.go:hover{background:linear-gradient(180deg,#5a2891,var(--brand-hover))}
+.filters input,.filters select,.fld input,.fld select,.fld textarea,.row input,.row select{min-height:34px;padding:5px 10px;font-size:.875rem;border-radius:7px}
+.fld input,.fld select,.fld textarea{font-size:.875rem}
+.fld{gap:4px;font-size:.78rem;color:#3d3548;letter-spacing:.005em}
+.fld textarea{min-height:64px}
+.fld input[type=file]{padding:4px 6px}
+.filters{gap:8px;padding:10px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh1)}
+.filters>*{margin:0}
+.cards{border-radius:var(--r);box-shadow:var(--sh1)}
+.stat{padding:14px 20px}.stat small{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:650}
+.stat b{font-size:1.55rem;font-weight:750;letter-spacing:-.03em;margin-top:4px}
+.ped,form.card,.rel-card,.empty{box-shadow:var(--sh1)}
+.ped{padding:14px 16px;border-radius:var(--r);transition:box-shadow .2s,border-color .2s}
+.ped:hover{box-shadow:var(--sh2);border-color:var(--brand-line)}
+form.card{max-width:760px;padding:22px;gap:12px}
+form.card>b{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);font-weight:700}
+form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
+.row2{gap:12px}
+.kcol{background:#efecf6;border-radius:var(--r)}
+.seg .btn{min-height:32px}
+.banner{border-radius:var(--r);box-shadow:var(--sh1)}
+.login form{border-radius:16px;box-shadow:var(--sh2)}
+@media(max-width:959px){
+  :root{--top:56px}
+  .hact{border:0;padding:0;gap:0}.hbtn{padding:0 8px}.hbtn .lbl{display:none}#btnAlert{font-size:0;gap:0;padding:0 11px}#btnAlert::before{width:10px;height:10px}
+  .uchip{padding:3px}.uchip #userTag{display:none}
+  .bname small{display:none}
+  .bar{padding:0 14px}.bar .brand{flex:1}
+  .side{background:var(--side-bg);padding:0 8px;box-shadow:0 6px 16px -10px rgba(20,8,36,.6)}
+  nav#tabs{padding:8px 0}nav#tabs .btn{min-height:42px;width:auto}
+  .content{padding:0 14px}main{padding:18px 0 80px}
+  .filters input,.filters select,.fld input,.fld select,.fld textarea,.row input,.row select{min-height:42px;font-size:1rem}
+  h2{font-size:1.3rem}
+}
 </style>
 </head>
 <body>
@@ -251,7 +322,8 @@ dialog#dlgImprimir::backdrop{background:rgba(29,23,38,.5)}dialog#dlgImprimir h3{
 <section class="login" id="viewLogin" hidden>
   <form id="loginForm">
     <img class="logo" src="../img/rotulo.webp" alt="">
-    <h2>Painel TQR Açaí</h2>
+    <h2>Central TQR</h2>
+    <p class="muted" style="margin:-8px 0 2px">Gestão do #TQR Açaí · acesso da equipe</p>
     <label class="fld">E-mail<input type="email" id="lEmail" autocomplete="username" required></label>
     <label class="fld">Senha<input type="password" id="lPass" autocomplete="current-password" required></label>
     <button class="btn go" type="submit">Entrar</button>
@@ -301,12 +373,15 @@ dialog#dlgImprimir::backdrop{background:rgba(29,23,38,.5)}dialog#dlgImprimir h3{
 
 <div id="app" hidden>
   <header class="top"><div class="bar">
-    <span class="brand"><img src="../img/rotulo.webp" alt="">Painel TQR Açaí</span><span class="muted" id="userTag"></span>
-    <a class="btn sm" href="../" target="_blank" rel="noopener" id="btnSite">Abrir site</a>
-    <button class="btn sm" id="btnAlert" type="button" aria-pressed="false">Avisos: desligados</button>
-    <button class="btn sm" id="btnSeg" type="button">Segurança</button>
-    <button class="btn sm" id="btnRefresh" type="button">Atualizar</button>
-    <button class="btn sm" id="btnOut" type="button">Sair</button>
+    <span class="brand"><img src="../img/rotulo.webp" alt=""><span class="bname"><b>Central TQR</b><small>Gestão do #TQR Açaí</small></span></span>
+    <div class="hact" role="toolbar" aria-label="Ações rápidas">
+      <a class="hbtn" href="../" target="_blank" rel="noopener" id="btnSite" title="Abrir o site em outra aba"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg><span class="lbl">Ver site</span></a>
+      <button class="hbtn" id="btnAlert" type="button" aria-pressed="false" title="Aviso sonoro de novos pedidos">Avisos: desligados</button>
+      <button class="hbtn" id="btnRefresh" type="button" title="Recarregar os dados"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.5-4M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.5 4M20 20v-4h-4"/></svg><span class="lbl">Atualizar</span></button>
+      <button class="hbtn" id="btnSeg" type="button" title="Verificação em duas etapas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.2 7.8 8 9 4.8-1.2 8-4.5 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg><span class="lbl">Segurança</span></button>
+    </div>
+    <span class="uchip"><span class="avatar" id="userAv" aria-hidden="true">·</span><span id="userTag"></span></span>
+    <button class="hbtn out" id="btnOut" type="button" title="Sair do painel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h4M15 8l4 4-4 4M9 12h10"/></svg><span class="lbl">Sair</span></button>
   </div></header>
 
   <div class="shell">
@@ -844,7 +919,7 @@ dialog#dlgImprimir::backdrop{background:rgba(29,23,38,.5)}dialog#dlgImprimir h3{
       var m=r.data;
       if(r.error||!m){show('viewDenied');return;}
       perms=m.permissoes||[];
-      nomeUsuario=m.nome||'';$('#userTag').textContent=(m.nome||'')+(m.perfil?' · '+m.perfil:'');
+      nomeUsuario=m.nome||'';$('#userTag').textContent=(m.nome||'')+(m.perfil?' · '+m.perfil:'');$('#userAv').textContent=((m.nome||'?').trim().charAt(0)||'?').toUpperCase();
       document.querySelectorAll('#tabs button').forEach(function(b){b.hidden=b.dataset.perm?!can(b.dataset.perm):false;});
       (function(){var g=null,vis=false;document.querySelectorAll('#tabs > *').forEach(function(n){if(n.classList.contains('nav-g')){if(g)g.hidden=!vis;g=n;vis=false;}else if(!n.hidden)vis=true;});if(g)g.hidden=!vis;})();
       show('app');clearInterval(timer);

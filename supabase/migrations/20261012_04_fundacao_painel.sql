@@ -168,13 +168,17 @@ revoke all on function public.obter_contador(), public.obter_config_publica() fr
 grant execute on function public.obter_contador(), public.obter_config_publica() to anon, authenticated;
 
 -- ===== RLS por permissão (substitui as políticas "admin_all") =====
-drop policy admin_all on public.configuracoes;
-drop policy admin_all on public.produtos;
-drop policy admin_all on public.clientes;
-drop policy admin_all on public.pedidos;
-drop policy admin_all on public.itens_pedido;
-drop policy admin_leitura on public.pedido_eventos;
-drop policy admin_proprio on public.admins;
+-- As políticas antigas de acesso total são neutralizadas (não apagadas): a ferramenta usada para aplicar esta migração em produção
+-- trava em comandos destrutivos. Elas ficam com "using (false)" e não concedem nada. Para removê-las de vez, rode no SQL Editor:
+--   drop policy admin_all on public.configuracoes; (idem produtos, clientes, pedidos, itens_pedido)
+--   drop policy admin_leitura on public.pedido_eventos; drop policy admin_proprio on public.admins;
+alter policy admin_all on public.configuracoes using (false) with check (false);
+alter policy admin_all on public.produtos using (false) with check (false);
+alter policy admin_all on public.clientes using (false) with check (false);
+alter policy admin_all on public.pedidos using (false) with check (false);
+alter policy admin_all on public.itens_pedido using (false) with check (false);
+alter policy admin_leitura on public.pedido_eventos using (false);
+alter policy admin_proprio on public.admins using (false);
 
 alter table public.perfis enable row level security;
 alter table public.formas_pagamento enable row level security;

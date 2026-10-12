@@ -67,12 +67,13 @@ begin
 end $$;
 
 -- ===== pedir e confirmar o código =====
+-- Códigos e sessões vencem logicamente (expira_em). A faxina de linhas antigas é manual, no SQL Editor, de vez em quando:
+--   delete from public.codigos_verificacao where criado_em < now() - interval '1 day';
+--   delete from public.sessoes_cliente where expira_em < now();
 create function public.solicitar_codigo(p_whatsapp text) returns boolean
 language plpgsql security definer set search_path = '' as $$
 declare cid uuid; w text := public.normalizar_whatsapp(p_whatsapp);
 begin
-  delete from public.codigos_verificacao where criado_em < now() - interval '1 day';
-  delete from public.sessoes_cliente where expira_em < now();
   select id into cid from public.clientes where whatsapp = w;
   if cid is null then return true; end if;     -- resposta igual para número desconhecido
   if (select count(*) from public.codigos_verificacao where cliente_id = cid and criado_em > now() - interval '10 minutes') >= 3

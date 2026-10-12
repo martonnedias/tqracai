@@ -1,8 +1,8 @@
 # Como aplicar o banco e as funções (ordem)
 
-Nada disto foi aplicado no Supabase pela sessão de desenvolvimento: as migrações foram testadas num PostgreSQL local com
-papéis e funções de autenticação simulados. Aplique na ordem, de preferência fora do horário de pico, e confira o
-painel (Advisors) depois de cada passo.
+**Status (12/10/2026): migrações 03 a 06 e a função `admin-usuarios` JÁ ESTÃO APLICADAS no projeto `elaczoriyaejkixkubxn`** (aplicadas em blocos menores; os nomes no histórico do Supabase terminam em a/b/c/d). O seu usuário é o Dono. As migrações foram testadas antes num PostgreSQL local com papéis e funções de autenticação simulados.
+
+Diferenças entre o repositório e a produção: as políticas antigas `admin_all` estão neutralizadas (`using (false)`) e não apagadas, e `solicitar_codigo` não faz limpeza automática. Motivo: a ferramenta que aplica migrações trava em comandos `drop`/`delete`. Se quiser, remova as políticas antigas no SQL Editor (comandos no comentário da migração 04).
 
 ## 1. Migrações (`supabase/migrations/`)
 

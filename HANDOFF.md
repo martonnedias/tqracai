@@ -162,7 +162,7 @@ Pontos de atenção:
 - Promoção e preço nunca vêm do navegador: só `calcular_pedido` calcula; o site apenas exibe.
 - Contador: se a base de 1.000 deixar de ser real, ajustar o texto; hoje é real segundo o dono.
 
-Status em 12/10/2026 (código pronto na branch `claude/bold-lovelace-25ml91`, **ainda não aplicado nem publicado**; ordem e passos em `supabase/LEIA-ME.md`):
+Status em 12/10/2026 (código na branch `claude/bold-lovelace-25ml91`; **migrações 03 a 06 e a função `admin-usuarios` aplicadas no Supabase em 12/10**, site e painel ainda NÃO publicados no GitHub Pages; ver `supabase/LEIA-ME.md`):
 
 - [x] Etapa 1: popup de confirmação de status (inclui cancelar), botão "Abrir site" no painel e link "Ir para o site" no login.
 - [x] Etapa 2: migração 04 (perfis dono/gerente/atendente/entregador, formas de pagamento, bairros, configurações, contador, RLS por permissão).

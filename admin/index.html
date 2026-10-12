@@ -608,25 +608,26 @@ div.card>b{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:
       <button class="btn" data-tab="inicio" data-perm="" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span>Início</span></button>
       <button class="btn" data-tab="pedidos" data-perm="pedidos.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg><span>Pedidos</span></button>
       <button class="btn" data-tab="novo" data-perm="pedidos.criar" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg><span>Novo pedido</span></button>
-      <button class="btn" data-tab="pagamentos" data-perm="financeiro.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19M6 15h4"/></svg><span>Pagamentos</span></button>
+      <button class="btn" data-tab="pagamentos" data-mod="pagamentos" data-perm="financeiro.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19M6 15h4"/></svg><span>Pagamentos</span></button>
       <span class="nav-g" role="presentation">Clientes e marketing</span>
       <button class="btn" data-tab="clientes" data-perm="clientes.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.4c2 .7 3.5 2.6 3.5 5.6"/></svg><span>Clientes</span></button>
-      <button class="btn" data-tab="crm" data-perm="clientes.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9Z"/></svg><span>CRM</span></button>
-      <button class="btn" data-tab="mensagens" data-perm="clientes.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5Z"/><path d="M8 9h8M8 12h5"/></svg><span>Mensagens</span></button>
-      <button class="btn" data-tab="promocoes" data-perm="promocoes.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8L3 12Z"/><circle cx="7.5" cy="8.5" r="1.2"/></svg><span>Promoções</span></button>
-      <button class="btn" data-tab="fidelidade" data-perm="clientes.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v8h14v-8"/><path d="M12 8c-2-4-6-3-5 0M12 8c2-4 6-3 5 0"/></svg><span>Fidelidade</span></button>
+      <button class="btn" data-tab="crm" data-mod="marketing" data-perm="clientes.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9Z"/></svg><span>CRM</span></button>
+      <button class="btn" data-tab="mensagens" data-mod="marketing" data-perm="clientes.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5Z"/><path d="M8 9h8M8 12h5"/></svg><span>Mensagens</span></button>
+      <button class="btn" data-tab="promocoes" data-mod="marketing" data-perm="promocoes.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8L3 12Z"/><circle cx="7.5" cy="8.5" r="1.2"/></svg><span>Promoções</span></button>
+      <button class="btn" data-tab="fidelidade" data-mod="marketing" data-perm="clientes.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v8h14v-8"/><path d="M12 8c-2-4-6-3-5 0M12 8c2-4 6-3 5 0"/></svg><span>Fidelidade</span></button>
       <span class="nav-g" role="presentation">Gestão</span>
-      <button class="btn" data-tab="financeiro" data-perm="financeiro.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6.5 9.5v5M17.5 9.5v5"/></svg><span>Financeiro</span></button>
-      <button class="btn" data-tab="relatorios" data-perm="financeiro.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Relatórios</span></button>
-      <button class="btn" data-tab="notas" data-perm="financeiro.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg><span>Notas fiscais</span></button>
-      <button class="btn" data-tab="custos" data-perm="custos.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5M4 19h16"/><path d="m8 15 3-4 3 2 5-7"/></svg><span>Custos</span></button>
-      <button class="btn" data-tab="estoque" data-perm="estoque.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4-9-4Z"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4"/></svg><span>Estoque</span></button>
+      <button class="btn" data-tab="financeiro" data-mod="gestao" data-perm="financeiro.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6.5 9.5v5M17.5 9.5v5"/></svg><span>Financeiro</span></button>
+      <button class="btn" data-tab="relatorios" data-mod="gestao" data-perm="financeiro.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Relatórios</span></button>
+      <button class="btn" data-tab="notas" data-mod="fiscal" data-perm="financeiro.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg><span>Notas fiscais</span></button>
+      <button class="btn" data-tab="custos" data-mod="gestao" data-perm="custos.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5M4 19h16"/><path d="m8 15 3-4 3 2 5-7"/></svg><span>Custos</span></button>
+      <button class="btn" data-tab="estoque" data-mod="gestao" data-perm="estoque.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4-9-4Z"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4"/></svg><span>Estoque</span></button>
       <span class="nav-g" role="presentation">Catálogo</span>
       <button class="btn" data-tab="produtos" data-perm="produtos.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg><span>Produtos</span></button>
       <button class="btn" data-tab="montagem" data-perm="produtos.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.4 5 5.6.8-4 3.9 1 5.5-5-2.7-5 2.7 1-5.5-4-3.9 5.6-.8z"/></svg><span>Montagem</span></button>
       <span class="nav-g" role="presentation">Sistema</span>
       <button class="btn" data-tab="config" data-perm="config.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Configurações</span></button>
       <button class="btn" data-tab="usuarios" data-perm="*" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.2 7.8 8 9 4.8-1.2 8-4.5 8-9V6l-8-3Z"/><circle cx="12" cy="10" r="2.5"/><path d="M7.5 16.5c.8-2 2.5-3 4.5-3s3.7 1 4.5 3"/></svg><span>Usuários</span></button>
+      <button class="btn" data-tab="modulos" data-perm="*" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 14v7M14 17.5h7"/></svg><span>Plano e módulos</span></button>
       <button class="btn" data-tab="ajuda" data-perm="" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><path d="M12 17h.01"/></svg><span>Ajuda</span></button>
 </nav></aside>
   <div class="content">
@@ -1122,6 +1123,13 @@ div.card>b{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:
       </div>
     </section>
 
+    <section id="tab-modulos" hidden>
+      <h2>Plano e módulos</h2>
+      <p class="muted" id="modPlano"></p>
+      <div class="list" id="listMod"></div>
+      <h2 style="margin-top:22px">Planos</h2>
+      <div class="list" id="listPlanos"></div>
+    </section>
     <section id="tab-usuarios" hidden>
       <h2>Usuários do painel</h2>
       <div class="list" id="listUsr"></div>
@@ -1237,7 +1245,9 @@ div.card>b{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:
       d.showModal();n.focus();
     });
   }
-  function can(p){return perms.indexOf('*')>=0||perms.indexOf(p)>=0;}
+  var mods=null,MOD_PERM={financeiro:'gestao',custos:'gestao',estoque:'gestao',promocoes:'marketing'};
+  function modOk(m){return !m||mods===null||mods.indexOf(m)>=0;}
+  function can(p){return (perms.indexOf('*')>=0||perms.indexOf(p)>=0)&&modOk(MOD_PERM[String(p).split('.')[0]]);}
   function show(id){['viewLogin','viewMfa','viewSeg','viewDenied','app'].forEach(function(v){$('#'+v).hidden=(v!==id);});}
 
   // ===== Login =====
@@ -1264,9 +1274,9 @@ div.card>b{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:
     sb.rpc('minhas_permissoes').then(function(r){
       var m=r.data;
       if(r.error||!m){show('viewDenied');return;}
-      perms=m.permissoes||[];
+      perms=m.permissoes||[];mods=m.modulos||null;
       nomeUsuario=m.nome||'';$('#userTag').textContent=(m.nome||'')+(m.perfil?' · '+m.perfil:'');$('#userAv').textContent=((m.nome||'?').trim().charAt(0)||'?').toUpperCase();
-      document.querySelectorAll('#tabs button').forEach(function(b){b.hidden=b.dataset.perm?!can(b.dataset.perm):false;});
+      document.querySelectorAll('#tabs button').forEach(function(b){b.hidden=(b.dataset.perm?!can(b.dataset.perm):false)||!modOk(b.dataset.mod);});
       montaBnav();
       (function(){var g=null,vis=false;document.querySelectorAll('#tabs > *').forEach(function(n){if(n.classList.contains('nav-g')){if(g)g.hidden=!vis;g=n;vis=false;}else if(!n.hidden)vis=true;});if(g)g.hidden=!vis;})();
       show('app');clearInterval(timer);
@@ -1347,6 +1357,7 @@ div.card>b{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:
     if(t==='clientes')loadClientes();
     if(t==='crm')loadCrm();
     if(t==='usuarios')loadUsuarios();
+    if(t==='modulos')loadModulos();
     if(t==='config')loadConfig();
     if(t==='produtos')loadProdutos();
     if(t==='financeiro')initFinanceiro();
@@ -2022,6 +2033,47 @@ div.card>b{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:
   var ERRO_USR={email_ja_cadastrado:'Este e-mail já está cadastrado.',precisa_de_um_dono:'Precisa existir pelo menos um dono ativo.',nao_pode_em_si_mesmo:'Você não pode fazer isso na sua própria conta.',
     perfil_em_uso:'Há usuários com este perfil.',perfil_de_sistema:'Perfis do sistema não podem ser alterados.',mfa_necessario:'Entre com o código de verificação em duas etapas.'};
   function msgUsr(e){var m=String(e&&e.message||'');return ERRO_USR[m]||(m.indexOf('invalido')===0?'Confira os campos informados.':'Não consegui concluir. Tente de novo.');}
+  // ===== Plano e módulos (só dono) =====
+  var modDados=null;
+  function loadModulos(){
+    sb.rpc('admin_modulos').then(function(r){if(r.error){toast('Não foi possível carregar os módulos.',true);return;}modDados=r.data;renderModulos();});
+  }
+  function renderModulos(){
+    var d=modDados,box=$('#listMod'),pb=$('#listPlanos');box.textContent='';pb.textContent='';
+    var pl=(d.planos.filter(function(p){return p.codigo===d.plano;})[0]||{}).nome;
+    $('#modPlano').textContent=pl?'Plano atual: '+pl+'. Ligar ou desligar um módulo muda o menu e também bloqueia o acesso no servidor.':'Ligue ou desligue os módulos desta loja.';
+    d.modulos.forEach(function(m){
+      var c=el('div','card row');c.style.justifyContent='space-between';
+      var t=el('div');t.appendChild(el('b',null,m.nome+(m.obrigatorio?' · sempre ativo':'')));t.appendChild(el('div','muted',m.descricao||''));
+      var b=el('button','btn sm'+(m.ativo?'':' go'),m.ativo?'Desligar':'Ligar');b.type='button';b.disabled=!!m.obrigatorio;
+      b.addEventListener('click',function(){
+        confirmar((m.ativo?'Desligar':'Ligar')+' o módulo "'+m.nome+'"?',[m.ativo?'As telas e dados desse módulo ficam bloqueados. Nada é apagado.':'As telas do módulo voltam a aparecer.'],m.ativo?'Desligar':'Ligar',m.ativo).then(function(ok){
+          if(!ok)return;sb.rpc('admin_definir_modulo',{p_modulo:m.codigo,p_ativo:!m.ativo}).then(function(r){
+            if(r.error){toast('Não foi possível alterar o módulo.',true);return;}toast('Módulo atualizado.');recarregaModulos();});});
+      });
+      var st=el('span','tag '+(m.ativo?'pago':'entregue'),m.ativo?'Ativo':'Inativo');
+      var dir=el('div','row');dir.appendChild(st);dir.appendChild(b);c.appendChild(t);c.appendChild(dir);box.appendChild(c);
+    });
+    d.planos.forEach(function(p){
+      var c=el('div','card row');c.style.justifyContent='space-between';
+      var t=el('div');t.appendChild(el('b',null,p.nome+(p.codigo===d.plano?' · atual':'')));
+      t.appendChild(el('div','muted',p.modulos.map(function(k){var x=d.modulos.filter(function(m){return m.codigo===k;})[0];return x?x.nome:k;}).join(', ')));
+      var b=el('button','btn sm','Aplicar plano');b.type='button';
+      b.addEventListener('click',function(){confirmar('Aplicar o plano "'+p.nome+'"?',['Os módulos serão ligados ou desligados conforme o plano.'],'Aplicar').then(function(ok){
+        if(!ok)return;sb.rpc('admin_aplicar_plano',{p_plano:p.codigo}).then(function(r){if(r.error){toast('Não foi possível aplicar o plano.',true);return;}toast('Plano aplicado.');recarregaModulos();});});});
+      c.appendChild(t);c.appendChild(b);pb.appendChild(c);
+    });
+  }
+  // depois de mudar módulos, recarrega permissões/menu
+  function recarregaModulos(){
+    sb.rpc('minhas_permissoes').then(function(r){
+      var m=r.data;if(m){mods=m.modulos||null;
+        document.querySelectorAll('#tabs button').forEach(function(b){b.hidden=(b.dataset.perm?!can(b.dataset.perm):false)||!modOk(b.dataset.mod);});
+        montaBnav();}
+      loadModulos();
+    });
+  }
+
   function loadUsuarios(){
     chamarUsr({acao:'listar'}).then(function(d){usrDados=d;renderUsuarios();}).catch(function(e){toast(msgUsr(e),true);});
   }

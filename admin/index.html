@@ -139,6 +139,29 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--text);color:#fff;font-weight:550;font-size:.9rem;padding:11px 18px;border-radius:var(--r-sm);z-index:50;max-width:90vw;box-shadow:0 10px 30px -10px rgba(0,0,0,.4)}
 #toast.err{background:var(--bad)}
 
+.nm-card{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:12px;display:grid;gap:10px}
+.nm-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.nm-top select{flex:1;min-width:140px}
+.nm-g b{font-size:.8125rem}.nm-g small{display:block;color:var(--muted);margin-bottom:6px}
+.nm-ops{display:flex;flex-wrap:wrap;gap:8px}
+.nm-op{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-strong);border-radius:999px;padding:6px 12px;font-size:.84rem;cursor:pointer;background:var(--surface)}
+.nm-op.off{opacity:.45;cursor:not-allowed}.nm-op:has(input:checked){border-color:var(--brand);background:var(--brand-soft)}
+/* kanban de pedidos */
+.seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:var(--r-sm);overflow:hidden;background:var(--surface)}
+.seg .btn{border:0;border-radius:0;min-height:36px}
+.seg .btn+.btn{border-left:1px solid var(--line-strong)}
+.kanban{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(185px,1fr);gap:12px;overflow-x:auto;align-items:start;padding-bottom:12px;scroll-snap-type:x proximity}
+.kcol{background:#efedf4;border:1px solid var(--line);border-radius:var(--r);display:grid;gap:8px;padding:10px;align-content:start;scroll-snap-align:start;min-height:140px}
+.kcol.over{outline:2px dashed var(--brand);outline-offset:-4px;background:var(--brand-soft)}
+.kcol>header{position:static;background:none;border:0;display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:2px 4px 6px}
+.kcol>header b{font-size:.875rem}.kcol>header span{font-size:.78rem;color:var(--muted)}
+.kcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 12px;display:grid;gap:4px;font-size:.875rem}
+.kcard[draggable=true]{cursor:grab}.kcard.drag{opacity:.45}
+.kcard .top{display:flex;justify-content:space-between;gap:6px;align-items:center}
+.kcard .late{color:var(--bad);font-weight:600}
+.kcard .acts{margin-top:4px}
+.kcard .btn.sm{min-height:32px;padding:4px 10px}
+.kvazio{font-size:.8125rem;color:var(--muted);text-align:center;padding:14px 4px}
+
 /* celular e tablet */
 @media(max-width:959px){
   header.top{position:static}
@@ -256,8 +279,10 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
         <select id="fPag" aria-label="Pagamento"><option value="">Pagamento: todos</option><option value="pix">Pix</option><option value="cartao">Cartão</option></select>
         <input type="search" id="fBusca" placeholder="Buscar nome, bairro ou código" aria-label="Buscar">
         <button class="btn sm" type="button" id="fCsv">Exportar CSV</button>
+        <div class="seg" id="viewToggle" role="group" aria-label="Modo de exibição"><button class="btn sm on" type="button" data-v="lista">Lista</button><button class="btn sm" type="button" data-v="kanban">Kanban</button></div>
       </div>
       <div class="list" id="listPed"></div>
+      <div class="kanban" id="kanban" hidden></div>
     </section>
 
     <section id="tab-novo" hidden>
@@ -266,6 +291,10 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
         <label class="fld">WhatsApp do cliente<input id="nWhats" type="tel" inputmode="tel" required placeholder="(86) 99999-9999"></label>
         <label class="fld">Nome <small>(só para cliente novo)</small><input id="nNome" type="text" placeholder="Nome do cliente"></label>
         <div id="nItens" class="perms"></div>
+        <div id="nMontBox" hidden>
+          <button class="btn sm" type="button" id="nMontAdd">+ Montagem (complementos e extras)</button>
+          <div id="nMontList" style="display:grid;gap:10px;margin-top:10px"></div>
+        </div>
         <label class="fld">Como recebe<select id="nMod"><option value="retirada">Retirada</option><option value="entrega_bairro">Entrega (bairro com taxa fixa)</option><option value="entrega_app">Entrega por aplicativo</option></select></label>
         <label class="fld" id="nBairroSelFld" hidden>Bairro<select id="nBairroSel"></select></label>
         <label class="fld">Pagamento<select id="nPag"></select></label>
@@ -673,23 +702,83 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
   $('#fBusca').addEventListener('input',renderPedidos);
 
   function loadPedidos(){
-    sb.from('pedidos').select('id,codigo,status,total,forma_pagamento,endereco,bairro,observacao,origem,criado_em,modalidade,subtotal,desconto,taxa_entrega,cupom,extras,montagens,clientes(nome,whatsapp),itens_pedido(quantidade,nome_produto,brinde)')
+    sb.from('pedidos').select('id,codigo,status,total,forma_pagamento,endereco,bairro,observacao,origem,criado_em,atualizado_em,modalidade,subtotal,desconto,taxa_entrega,cupom,extras,montagens,clientes(nome,whatsapp),itens_pedido(quantidade,nome_produto,brinde)')
       .order('criado_em',{ascending:false}).limit(300).then(function(r){
         if(r.error){toast('Não consegui carregar os pedidos.',true);return;}
         avisar(r.data||[]);pedidos=r.data||[];renderPedidos();
       });
   }
+  // ===== Kanban de pedidos =====
+  var viewPed='lista';try{viewPed=localStorage.getItem('tqr_view_ped')==='kanban'?'kanban':'lista';}catch(e){}
+  var KCOLS=['pendente','confirmado','pago','saiu_entrega','entregue'],KATRASO={pendente:10,confirmado:60,pago:45};
+  function idadeMin(iso){return Math.max(0,Math.round((Date.now()-new Date(iso).getTime())/60000));}
+  function idadeTxt(m){return m<1?'agora':m<60?'há '+m+' min':m<1440?'há '+Math.floor(m/60)+' h '+(m%60?m%60+' min':''):'há '+Math.floor(m/1440)+' d';}
+  function podeMover(p,alvo){
+    var i=KCOLS.indexOf(p.status),j=KCOLS.indexOf(alvo);if(i<0||j<=i)return false;
+    return can('pedidos.status')||(can('pedidos.status_entrega')&&(alvo==='saiu_entrega'||alvo==='entregue'));
+  }
+  function pedirMover(p,alvo){
+    var c=p.clientes||{};
+    confirmar('Alterar status do pedido?',[p.codigo+' · '+(c.nome||'Cliente'),LABEL[p.status]+'  →  '+LABEL[alvo]].concat(alvo==='pago'||(p.status==='pendente'||p.status==='confirmado')&&(alvo==='saiu_entrega'||alvo==='entregue')?['Entra no caixa e gera pontos para o cliente.']:[]),'Sim, alterar').then(function(ok){if(ok)mudar(p,alvo,{});});
+  }
+  function cardKanban(p){
+    var c=p.clientes||{},n=el('article','kcard'),top=el('div','top');
+    top.appendChild(el('b',null,p.codigo));var m=idadeMin(p.atualizado_em||p.criado_em),lim=KATRASO[p.status],tm=el('span',lim&&m>lim?'late':'muted',idadeTxt(m));top.appendChild(tm);n.appendChild(top);
+    n.appendChild(el('span',null,(c.nome||'Cliente')));
+    var its=(p.itens_pedido||[]).filter(function(i){return i.nome_produto;}).map(function(i){return i.quantidade+'× '+i.nome_produto+(i.brinde?' (brinde)':'');});
+    if(its.length)n.appendChild(el('span','muted',its.join(' · ')));
+    (p.montagens||[]).forEach(function(mo){n.appendChild(el('span','muted','Montagem: '+mo.quantidade+'× com '+(mo.opcoes||[]).map(function(o){return o.nome;}).join(', ')));});
+    n.appendChild(el('span',null,brl(p.total)+(p.forma_pagamento?' · '+(NOME_PAG[p.forma_pagamento]||p.forma_pagamento):'')+(p.modalidade?' · '+(p.modalidade==='retirada'?'Retirada':p.bairro||'Entrega'):'')));
+    if(p.observacao)n.appendChild(el('span','muted','Obs.: '+p.observacao));
+    var a=el('div','acts'),nx=NEXT[p.status];
+    if(nx&&podeMover(p,nx)){var b=el('button','btn sm go','Avançar');b.type='button';b.setAttribute('aria-label','Avançar '+p.codigo+' para '+LABEL[nx]);b.addEventListener('click',function(){pedirMover(p,nx);});a.appendChild(b);}
+    if(c.whatsapp){var w=el('a','btn sm wa','WhatsApp');w.target='_blank';w.rel='noopener';w.href='https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent('Olá, '+first(c.nome)+'! Aqui é da TQR Açaí 💜 Sobre o seu pedido '+p.codigo+'.');a.appendChild(w);}
+    if(a.childNodes.length)n.appendChild(a);
+    if(KCOLS.indexOf(p.status)>=0&&KCOLS.some(function(s){return podeMover(p,s);})){
+      n.draggable=true;
+      n.addEventListener('dragstart',function(e){e.dataTransfer.setData('text/plain',p.id);e.dataTransfer.effectAllowed='move';n.classList.add('drag');dragPed=p;});
+      n.addEventListener('dragend',function(){n.classList.remove('drag');dragPed=null;document.querySelectorAll('.kcol.over').forEach(function(x){x.classList.remove('over');});});
+    }
+    return n;
+  }
+  var dragPed=null;
+  function renderKanban(rows){
+    var box=$('#kanban');box.textContent='';var d=$('#fDia').value,hoje=dia(new Date().toISOString());
+    KCOLS.forEach(function(st){
+      var col=el('section','kcol'),lista=rows.filter(function(p){
+        if(p.status!==st)return false;
+        if(st==='entregue'&&!d)return dia(p.atualizado_em||p.criado_em)===hoje;
+        return true;});
+      var h=el('header'),soma=lista.reduce(function(t,p){return t+ +p.total;},0);h.appendChild(el('b',null,LABEL[st]+' ('+lista.length+')'));h.appendChild(el('span',null,brl(soma)));col.appendChild(h);
+      if(!lista.length)col.appendChild(el('div','kvazio',st==='entregue'?'Nenhuma entrega hoje.':'Nada por aqui.'));
+      lista.forEach(function(p){col.appendChild(cardKanban(p));});
+      col.addEventListener('dragover',function(e){if(dragPed&&podeMover(dragPed,st)){e.preventDefault();col.classList.add('over');}});
+      col.addEventListener('dragleave',function(){col.classList.remove('over');});
+      col.addEventListener('drop',function(e){e.preventDefault();col.classList.remove('over');if(dragPed&&podeMover(dragPed,st))pedirMover(dragPed,st);});
+      box.appendChild(col);
+    });
+  }
+  $('#viewToggle').addEventListener('click',function(e){
+    var b=e.target.closest('button[data-v]');if(!b)return;viewPed=b.dataset.v;try{localStorage.setItem('tqr_view_ped',viewPed);}catch(x){}
+    document.querySelectorAll('#viewToggle button').forEach(function(x){x.classList.toggle('on',x.dataset.v===viewPed);});renderPedidos();
+  });
+  document.querySelectorAll('#viewToggle button').forEach(function(x){x.classList.toggle('on',x.dataset.v===viewPed);});
   function renderPedidos(){
     var st=$('#fStatus').value,d=$('#fDia').value,pg=$('#fPag').value,q=$('#fBusca').value.trim().toLowerCase(),box=$('#listPed');
     var rows=pedidos.filter(function(p){
-      if(st==='abertos'&&ABERTOS.indexOf(p.status)<0)return false;
-      if(st!=='abertos'&&st!=='todos'&&p.status!==st)return false;
+      if(viewPed!=='kanban'){
+        if(st==='abertos'&&ABERTOS.indexOf(p.status)<0)return false;
+        if(st!=='abertos'&&st!=='todos'&&p.status!==st)return false;
+      }
       if(d&&dia(p.criado_em)!==d)return false;
       if(pg&&p.forma_pagamento!==pg)return false;
       if(q){var h=[p.codigo,p.bairro,p.clientes&&p.clientes.nome,p.clientes&&p.clientes.whatsapp].join(' ').toLowerCase();if(h.indexOf(q)<0)return false;}
       return true;
     });
     visiveis=rows;box.textContent='';
+    $('#kanban').hidden=viewPed!=='kanban';box.hidden=viewPed==='kanban';
+    $('#fStatus').hidden=viewPed==='kanban';
+    if(viewPed==='kanban'){renderKanban(rows);return;}
     if(!rows.length){box.appendChild(el('p','empty','Nenhum pedido com esses filtros.'));return;}
     rows.forEach(function(p){box.appendChild(card(p));});
   }
@@ -757,27 +846,71 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
     var box=$('#nItens');box.textContent='';
     catalogo.produtos.filter(function(p){return p.ativo&&p.preco!=null;}).forEach(function(p,i){
       var l=el('label','fld',p.nome+' ('+brl(p.preco)+')'),inp=document.createElement('input');inp.type='number';inp.min=0;inp.max=100;inp.value=i===0?1:0;inp.dataset.pid=p.id;
-      inp.addEventListener('input',simNovo);l.appendChild(inp);box.appendChild(l);
+      inp.addEventListener('input',function(){nSync();simNovo();});l.appendChild(inp);box.appendChild(l);
     });
     var pg=$('#nPag');pg.textContent='';var o0=el('option',null,'A definir');o0.value='';pg.appendChild(o0);
     catalogo.formas.forEach(function(f){var o=el('option',null,f.nome);o.value=f.id;pg.appendChild(o);});
     var bs=$('#nBairroSel');bs.textContent='';catalogo.bairros.forEach(function(b){var o=el('option',null,b.nome+' — '+brl(b.taxa));o.value=b.id;bs.appendChild(o);});
-    ajustaModNovo();simNovo();
+    ajustaModNovo();carregaGruposNovo();simNovo();
   }
   function ajustaModNovo(){
     var m=$('#nMod').value;$('#nBairroSelFld').hidden=(m!=='entrega_bairro');$('#nBairroTxtFld').hidden=(m!=='entrega_app');
+  }
+  // --- montagem no pedido manual ---
+  var NG=[],NMONT=[];
+  function nGrupos(pid){return NG.filter(function(g){return !g.produtos||g.produtos.indexOf(pid)>=0;});}
+  function nQtd(pid){var i=document.querySelector('#nItens input[data-pid="'+pid+'"]');return i?(+i.value||0):0;}
+  function nUsado(pid,ex){var u=0;NMONT.forEach(function(m){if(m!==ex&&m.pid===pid)u+=m.q;});return u;}
+  function nIds(m){return Object.keys(m.sel).filter(function(k){return m.sel[k];});}
+  function nMontagens(){return NMONT.filter(function(m){return m.q>0&&nIds(m).length>0;}).map(function(m){return {produto_id:m.pid,quantidade:m.q,opcoes:nIds(m)};});}
+  function nErro(){for(var i=0;i<NMONT.length;i++){var m=NMONT[i],e='';nGrupos(m.pid).forEach(function(g){var n=g.opcoes.filter(function(o){return m.sel[o.id];}).length;if(!e&&n<g.minimo)e='Escolha ao menos '+g.minimo+' em "'+g.nome+'".';});if(e)return e;}return '';}
+  function nSync(){
+    var mudou=false;catalogo.produtos.forEach(function(p){var ex=nUsado(p.id)-nQtd(p.id);for(var i=NMONT.length-1;i>=0&&ex>0;i--){if(NMONT[i].pid!==p.id)continue;var t=Math.min(ex,NMONT[i].q);NMONT[i].q-=t;ex-=t;mudou=true;}});
+    var n=NMONT.length;NMONT=NMONT.filter(function(m){return m.q>0;});if(NMONT.length!==n)mudou=true;if(mudou)nRender();
+  }
+  function nRender(){
+    var box=$('#nMontBox'),list=$('#nMontList');list.textContent='';
+    box.hidden=!NG.length||!catalogo.produtos.some(function(p){return nGrupos(p.id).length;});
+    NMONT.forEach(function(m){
+      var card=el('div','nm-card'),top=el('div','nm-top'),sel=document.createElement('select');
+      catalogo.produtos.filter(function(p){return p.ativo&&nGrupos(p.id).length;}).forEach(function(p){var o=el('option',null,p.nome);o.value=p.id;if(p.id===m.pid)o.selected=true;sel.appendChild(o);});
+      sel.addEventListener('change',function(){m.pid=sel.value;m.sel={};m.q=Math.max(1,Math.min(m.q,nQtd(m.pid)-nUsado(m.pid,m)));nRender();simNovo();});
+      var q=numIn(m.q,{min:1,max:100,'aria-label':'Garrafas nesta montagem'});q.style.maxWidth='80px';
+      q.addEventListener('input',function(){m.q=Math.max(1,+q.value||1);simNovo();});
+      var rm=el('button','btn sm danger','Remover');rm.type='button';rm.addEventListener('click',function(){NMONT=NMONT.filter(function(x){return x!==m;});nRender();simNovo();});
+      top.appendChild(sel);top.appendChild(q);top.appendChild(el('span','muted','garrafa(s)'));top.appendChild(rm);card.appendChild(top);
+      nGrupos(m.pid).forEach(function(g){
+        var gd=el('div','nm-g');gd.appendChild(el('b',null,g.nome));gd.appendChild(el('small',null,(g.minimo>0?'De '+g.minimo+' a '+g.maximo:'Até '+g.maximo)+(g.gratis_ate>0?' · '+g.gratis_ate+' grátis':'')));
+        var ops=el('div','nm-ops'),n=g.opcoes.filter(function(o){return m.sel[o.id];}).length;
+        g.opcoes.forEach(function(o){
+          var lb=el('label','nm-op'),cb=document.createElement('input');cb.type='checkbox';cb.checked=!!m.sel[o.id];var lock=o.esgotado||(!cb.checked&&n>=g.maximo);cb.disabled=lock;if(lock)lb.className='nm-op off';
+          lb.appendChild(cb);lb.appendChild(document.createTextNode(o.nome+(o.esgotado?' (esgotado)':(+o.preco>0?' +'+brl(+o.preco):''))));
+          cb.addEventListener('change',function(){if(cb.checked)m.sel[o.id]=true;else delete m.sel[o.id];nRender();simNovo();});ops.appendChild(lb);});
+        gd.appendChild(ops);card.appendChild(gd);});
+      list.appendChild(card);
+    });
+  }
+  $('#nMontAdd').addEventListener('click',function(){
+    var p=catalogo.produtos.filter(function(x){return x.ativo&&nGrupos(x.id).length&&nQtd(x.id)-nUsado(x.id)>0;})[0];
+    if(!p){toast('Aumente a quantidade do produto para montar mais uma.',true);return;}
+    NMONT.push({pid:p.id,q:1,sel:{}});nRender();simNovo();
+  });
+  function carregaGruposNovo(){
+    sb.rpc('obter_vitrine').then(function(r){NG=(r&&r.data&&r.data.personalizacao||[]).filter(function(g){return g.opcoes&&g.opcoes.length;});NMONT=[];nRender();});
   }
   function simNovo(){
     clearTimeout(simNovoTmr);
     simNovoTmr=setTimeout(function(){
       var it=itensNovo(),box=$('#nResumo');
       if(!it.length){box.textContent='Escolha os produtos para ver o total.';return;}
-      sb.rpc('simular_pedido',{p_itens:it,p_cupom:$('#nCupom').value.trim()||null,p_modalidade:$('#nMod').value,p_bairro_id:$('#nMod').value==='entrega_bairro'?($('#nBairroSel').value||null):null,
-        p_forma:$('#nPag').value||null,p_whatsapp:$('#nWhats').value||null}).then(function(r){
+      var args={p_itens:it,p_cupom:$('#nCupom').value.trim()||null,p_modalidade:$('#nMod').value,p_bairro_id:$('#nMod').value==='entrega_bairro'?($('#nBairroSel').value||null):null,
+        p_forma:$('#nPag').value||null,p_whatsapp:$('#nWhats').value||null};
+      if(NG.length)args.p_montagens=nMontagens();
+      sb.rpc(NG.length?'simular_pedido_v3':'simular_pedido',args).then(function(r){
         box.textContent='';
         if(r.error||!r.data){box.appendChild(el('span',null,'Não consegui calcular. Confira os dados.'));return;}
         var d=r.data;
-        box.appendChild(el('span',null,'Itens '+brl(d.subtotal)+(+d.desconto>0?' − desconto '+brl(d.desconto):'')+(+d.taxa_entrega>0?' + entrega '+brl(d.taxa_entrega):'')+(d.promocao?' · '+d.promocao.nome:'')+(d.cupom_status==='invalido'?' · cupom inválido':'')));
+        box.appendChild(el('span',null,'Itens '+brl(d.subtotal)+(+d.extras>0?' + adicionais '+brl(d.extras):'')+(+d.desconto>0?' − desconto '+brl(d.desconto):'')+(+d.taxa_entrega>0?' + entrega '+brl(d.taxa_entrega):'')+(d.promocao?' · '+d.promocao.nome:'')+(d.cupom_status==='invalido'?' · cupom inválido':'')));
         box.appendChild(el('b',null,'Total '+brl(d.total)));
       });
     },300);
@@ -789,8 +922,9 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
     if(!it.length){toast('Escolha ao menos um produto.',true);return;}
     var m=$('#nMod').value;
     if(m==='entrega_bairro'&&!$('#nBairroSel').value){toast('Escolha o bairro.',true);return;}
+    var em=nErro();if(em){toast(em,true);return;}
     var b=$('#nGo');b.disabled=true;
-    sb.rpc('admin_criar_pedido_v2',{p_whatsapp:$('#nWhats').value,p_itens:it,p_nome:$('#nNome').value.trim()||null,p_forma_pagamento:$('#nPag').value||null,
+    sb.rpc(NG.length?'admin_criar_pedido_v3':'admin_criar_pedido_v2',{p_montagens:NG.length?nMontagens():undefined,p_whatsapp:$('#nWhats').value,p_itens:it,p_nome:$('#nNome').value.trim()||null,p_forma_pagamento:$('#nPag').value||null,
       p_endereco:$('#nEnd').value.trim()||null,p_bairro:m==='entrega_app'?($('#nBairro').value.trim()||null):null,p_bairro_id:m==='entrega_bairro'?$('#nBairroSel').value:null,
       p_modalidade:m,p_cupom:$('#nCupom').value.trim()||null,p_observacao:$('#nObs').value.trim()||null})
     .then(function(r){

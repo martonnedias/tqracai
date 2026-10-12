@@ -52,4 +52,4 @@ o site novo cai para o pedido simples se o banco ainda não tiver a migração 0
 - **16:** grupos/opções de exemplo (Complementos, Caldas, Turbine seu açaí), editáveis na aba Montagem do painel.
 - Promoções valem sobre o produto-base; o adicional das opções entra depois, sem desconto. O custo das opções entra no custo do item do pedido.
 - A função de borda `criar-pedido` (Turnstile, ainda não publicada) aceita `versao: 3` para as montagens.
-- Pedido manual no painel (aba Novo pedido) ainda não tem a escolha de opções; o pedido do site mostra a montagem no cartão do pedido.
+- O pedido manual do painel (aba Novo pedido) também escolhe opções e usa `admin_criar_pedido_v3`.

@@ -133,6 +133,11 @@ body:has(.login:not([hidden])){background:var(--bg)}
 /* confirmação e aviso */
 dialog#dlg{background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:14px;padding:24px;max-width:min(440px,92vw);width:100%;margin:auto;box-shadow:0 24px 60px -20px rgba(30,15,50,.4)}
 dialog#dlg::backdrop{background:rgba(29,23,38,.5)}
+dialog#dlgFicha{background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:14px;padding:22px;max-width:min(640px,94vw);width:100%;margin:auto;max-height:90vh;overflow:auto;box-shadow:0 24px 60px -20px rgba(30,15,50,.4)}
+dialog#dlgFicha::backdrop{background:rgba(29,23,38,.5)}
+dialog#dlgFicha h3{font-size:1.125rem;margin-bottom:4px}dialog#dlgFicha h4{margin:16px 0 6px;font-size:.9375rem}
+dialog#dlgFicha .fld{margin-top:10px}dialog#dlgFicha .row{margin-top:8px;flex-wrap:wrap}
+.late{color:var(--bad)}
 dialog#dlg h3{margin-bottom:8px;font-size:1.0625rem;letter-spacing:-.01em}
 dialog#dlg .de{display:grid;gap:4px;margin:8px 0 20px;color:var(--muted);font-size:.9rem}
 dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
@@ -250,6 +255,7 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
       <button class="btn" data-tab="pedidos" data-perm="pedidos.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg><span>Pedidos</span></button>
       <button class="btn" data-tab="novo" data-perm="pedidos.criar" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg><span>Novo pedido</span></button>
       <button class="btn" data-tab="clientes" data-perm="clientes.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.4c2 .7 3.5 2.6 3.5 5.6"/></svg><span>Clientes</span></button>
+      <button class="btn" data-tab="crm" data-perm="clientes.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9Z"/></svg><span>CRM</span></button>
       <button class="btn" data-tab="financeiro" data-perm="financeiro.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6.5 9.5v5M17.5 9.5v5"/></svg><span>Financeiro</span></button>
       <button class="btn" data-tab="produtos" data-perm="produtos.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg><span>Produtos</span></button>
       <button class="btn" data-tab="montagem" data-perm="produtos.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.4 5 5.6.8-4 3.9 1 5.5-5-2.7-5 2.7 1-5.5-4-3.9 5.6-.8z"/></svg><span>Montagem</span></button>
@@ -304,6 +310,34 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
         <label class="fld">Observações<textarea id="nObs" rows="2"></textarea></label>
         <div class="banner" id="nResumo"><span>Escolha os produtos para ver o total.</span></div>
         <button class="btn go" type="submit" id="nGo">Criar pedido</button>
+      </form>
+    </section>
+
+    <section id="tab-crm" hidden>
+      <h2>CRM</h2>
+      <p class="muted">Os clientes entram no funil sozinhos (novo, recorrente, VIP, em risco, inativo) a partir dos pedidos. Arraste um cartão para mudar a etapa à mão. O WhatsApp só abre com a mensagem pronta: quem envia é você.</p>
+      <div class="cards" id="crmCards"></div>
+      <div class="filters">
+        <input type="search" id="crmBusca" placeholder="Buscar nome, WhatsApp ou etiqueta" aria-label="Buscar no CRM">
+        <select id="crmTag" aria-label="Etiqueta"></select>
+        <div class="seg" id="crmFiltros" role="group" aria-label="Filtros rápidos">
+          <button class="btn sm on" type="button" data-f="todos">Todos</button>
+          <button class="btn sm" type="button" data-f="aniv">Aniversariantes</button>
+          <button class="btn sm" type="button" data-f="pontos">Com brinde</button>
+          <button class="btn sm" type="button" data-f="risco">Em risco ou inativos</button>
+        </div>
+      </div>
+      <div class="kanban" id="crmKanban"></div>
+      <h2>Tarefas de hoje</h2>
+      <div class="list" id="crmTarefas"></div>
+      <h2>Mensagens prontas</h2>
+      <p class="muted">Use {nome}, {pontos} e {garrafas}; o painel preenche com os dados do cliente.</p>
+      <div class="list" id="crmMsgs"></div>
+      <form class="card" id="formMsgCrm" autocomplete="off" style="margin-top:12px" hidden>
+        <b>Nova mensagem</b>
+        <label class="fld">Nome<input id="mcNome" type="text" required minlength="2" maxlength="60"></label>
+        <label class="fld">Texto<input id="mcTexto" type="text" required minlength="5" maxlength="600" placeholder="Oi, {nome}! ..."></label>
+        <button class="btn go" type="submit">Criar mensagem</button>
       </form>
     </section>
 
@@ -573,6 +607,7 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
   </div>
   </div>
 </div>
+<dialog id="dlgFicha"><div id="fichaBody"></div><div class="da" style="margin-top:14px"><button class="btn" type="button" id="fichaFechar">Fechar</button></div></dialog>
 <dialog id="dlg" aria-labelledby="dlgT">
   <h3 id="dlgT"></h3>
   <div class="de" id="dlgB"></div>
@@ -654,6 +689,7 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
     document.querySelectorAll('#tabs button').forEach(function(x){x.classList.toggle('on',x.dataset.tab===t);});
     document.querySelectorAll('main > section[id^=tab-]').forEach(function(x){x.hidden=(x.id!=='tab-'+t);});
     if(t==='clientes')loadClientes();
+    if(t==='crm')loadCrm();
     if(t==='usuarios')loadUsuarios();
     if(t==='config')loadConfig();
     if(t==='produtos')loadProdutos();
@@ -1942,6 +1978,163 @@ dialog#dlg .da{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
     sb.from('grupos_opcao').insert({nome:$('#gpNome').value.trim(),minimo:+$('#gpMin').value||0,maximo:+$('#gpMax').value||1,gratis_ate:+$('#gpGratis').value||0,ordem:grupos.length+1,produtos:ids.length?ids:null}).then(function(r){
       if(r.error){toast(msgMont(r.error),true);return;}toast('Grupo criado. Adicione as opções nele.');$('#formGrupo').reset();loadMontagem();});
   });
+
+  // ===== CRM: funil de clientes, segmentos, tarefas, mensagens prontas =====
+  var crm=[],crmTarefas=[],crmMsgs=[],crmFiltro='todos',crmBrinde=170,crmDrag=null;
+  var FUNIL=[['novo','Novo'],['recorrente','Recorrente'],['vip','VIP'],['em_risco','Em risco'],['inativo','Inativo']];
+  var SEG_ROT={novo:'Novo',recorrente:'Recorrente',vip:'VIP',em_risco:'Em risco',inativo:'Inativo',sem_pedido:'Sem pedido'};
+  function msgCrm(er){var m=String(er&&er.message||'');if(/etiquetas_demais/.test(m))return 'No máximo 10 etiquetas.';if(/duplicate|unique/i.test(m))return 'Já existe uma mensagem com esse nome.';return msgPts(er);}
+  function diasDesde(iso){return iso?Math.floor((Date.now()-new Date(iso).getTime())/864e5):null;}
+  function loadCrm(){
+    Promise.all([
+      sb.rpc('crm_clientes'),
+      sb.from('tarefas_crm').select('id,cliente_id,titulo,vence_em,feita').eq('feita',false).order('vence_em'),
+      sb.from('mensagens_crm').select('*').order('ordem').order('nome'),
+      sb.rpc('obter_config_publica')
+    ]).then(function(rs){
+      if(rs[0].error){toast('Não consegui carregar o CRM.',true);return;}
+      crm=rs[0].data||[];crmTarefas=rs[1].data||[];crmMsgs=rs[2].data||[];
+      var cfg=rs[3]&&rs[3].data;if(cfg&&+cfg.pontos_por_brinde>0)crmBrinde=+cfg.pontos_por_brinde;
+      renderCrm();
+    });
+  }
+  function crmPassa(c){
+    var q=($('#crmBusca').value||'').trim().toLowerCase(),tg=$('#crmTag').value;
+    if(q&&(c.nome+' '+c.whatsapp+' '+(c.etiquetas||[]).join(' ')).toLowerCase().indexOf(q)<0)return false;
+    if(tg&&(c.etiquetas||[]).indexOf(tg)<0)return false;
+    if(crmFiltro==='aniv')return !!c.aniversario_mes;
+    if(crmFiltro==='pontos')return +c.saldo_pontos>=crmBrinde;
+    if(crmFiltro==='risco')return c.segmento==='em_risco'||c.segmento==='inativo';
+    return true;
+  }
+  function renderCrm(){
+    var cards=$('#crmCards');cards.textContent='';
+    var ativos=crm.filter(function(c){var d=diasDesde(c.ultimo_pedido);return d!=null&&d<=30;}).length;
+    [['Clientes',crm.length],['Ativos (30 dias)',ativos],['Em risco',crm.filter(function(c){return c.segmento==='em_risco';}).length],['Inativos',crm.filter(function(c){return c.segmento==='inativo';}).length],
+     ['Aniversariantes do mês',crm.filter(function(c){return c.aniversario_mes;}).length],['Com brinde para resgatar',crm.filter(function(c){return +c.saldo_pontos>=crmBrinde;}).length]].forEach(function(x){
+      var e=el('div','stat');e.appendChild(el('small',null,x[0]));e.appendChild(el('b',null,String(x[1])));cards.appendChild(e);});
+    var tg=$('#crmTag'),atual=tg.value,todas={};crm.forEach(function(c){(c.etiquetas||[]).forEach(function(t){todas[t]=1;});});
+    tg.textContent='';var o0=el('option',null,'Etiqueta: todas');o0.value='';tg.appendChild(o0);Object.keys(todas).sort().forEach(function(t){var o=el('option',null,t);o.value=t;tg.appendChild(o);});tg.value=atual;
+    document.querySelectorAll('#crmFiltros button').forEach(function(b){b.classList.toggle('on',b.dataset.f===crmFiltro);});
+    var kb=$('#crmKanban');kb.textContent='';var lista=crm.filter(crmPassa);
+    FUNIL.forEach(function(f){
+      var col=el('section','kcol'),itens=lista.filter(function(c){return c.funil===f[0];}),h=el('header');
+      h.appendChild(el('b',null,f[1]+' ('+itens.length+')'));col.appendChild(h);
+      if(!itens.length)col.appendChild(el('div','kvazio','Ninguém aqui.'));
+      itens.slice(0,60).forEach(function(c){col.appendChild(cardCrm(c));});
+      if(itens.length>60)col.appendChild(el('div','kvazio','+ '+(itens.length-60)+' (use a busca)'));
+      col.addEventListener('dragover',function(e){if(crmDrag&&can('clientes.editar')){e.preventDefault();col.classList.add('over');}});
+      col.addEventListener('dragleave',function(){col.classList.remove('over');});
+      col.addEventListener('drop',function(e){e.preventDefault();col.classList.remove('over');if(!crmDrag)return;var c=crmDrag;
+        var auto=c.segmento==='sem_pedido'?'novo':c.segmento;
+        sb.rpc('crm_atualizar',{p_cliente:c.id,p_funil:f[0]===auto?null:f[0],p_limpar_funil:f[0]===auto}).then(function(x){if(x.error){toast(msgCrm(x.error),true);return;}toast(c.nome+': '+f[1]);loadCrm();});});
+      kb.appendChild(col);
+    });
+    renderTarefasCrm();renderMsgsCrm();
+  }
+  function cardCrm(c){
+    var n=el('article','kcard'),top=el('div','top');top.appendChild(el('b',null,c.nome));if(c.funil_manual)top.appendChild(el('span','muted','manual'));n.appendChild(top);
+    var d=diasDesde(c.ultimo_pedido);
+    n.appendChild(el('span','muted',c.total_pedidos>0?c.total_pedidos+' pedido'+(c.total_pedidos>1?'s':'')+' · último '+(d===0?'hoje':'há '+d+' d'):'Ainda sem pedidos'));
+    if(c.gasto_total!=null&&c.total_pedidos>0)n.appendChild(el('span','muted',brl(c.gasto_total)+' pagos · ticket '+brl(c.ticket_medio)));
+    var ex=[];if(+c.saldo_pontos>=crmBrinde)ex.push('brinde disponível');else if(+c.saldo_pontos>0)ex.push(c.saldo_pontos+' pts');if(c.aniversario_mes)ex.push('aniversário no mês');
+    if(ex.length)n.appendChild(el('span',null,ex.join(' · ')));
+    if((c.etiquetas||[]).length)n.appendChild(el('span','muted',c.etiquetas.map(function(t){return '#'+t;}).join(' ')));
+    var a=el('div','acts'),fb=el('button','btn sm go','Ficha');fb.type='button';fb.addEventListener('click',function(){abrirFicha(c);});a.appendChild(fb);n.appendChild(a);
+    if(can('clientes.editar')){n.draggable=true;
+      n.addEventListener('dragstart',function(e){e.dataTransfer.setData('text/plain',c.id);e.dataTransfer.effectAllowed='move';n.classList.add('drag');crmDrag=c;});
+      n.addEventListener('dragend',function(){n.classList.remove('drag');crmDrag=null;document.querySelectorAll('.kcol.over').forEach(function(x){x.classList.remove('over');});});}
+    return n;
+  }
+  function msgPronta(txt,c){var g=Math.floor((+c.saldo_pontos||0)/crmBrinde);return String(txt).replace(/\{nome\}/g,first(c.nome)).replace(/\{pontos\}/g,String(c.saldo_pontos||0)).replace(/\{garrafas\}/g,String(g));}
+  function abrirFicha(c){
+    var dl=$('#dlgFicha'),body=$('#fichaBody');body.textContent='';
+    body.appendChild(el('h3',null,c.nome));
+    var d=diasDesde(c.ultimo_pedido);
+    body.appendChild(el('p','muted',fone(c.whatsapp)+(c.data_nascimento?' · nascimento '+String(c.data_nascimento).split('-').reverse().join('/'):' · nascimento não cadastrado')+' · '+SEG_ROT[c.segmento]));
+    body.appendChild(el('p',null,c.total_pedidos+' pedido(s)'+(c.gasto_total!=null?' · '+brl(c.gasto_total)+' pagos · ticket '+brl(c.ticket_medio):'')+' · '+c.saldo_pontos+' pontos'+(d!=null?' · último pedido '+(d===0?'hoje':'há '+d+' dias'):'')));
+    var pode=can('clientes.editar');
+    // mensagem pronta
+    var sec=el('div','fld');sec.appendChild(el('span',null,'Mensagem pronta (você envia pelo WhatsApp)'));
+    var sel=document.createElement('select'),ta=document.createElement('textarea');ta.rows=3;
+    var o0=el('option',null,'Escolha um modelo…');o0.value='';sel.appendChild(o0);crmMsgs.filter(function(m){return m.ativo;}).forEach(function(m){var o=el('option',null,m.nome);o.value=m.id;sel.appendChild(o);});
+    sel.addEventListener('change',function(){var m=crmMsgs.filter(function(x){return x.id===sel.value;})[0];ta.value=m?msgPronta(m.texto,c):'';});
+    sec.appendChild(sel);sec.appendChild(ta);
+    var wa=el('button','btn sm wa','Abrir WhatsApp');wa.type='button';
+    wa.addEventListener('click',function(){
+      var t=ta.value.trim()||('Olá, '+first(c.nome)+'! Aqui é da TQR Açaí 💜');
+      window.open('https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent(t),'_blank','noopener');
+      if(pode)sb.rpc('crm_registrar',{p_cliente:c.id,p_tipo:'whatsapp',p_texto:sel.value?(sel.options[sel.selectedIndex].text):'mensagem livre'}).then(function(x){if(!x.error){c.ultimo_contato=new Date().toISOString();carregaInteracoes();}});
+    });
+    sec.appendChild(wa);body.appendChild(sec);
+    // etiquetas + funil
+    if(pode){
+      var et=campo('Etiquetas (separe por vírgula)','text',(c.etiquetas||[]).join(', '),{maxlength:200});body.appendChild(et[0]);
+      var fl=el('label','fld','Etapa do funil'),fs=document.createElement('select');
+      var oa=el('option',null,'Automática ('+SEG_ROT[c.segmento]+')');oa.value='';fs.appendChild(oa);FUNIL.forEach(function(f){var o=el('option',null,f[1]);o.value=f[0];if(c.funil_manual===f[0])o.selected=true;fs.appendChild(o);});fl.appendChild(fs);body.appendChild(fl);
+      var sv=el('button','btn sm go','Salvar etiquetas e etapa');sv.type='button';
+      sv.addEventListener('click',function(){
+        var tags=et[1].value.split(',').map(function(t){return t.trim();}).filter(Boolean);
+        sb.rpc('crm_atualizar',{p_cliente:c.id,p_etiquetas:tags,p_funil:fs.value||null,p_limpar_funil:!fs.value}).then(function(x){if(x.error){toast(msgCrm(x.error),true);return;}toast('Salvo.');dl.close();loadCrm();});});
+      body.appendChild(sv);
+    }
+    // tarefas do cliente
+    body.appendChild(el('h4',null,'Tarefas'));var tl=el('div','perms');body.appendChild(tl);
+    function renderT(){tl.textContent='';var mine=crmTarefas.filter(function(t){return t.cliente_id===c.id;});if(!mine.length)tl.appendChild(el('span','muted','Nenhuma tarefa pendente.'));
+      mine.forEach(function(t){tl.appendChild(linhaTarefa(t,function(){renderT();},false));});}
+    renderT();
+    if(pode){var rw=el('div','row'),ti=document.createElement('input'),di=document.createElement('input'),ad=el('button','btn sm','Adicionar');ti.type='text';ti.placeholder='Ex.: ligar para oferecer o combo';ti.maxLength=160;di.type='date';di.value=dia(new Date().toISOString());ad.type='button';
+      ad.addEventListener('click',function(){if(ti.value.trim().length<2){toast('Descreva a tarefa.',true);return;}
+        sb.from('tarefas_crm').insert({cliente_id:c.id,titulo:ti.value.trim(),vence_em:di.value}).select('id,cliente_id,titulo,vence_em,feita').then(function(x){if(x.error){toast(msgCrm(x.error),true);return;}if(x.data&&x.data[0])crmTarefas.push(x.data[0]);ti.value='';renderT();renderTarefasCrm();});});
+      rw.appendChild(ti);rw.appendChild(di);rw.appendChild(ad);body.appendChild(rw);}
+    // anotações e contatos
+    body.appendChild(el('h4',null,'Anotações e contatos'));var il=el('div','hist');body.appendChild(il);
+    function carregaInteracoes(){
+      sb.from('interacoes_crm').select('tipo,texto,criado_em').eq('cliente_id',c.id).order('criado_em',{ascending:false}).limit(15).then(function(r){
+        il.textContent='';if(r.error)return;if(!(r.data||[]).length)il.appendChild(el('span',null,'Nada registrado ainda.'));
+        (r.data||[]).forEach(function(i){il.appendChild(el('span',null,hora(i.criado_em)+' · '+({nota:'Nota',whatsapp:'WhatsApp',ligacao:'Ligação'}[i.tipo]||i.tipo)+(i.texto?' · '+i.texto:'')));});});
+    }
+    carregaInteracoes();
+    if(pode){var r2=el('div','row'),ni=document.createElement('input'),nb=el('button','btn sm','Salvar nota'),lb=el('button','btn sm','Registrei uma ligação');ni.type='text';ni.placeholder='Anotação sobre o cliente';ni.maxLength=500;nb.type=lb.type='button';
+      nb.addEventListener('click',function(){if(!ni.value.trim())return;sb.rpc('crm_registrar',{p_cliente:c.id,p_tipo:'nota',p_texto:ni.value}).then(function(x){if(x.error){toast(msgCrm(x.error),true);return;}ni.value='';carregaInteracoes();});});
+      lb.addEventListener('click',function(){sb.rpc('crm_registrar',{p_cliente:c.id,p_tipo:'ligacao',p_texto:ni.value||null}).then(function(x){if(x.error){toast(msgCrm(x.error),true);return;}ni.value='';carregaInteracoes();});});
+      r2.appendChild(ni);r2.appendChild(nb);r2.appendChild(lb);body.appendChild(r2);}
+    if(dl.showModal)dl.showModal();else dl.setAttribute('open','');
+  }
+  $('#fichaFechar').addEventListener('click',function(){var dl=$('#dlgFicha');if(dl.close)dl.close();else dl.removeAttribute('open');});
+  function linhaTarefa(t,depois,comCliente){
+    var r=el('div','row'),c=crm.filter(function(x){return x.id===t.cliente_id;})[0],atrasada=t.vence_em<dia(new Date().toISOString());
+    var tx=el('span',atrasada?'late':null,(comCliente&&c?c.nome+': ':'')+t.titulo+' · '+String(t.vence_em).split('-').reverse().join('/')+(atrasada?' (atrasada)':''));tx.style.flex='1';r.appendChild(tx);
+    if(can('clientes.editar')){var b=el('button','btn sm','Feita');b.type='button';b.addEventListener('click',function(){
+      sb.from('tarefas_crm').update({feita:true,feita_em:new Date().toISOString()}).eq('id',t.id).then(function(x){if(x.error){toast(msgCrm(x.error),true);return;}crmTarefas=crmTarefas.filter(function(y){return y.id!==t.id;});depois();renderTarefasCrm();});});r.appendChild(b);}
+    return r;
+  }
+  function renderTarefasCrm(){
+    var box=$('#crmTarefas');box.textContent='';var hoje=dia(new Date().toISOString());
+    var lista=crmTarefas.filter(function(t){return t.vence_em<=hoje;});
+    if(!lista.length){box.appendChild(el('p','empty','Nenhuma tarefa para hoje. Abra a ficha de um cliente para criar.'));return;}
+    var art=el('article','ped');lista.forEach(function(t){art.appendChild(linhaTarefa(t,function(){},true));});box.appendChild(art);
+  }
+  function renderMsgsCrm(){
+    var box=$('#crmMsgs');box.textContent='';
+    crmMsgs.forEach(function(m){
+      var n=el('article','ped'),top=el('div','top');top.appendChild(el('b',null,m.nome));top.appendChild(el('span','tag '+(m.ativo?'pago':'cancelado'),m.ativo?'Ativa':'Oculta'));n.appendChild(top);
+      if(!can('config.gerir')){n.appendChild(el('span','muted',m.texto));box.appendChild(n);return;}
+      var tx=campo('Texto','text',m.texto,{maxlength:600});n.appendChild(tx[0]);
+      var ac=el('div','acts'),sv=el('button','btn sm go','Salvar'),at=el('button','btn sm',m.ativo?'Ocultar':'Mostrar');sv.type=at.type='button';
+      sv.addEventListener('click',function(){sb.from('mensagens_crm').update({texto:tx[1].value.trim()}).eq('id',m.id).then(function(x){if(x.error){toast(msgCrm(x.error),true);return;}toast('Mensagem salva.');loadCrm();});});
+      at.addEventListener('click',function(){sb.from('mensagens_crm').update({ativo:!m.ativo}).eq('id',m.id).then(function(x){if(x.error){toast(msgCrm(x.error),true);return;}loadCrm();});});
+      ac.appendChild(sv);ac.appendChild(at);n.appendChild(ac);box.appendChild(n);
+    });
+    $('#formMsgCrm').hidden=!can('config.gerir');
+  }
+  $('#formMsgCrm').addEventListener('submit',function(e){
+    e.preventDefault();
+    sb.from('mensagens_crm').insert({nome:$('#mcNome').value.trim(),texto:$('#mcTexto').value.trim(),ordem:crmMsgs.length+1}).then(function(r){
+      if(r.error){toast(msgCrm(r.error),true);return;}toast('Mensagem criada.');$('#formMsgCrm').reset();loadCrm();});
+  });
+  $('#crmBusca').addEventListener('input',renderCrm);$('#crmTag').addEventListener('change',renderCrm);
+  $('#crmFiltros').addEventListener('click',function(e){var b=e.target.closest('button[data-f]');if(!b)return;crmFiltro=b.dataset.f;renderCrm();});
 
   sb.auth.onAuthStateChange(function(ev){if(ev==='SIGNED_OUT')show('viewLogin');});
   start();

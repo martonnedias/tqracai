@@ -53,3 +53,8 @@ o site novo cai para o pedido simples se o banco ainda não tiver a migração 0
 - Promoções valem sobre o produto-base; o adicional das opções entra depois, sem desconto. O custo das opções entra no custo do item do pedido.
 - A função de borda `criar-pedido` (Turnstile, ainda não publicada) aceita `versao: 3` para as montagens.
 - O pedido manual do painel (aba Novo pedido) também escolhe opções e usa `admin_criar_pedido_v3`.
+
+## CRM (migração 17 — já aplicada)
+- `crm_clientes()` devolve cada cliente com segmento automático (novo, recorrente, VIP, em risco, inativo) a partir dos pedidos; os limites ficam em Configurações do banco: `crm_vip_pedidos` (5), `crm_risco_dias` (30), `crm_inativo_dias` (60). Gasto e ticket médio só aparecem para quem tem `financeiro.ver`.
+- Funil em Kanban na aba CRM (arrastar muda a etapa à mão; arrastar para a etapa automática volta ao automático), etiquetas, tarefas com data, anotações/contatos (`crm_registrar`) e mensagens prontas editáveis com {nome}, {pontos}, {garrafas}.
+- Permissões: ver = `clientes.ver`; editar = `clientes.editar`; editar mensagens prontas = `config.gerir`. O envio é sempre manual: o painel abre o WhatsApp e só registra que houve contato.

@@ -568,6 +568,17 @@ html,body{max-width:100%;overflow-x:clip}
   .side{position:relative;top:auto;height:auto;min-height:calc(100vh - var(--top));overflow:visible}
   .side #tabs{position:sticky;top:calc(var(--top) + 8px);max-height:calc(100vh - var(--top) - 16px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#4a3566 transparent;padding-bottom:12px}
 }
+
+/* grupos do menu recolhem sozinhos quando a janela é baixa (o menu nunca rola por dentro) */
+@media(min-width:960px){
+  .gfech{display:none!important}
+  #tabs .nav-g[role=button]{display:flex;align-items:center;justify-content:space-between;cursor:pointer;border-radius:6px;user-select:none}
+  #tabs .nav-g[role=button]:hover{color:#fff}
+  #tabs .nav-g[role=button]:focus-visible{outline:2px solid var(--ouro);outline-offset:2px}
+  #tabs .nav-g[role=button]::after{content:"";width:6px;height:6px;margin-right:4px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);transition:transform .15s}
+  #tabs .nav-g.fechado::after{transform:rotate(-45deg)}
+  .side #tabs{overflow-y:hidden}
+}
 </style>
 </head>
 <body>
@@ -1383,12 +1394,37 @@ html,body{max-width:100%;overflow-x:clip}
   $('#maisFecha').addEventListener('click',function(){$('#dlgMais').close();});
   var ultMob=window.innerWidth<700,resT=null;
   window.addEventListener('resize',function(){clearTimeout(resT);resT=setTimeout(function(){var m=window.innerWidth<700;if(m!==ultMob){ultMob=m;if(['inicio','pedidos','relatorios','financeiro'].indexOf(tabAtual)>=0)carregaAba(tabAtual);}},250);});
+  // ===== Menu lateral: grupos recolhíveis (abrem/fecham no clique; fecham sozinhos se a janela for baixa) =====
+  var menuG=[];
+  (function(){
+    var nav=$('#tabs'),g=null;
+    nav.querySelectorAll(':scope > *').forEach(function(n){
+      if(n.classList.contains('nav-g')){g={h:n,it:[]};menuG.push(g);n.setAttribute('role','button');n.tabIndex=0;n.setAttribute('aria-expanded','true');
+        var tg=function(){var ab=g0.it.length&&g0.it[0].classList.contains('gfech');setG(g0,ab);};var g0=g;
+        n.addEventListener('click',tg);n.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();tg();}});}
+      else if(g)g.it.push(n);
+    });
+  })();
+  function setG(g,abre){g.it.forEach(function(n){n.classList.toggle('gfech',!abre);});g.h.setAttribute('aria-expanded',abre?'true':'false');g.h.classList.toggle('fechado',!abre);}
+  function ajustaMenu(){
+    var nav=$('#tabs');if(!nav||window.innerWidth<960)return;
+    menuG.forEach(function(g){setG(g,true);});
+    nav.style.overflowY='auto';
+    if(nav.scrollHeight>nav.clientHeight+1){
+      var outros=menuG.filter(function(g){return !g.it.some(function(n){return n.classList.contains('on');});});
+      outros.forEach(function(g){setG(g,false);});
+      outros.forEach(function(g){if(g.it.every(function(n){return n.hidden;}))return;setG(g,true);if(nav.scrollHeight>nav.clientHeight+1)setG(g,false);});
+    }
+    nav.style.overflowY='';
+  }
+  window.addEventListener('resize',function(){clearTimeout(ajustaMenu.t);ajustaMenu.t=setTimeout(ajustaMenu,150);});
   var tabAtual='';
   document.addEventListener('click',function(e){if(e.target&&e.target.id==='novaVersaoGo')location.reload();});
   function abrirAba(t){
     tabAtual=t;marcaBnav();
     document.querySelectorAll('#tabs button').forEach(function(x){x.classList.toggle('on',x.dataset.tab===t);});
     document.querySelectorAll('main > section[id^=tab-]').forEach(function(x){x.hidden=(x.id!=='tab-'+t);});
+    ajustaMenu();
     carregaAba(t);
   }
   function carregaAba(t){

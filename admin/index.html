@@ -529,6 +529,38 @@ div.card>b{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:
 .kcol>header{position:sticky;top:-10px;z-index:2;background:inherit;padding-top:10px;margin-top:-10px}
 .kmais{width:100%;justify-content:center}
 @media(max-width:959px){.kcol{max-height:none}}
+
+/* ===== responsividade em todos os celulares (320–600px) ===== */
+html,body{max-width:100%;overflow-x:hidden}
+.bar .brand img{flex:none}
+.bname{min-width:0}.bname b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.seg{max-width:100%}.seg .btn{flex:1 1 auto;white-space:nowrap}
+@media(max-width:600px){
+  .cards,.cards-6{grid-template-columns:repeat(2,1fr)}
+  .stat,.cards-6 .stat{padding:12px 14px;min-width:0}
+  .stat b,.cards-6 .stat b{font-size:clamp(1.05rem,5.4vw,1.35rem);overflow-wrap:anywhere}
+  .stat small{font-size:.68rem;letter-spacing:.04em}
+  .row{flex-wrap:wrap}.row>label,.row>.fld{flex:1 1 140px;min-width:0}
+  .seg{display:flex;flex-wrap:wrap}.seg .btn{padding:0 10px}
+  .ini-top{padding-top:12px}
+  .card,.rel-card{padding-left:14px;padding-right:14px}
+  table{display:block;overflow-x:auto;max-width:100%}
+  dialog{max-width:calc(100vw - 16px)}
+}
+@media(max-width:420px){
+  .bar{padding-left:10px;padding-right:10px;gap:4px}
+  .bar .brand{gap:8px}.bar .brand img{width:34px;height:34px}
+  .bname b{font-size:1.1rem}
+  .hbtn{min-width:40px;padding:0 4px}#btnAlert{padding:0 8px}
+  .avatar{width:30px;height:30px}
+  .bn span{font-size:.66rem}
+  .acts{grid-template-columns:1fr 1fr}
+}
+@media(max-width:420px){.row>label,.row>.fld{flex-basis:100%}.row select{width:100%}}
+@media(max-width:340px){
+  .bname b{font-size:1rem}.hbtn{min-width:36px}
+  .stat b,.cards-6 .stat b{font-size:1.05rem}
+}
 </style>
 </head>
 <body>
@@ -2036,7 +2068,7 @@ div.card>b{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:
   // ===== Plano e módulos (só dono) =====
   var modDados=null;
   function loadModulos(){
-    sb.rpc('admin_modulos').then(function(r){if(r.error){toast('Não foi possível carregar os módulos.',true);return;}modDados=r.data;renderModulos();});
+    sb.rpc('admin_modulos').then(function(r){if(r.error||!r.data){toast('Não foi possível carregar os módulos.',true);return;}modDados=r.data;renderModulos();});
   }
   function renderModulos(){
     var d=modDados,box=$('#listMod'),pb=$('#listPlanos');box.textContent='';pb.textContent='';

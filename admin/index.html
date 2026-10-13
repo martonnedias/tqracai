@@ -635,8 +635,6 @@ html,body{max-width:100%;overflow-x:hidden}
   <div class="shell">
   <aside class="side"><nav id="tabs" aria-label="Seções do painel">
       <span class="nav-g" role="presentation">Operação</span>
-      <span class="nav-g" role="presentation">Operação</span>
-      <span class="nav-g" role="presentation">Operação</span>
       <button class="btn" data-tab="inicio" data-perm="" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span>Início</span></button>
       <button class="btn" data-tab="pedidos" data-perm="pedidos.ver" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg><span>Pedidos</span></button>
       <button class="btn" data-tab="novo" data-perm="pedidos.criar" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg><span>Novo pedido</span></button>
@@ -1369,9 +1367,10 @@ html,body{max-width:100%;overflow-x:hidden}
     document.querySelectorAll('#tabs > *').forEach(function(n){
       if(n.classList.contains('nav-g')){g=el('div','mais-g');g.appendChild(el('span','mais-gt',n.textContent));box.appendChild(g);return;}
       if(n.hidden||!g)return;
-      var b=el('button','btn mais-i');b.type='button';b.innerHTML=n.querySelector('svg').outerHTML+'<span>'+n.textContent.trim()+'</span>';
+      var b=el('button','btn mais-i');b.type='button';var lb=n.querySelector('span:not(.nbadge)');b.innerHTML=n.querySelector('svg').outerHTML+'<span></span>';b.lastChild.textContent=(lb?lb.textContent:n.textContent).trim();
       b.addEventListener('click',function(){$('#dlgMais').close();abrirAba(n.dataset.tab);});g.appendChild(b);
     });
+    box.querySelectorAll('.mais-g').forEach(function(x){if(!x.querySelector('.mais-i'))x.remove();});
     var d=$('#dlgMais');if(d.showModal)d.showModal();else d.setAttribute('open','');
   }
   $('#maisFecha').addEventListener('click',function(){$('#dlgMais').close();});

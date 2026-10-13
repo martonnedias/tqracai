@@ -531,7 +531,7 @@ div.card>b{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:
 @media(max-width:959px){.kcol{max-height:none}}
 
 /* ===== responsividade em todos os celulares (320–600px) ===== */
-html,body{max-width:100%;overflow-x:hidden}
+html,body{max-width:100%;overflow-x:clip}
 .bar .brand img{flex:none}
 .bname{min-width:0}.bname b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .seg{max-width:100%}.seg .btn{flex:1 1 auto;white-space:nowrap}
@@ -560,6 +560,13 @@ html,body{max-width:100%;overflow-x:hidden}
 @media(max-width:340px){
   .bname b{font-size:1rem}.hbtn{min-width:36px}
   .stat b,.cards-6 .stat b{font-size:1.05rem}
+}
+
+/* menu lateral: a faixa escura cobre a página inteira; só a lista de itens fica fixa e rola por dentro */
+@media(min-width:960px){
+  .shell{align-items:stretch}
+  .side{position:relative;top:auto;height:auto;min-height:calc(100vh - var(--top));overflow:visible}
+  .side #tabs{position:sticky;top:calc(var(--top) + 8px);max-height:calc(100vh - var(--top) - 16px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#4a3566 transparent;padding-bottom:12px}
 }
 </style>
 </head>

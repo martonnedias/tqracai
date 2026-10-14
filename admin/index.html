@@ -579,6 +579,17 @@ html,body{max-width:100%;overflow-x:clip}
   #tabs .nav-g.fechado::after{transform:rotate(-45deg)}
   .side #tabs{overflow-y:hidden}
 }
+
+/* tela Personalização */
+.mk-cores,.mk-fontes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 14px}
+.mk-cores input[type=color]{width:100%;height:44px;padding:3px;cursor:pointer}
+.mk-ctr{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:4px;font-size:.85rem}
+.mk-ctr li{display:flex;gap:8px;align-items:center}.mk-ctr .ok{color:var(--ok)}.mk-ctr .ruim{color:var(--bad);font-weight:650}
+.mk-amostra{margin:14px 0 0;padding:14px 16px;border-radius:var(--r);background:var(--fundo);border:1px dashed var(--brand-line);display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
+.mk-amostra .script-h{font-size:1.7rem;color:var(--brand)}
+.mk-pres .btn{display:inline-flex;align-items:center;gap:8px}
+#tab-marca .card{max-width:none;margin-bottom:16px}#tab-marca .card h3{margin:0 0 10px}#tab-marca .card h3+*{margin-top:0}
+.mk-pres i{display:inline-block;width:46px;height:18px;border-radius:5px;border:1px solid rgba(0,0,0,.15)}
 </style>
 </head>
 <body>
@@ -673,6 +684,7 @@ html,body{max-width:100%;overflow-x:clip}
       <button class="btn" data-tab="produtos" data-perm="produtos.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg><span>Produtos</span></button>
       <button class="btn" data-tab="montagem" data-perm="produtos.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.4 5 5.6.8-4 3.9 1 5.5-5-2.7-5 2.7 1-5.5-4-3.9 5.6-.8z"/></svg><span>Montagem</span></button>
       <span class="nav-g" role="presentation">Sistema</span>
+      <button class="btn" data-tab="marca" data-mod="personalizacao" data-perm="config.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 2-.9 2-2 0-.6-.2-1-.6-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2H18a3 3 0 0 0 3-3c0-4.4-4-8.3-9-8.3Z"/><circle cx="7.5" cy="11" r="1.2"/><circle cx="11" cy="7" r="1.2"/><circle cx="16" cy="8" r="1.2"/></svg><span>Personalização</span></button>
       <button class="btn" data-tab="config" data-perm="config.gerir" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Configurações</span></button>
       <button class="btn" data-tab="usuarios" data-perm="*" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.2 7.8 8 9 4.8-1.2 8-4.5 8-9V6l-8-3Z"/><circle cx="12" cy="10" r="2.5"/><path d="M7.5 16.5c.8-2 2.5-3 4.5-3s3.7 1 4.5 3"/></svg><span>Usuários</span></button>
       <button class="btn" data-tab="modulos" data-perm="*" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 14v7M14 17.5h7"/></svg><span>Plano e módulos</span></button>
@@ -1178,6 +1190,42 @@ html,body{max-width:100%;overflow-x:clip}
       <h2 style="margin-top:22px">Planos</h2>
       <div class="list" id="listPlanos"></div>
     </section>
+    <section id="tab-marca" hidden>
+      <h2>Personalização</h2>
+      <p class="muted">Cores, fontes, nome e logo do painel. A mudança aparece na hora, como prévia; só vale para todos depois de salvar.</p>
+      <div class="card">
+        <h3>Modelos prontos</h3>
+        <div class="row mk-pres" id="mkPres" style="flex-wrap:wrap"></div>
+      </div>
+      <form class="card" id="formMarca" autocomplete="off">
+        <h3>Nome e logo</h3>
+        <div class="row2">
+          <label class="fld">Nome do painel<input id="mkNome" type="text" maxlength="40"></label>
+          <label class="fld">Subtítulo<input id="mkSub" type="text" maxlength="70"></label>
+        </div>
+        <label class="fld">Endereço do logo <small>(link https da imagem; deixe vazio para manter o atual)</small><input id="mkLogo" type="text" maxlength="250" placeholder="https://..."></label>
+        <h3 style="margin-top:14px">Cores</h3>
+        <div class="mk-cores">
+          <label class="fld">Fundo do menu e topo<input id="mkCasca" type="color"></label>
+          <label class="fld">Cor principal (botões)<input id="mkMarca" type="color"></label>
+          <label class="fld">Cor de destaque (detalhes)<input id="mkDest" type="color"></label>
+          <label class="fld">Fundo das telas<input id="mkFundo" type="color"></label>
+        </div>
+        <ul class="mk-ctr" id="mkCtr" aria-live="polite"></ul>
+        <h3 style="margin-top:14px">Fontes</h3>
+        <div class="mk-fontes">
+          <label class="fld">Textos<select id="mkFTexto"></select></label>
+          <label class="fld">Títulos e números<select id="mkFTitulo"></select></label>
+          <label class="fld">Destaque (nome da marca)<select id="mkFDest"></select></label>
+        </div>
+        <p class="mk-amostra" id="mkAmostra"><b class="script-h">Boa noite.</b> <span>Pedidos de hoje: <strong>12</strong> · R$ 143,86</span></p>
+        <div class="row" style="flex-wrap:wrap;margin-top:12px">
+          <button class="btn go" id="mkSalvar" type="submit">Salvar para todos</button>
+          <button class="btn" id="mkDesfaz" type="button">Desfazer alterações</button>
+          <button class="btn" id="mkRestaura" type="button">Voltar ao padrão do arquivo</button>
+        </div>
+      </form>
+    </section>
     <section id="tab-usuarios" hidden>
       <h2>Usuários do painel</h2>
       <div class="list" id="listUsr"></div>
@@ -1337,18 +1385,42 @@ html,body{max-width:100%;overflow-x:clip}
 
   // ===== Abas =====
   // ===== Pacote de marca (admin/marca.js) =====
-  var MARCA=window.TQR_MARCA||{},EMP=(window.TQR_MARCA&&window.TQR_MARCA.empresa)||'a loja',EMPS=EMP.replace(/^#/,'');
-  (function aplicaMarca(){
-    var c=MARCA.cores||{},r=document.documentElement.style;
+  var MARCA_BASE=window.TQR_MARCA||{},MARCA=MARCA_BASE,EMP=(MARCA_BASE.empresa)||'a loja',EMPS=EMP.replace(/^#/,'');
+  // fontes liberadas (as mesmas que o servidor aceita) e os pesos que cada uma tem no Google Fonts
+  var FONTES={'Poppins':'400;500;600;700','Inter':'400;500;600;700','Montserrat':'400;500;600;700','Nunito':'400;600;700','Lato':'400;700','Roboto':'400;500;700','Open Sans':'400;600;700','Source Sans 3':'400;600;700','Work Sans':'400;500;600;700','DM Sans':'400;500;700','Playfair Display':'400;600;700','Merriweather':'400;700','Raleway':'400;500;600;700','Oswald':'400;500;600;700','Kaushan Script':'','Pacifico':'','Lobster':''};
+  var FONTE_FALLBACK={'Playfair Display':'serif','Merriweather':'serif','Kaushan Script':'cursive','Pacifico':'cursive','Lobster':'cursive'};
+  function carregaFonte(n){
+    if(!FONTES.hasOwnProperty(n)||document.getElementById('gf-'+n.replace(/ /g,'')))return;
+    var l=document.createElement('link');l.rel='stylesheet';l.id='gf-'+n.replace(/ /g,'');
+    l.href='https://fonts.googleapis.com/css2?family='+n.replace(/ /g,'+')+(FONTES[n]?':wght@'+FONTES[n]:'')+'&display=swap';document.head.appendChild(l);
+  }
+  function famCss(n,sans){return "'"+n+"',"+(FONTE_FALLBACK[n]||sans);}
+  var SANS='ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif';
+  function mesclaMarca(b,d){
+    var o={};Object.keys(b).forEach(function(k){o[k]=b[k];});
+    if(!d||typeof d!=='object')return o;
+    ['nome','subtitulo','logo'].forEach(function(k){if(typeof d[k]==='string'&&d[k])o[k]=d[k];});
+    [['fonteTexto','fTexto'],['fonteTitulo','fTitulo'],['fonteDestaque','fDestaque']].forEach(function(m){if(typeof d[m[0]]==='string'&&FONTES.hasOwnProperty(d[m[0]]))o[m[1]]=d[m[0]];});
+    if(d.cores&&typeof d.cores==='object')o.cores=Object.assign({},b.cores||{},d.cores);
+    return o;
+  }
+  function aplicaMarca(M){
+    var c=M.cores||{},r=document.documentElement.style;
     var mp={casca:'--casca',casca2:'--casca-2',marca:'--brand',marcaHover:'--brand-hover',destaque:'--ouro',destaque2:'--ouro-2',fundo:'--fundo'};
     Object.keys(mp).forEach(function(k){if(c[k])r.setProperty(mp[k],c[k]);});
-    if(MARCA.fonteDestaque&&MARCA.fonteDestaque.arquivo){var st=document.createElement('style');st.textContent="@font-face{font-family:'TQRDestaque';src:url("+MARCA.fonteDestaque.arquivo+");font-display:swap}";document.head.appendChild(st);r.setProperty('--f-destaque',"'TQRDestaque',"+(MARCA.fonteDestaque.familia||'cursive')+",cursive");}
-    var tx={nome:MARCA.nome,subtitulo:MARCA.subtitulo,loginSub:(MARCA.textos||{}).loginSub,montagemTitulo:(MARCA.textos||{}).montagemTitulo};
-    document.querySelectorAll('[data-marca-ph]').forEach(function(n){var t=(MARCA.textos||{})[n.dataset.marcaPh];if(t)n.placeholder='Ex.: '+t;});
-    document.querySelectorAll('[data-marca]').forEach(function(n){var k=n.dataset.marca;if(k==='logo'){if(MARCA.logo)n.src=MARCA.logo;}else if(tx[k])n.textContent=tx[k];});
-    var fv=document.getElementById('favMarca');if(fv&&MARCA.logo)fv.href=MARCA.logo;
-    if(MARCA.nome)document.title=MARCA.nome+(MARCA.empresa?' · '+MARCA.empresa:'');
-  })();
+    if(M.fTexto){carregaFonte(M.fTexto);r.setProperty('--font',famCss(M.fTexto,SANS));}
+    if(M.fTitulo){carregaFonte(M.fTitulo);r.setProperty('--f-ui',famCss(M.fTitulo,SANS));}
+    if(M.fDestaque){carregaFonte(M.fDestaque);r.setProperty('--f-destaque',famCss(M.fDestaque,'cursive'));}
+    else if(M.fonteDestaque&&M.fonteDestaque.arquivo){if(!document.getElementById('stDestaque')){var st=document.createElement('style');st.id='stDestaque';st.textContent="@font-face{font-family:'TQRDestaque';src:url("+M.fonteDestaque.arquivo+");font-display:swap}";document.head.appendChild(st);}r.setProperty('--f-destaque',"'TQRDestaque',"+(M.fonteDestaque.familia||'cursive')+",cursive");}
+    var tx={nome:M.nome,subtitulo:M.subtitulo,loginSub:(M.textos||{}).loginSub,montagemTitulo:(M.textos||{}).montagemTitulo};
+    document.querySelectorAll('[data-marca-ph]').forEach(function(n){var t=(M.textos||{})[n.dataset.marcaPh];if(t)n.placeholder='Ex.: '+t;});
+    document.querySelectorAll('[data-marca]').forEach(function(n){var k=n.dataset.marca;if(k==='logo'){if(M.logo)n.src=M.logo;}else if(tx[k])n.textContent=tx[k];});
+    var fv=document.getElementById('favMarca');if(fv&&M.logo)fv.href=M.logo;
+    if(M.nome)document.title=M.nome+(M.empresa?' · '+M.empresa:'');
+  }
+  aplicaMarca(MARCA);
+  // marca salva no banco (tela Personalização) vale por cima do arquivo marca.js, inclusive no login
+  sb.rpc('obter_marca').then(function(r){if(r&&r.data&&typeof r.data==='object'){mkSalvo=r.data;MARCA=mesclaMarca(MARCA_BASE,r.data);aplicaMarca(MARCA);}},function(){});
   // vocabulário do negócio (admin/marca.js): troca "garrafa(s)" nos textos quando o cliente usa outra palavra
   (function(){
     var v=MARCA.vocabulario||{};if(!v.unidade||(v.unidade==='garrafa'&&(!v.unidades||v.unidades==='garrafas')))return;
@@ -1421,6 +1493,7 @@ html,body{max-width:100%;overflow-x:clip}
   var tabAtual='';
   document.addEventListener('click',function(e){if(e.target&&e.target.id==='novaVersaoGo')location.reload();});
   function abrirAba(t){
+    if(tabAtual==='marca'&&t!=='marca'){MARCA=mesclaMarca(MARCA_BASE,mkSalvo);aplicaMarca(MARCA);}
     tabAtual=t;marcaBnav();
     document.querySelectorAll('#tabs button').forEach(function(x){x.classList.toggle('on',x.dataset.tab===t);});
     document.querySelectorAll('main > section[id^=tab-]').forEach(function(x){x.hidden=(x.id!=='tab-'+t);});
@@ -1432,6 +1505,7 @@ html,body{max-width:100%;overflow-x:clip}
     if(t==='crm')loadCrm();
     if(t==='usuarios')loadUsuarios();
     if(t==='modulos')loadModulos();
+    if(t==='marca')loadMarca();
     if(t==='config')loadConfig();
     if(t==='produtos')loadProdutos();
     if(t==='financeiro')initFinanceiro();
@@ -2107,6 +2181,70 @@ html,body{max-width:100%;overflow-x:clip}
   var ERRO_USR={email_ja_cadastrado:'Este e-mail já está cadastrado.',precisa_de_um_dono:'Precisa existir pelo menos um dono ativo.',nao_pode_em_si_mesmo:'Você não pode fazer isso na sua própria conta.',
     perfil_em_uso:'Há usuários com este perfil.',perfil_de_sistema:'Perfis do sistema não podem ser alterados.',mfa_necessario:'Entre com o código de verificação em duas etapas.'};
   function msgUsr(e){var m=String(e&&e.message||'');return ERRO_USR[m]||(m.indexOf('invalido')===0?'Confira os campos informados.':'Não consegui concluir. Tente de novo.');}
+  // ===== Personalização: cores, fontes, nome e logo (grava no banco; prévia ao vivo) =====
+  var MK_PRESETS=[
+    {n:'Berinjela e ouro (padrão)',casca:'#1a0a2b',marca:'#59298a',destaque:'#e8be62',fundo:'#f5f1f9',fT:'Inter',fH:'Poppins',fD:'Kaushan Script'},
+    {n:'Verde folha',casca:'#0f2a1d',marca:'#1f7a4d',destaque:'#f0c24b',fundo:'#f2f7f3',fT:'Inter',fH:'Montserrat',fD:'Pacifico'},
+    {n:'Azul oceano',casca:'#0b1f3a',marca:'#1d5fb8',destaque:'#ffb347',fundo:'#f1f5fa',fT:'Roboto',fH:'Poppins',fD:'Lobster'},
+    {n:'Laranja tropical',casca:'#2b1408',marca:'#c2410c',destaque:'#ffd166',fundo:'#fbf5ef',fT:'Nunito',fH:'Raleway',fD:'Pacifico'},
+    {n:'Grafite',casca:'#17191c',marca:'#3b4252',destaque:'#7dd3fc',fundo:'#f3f4f6',fT:'Inter',fH:'Work Sans',fD:'Oswald'}
+  ];
+  function hex2rgb(h){h=h.replace('#','');return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)];}
+  function rgb2hex(a){return '#'+a.map(function(v){v=Math.max(0,Math.min(255,Math.round(v)));return (v<16?'0':'')+v.toString(16);}).join('');}
+  function mixHex(a,b,t){var x=hex2rgb(a),y=hex2rgb(b);return rgb2hex([x[0]+(y[0]-x[0])*t,x[1]+(y[1]-x[1])*t,x[2]+(y[2]-x[2])*t]);}
+  function lum(h){var v=hex2rgb(h).map(function(c){c/=255;return c<=.03928?c/12.92:Math.pow((c+.055)/1.055,2.4);});return .2126*v[0]+.7152*v[1]+.0722*v[2];}
+  function ratio(a,b){var l1=lum(a),l2=lum(b);return (Math.max(l1,l2)+.05)/(Math.min(l1,l2)+.05);}
+  var mkSalvo=null;
+  function mkRascunho(){
+    var casca=$('#mkCasca').value,marca=$('#mkMarca').value,dest=$('#mkDest').value,fundo=$('#mkFundo').value;
+    var lg=$('#mkLogo').value.trim();
+    return {nome:$('#mkNome').value.trim(),subtitulo:$('#mkSub').value.trim(),logo:/^https:\/\/\S{4,}$/.test(lg)?lg:'',
+      cores:{casca:casca,casca2:mixHex(casca,'#ffffff',.1),marca:marca,marcaHover:mixHex(marca,'#000000',.18),destaque:dest,destaque2:mixHex(dest,'#ffffff',.45),fundo:fundo},
+      fonteTexto:$('#mkFTexto').value,fonteTitulo:$('#mkFTitulo').value,fonteDestaque:$('#mkFDest').value};
+  }
+  function mkPreencher(m){
+    var c=m.cores||{};
+    $('#mkNome').value=m.nome||'';$('#mkSub').value=m.subtitulo||'';$('#mkLogo').value=/^https:/.test(m.logo||'')?m.logo:'';
+    $('#mkCasca').value=c.casca||'#1a0a2b';$('#mkMarca').value=c.marca||'#59298a';$('#mkDest').value=c.destaque||'#e8be62';$('#mkFundo').value=c.fundo||'#f5f1f9';
+    $('#mkFTexto').value=m.fTexto||'Inter';$('#mkFTitulo').value=m.fTitulo||'Poppins';$('#mkFDest').value=m.fDestaque||'Kaushan Script';
+  }
+  function mkContraste(){
+    var d=mkRascunho(),c=d.cores,box=$('#mkCtr');box.textContent='';
+    [['Texto branco sobre a cor principal (botões)',ratio(c.marca,'#ffffff'),4.5],['Detalhes sobre o fundo do menu',ratio(c.destaque,c.casca),3],['Texto branco sobre o fundo do menu',ratio('#ffffff',c.casca),4.5],['Texto escuro sobre o fundo das telas',ratio('#1d1726',c.fundo),7]].forEach(function(x){
+      var li=el('li',x[1]>=x[2]?'ok':'ruim');li.textContent=(x[1]>=x[2]?'✓ ':'⚠ ')+x[0]+': '+x[1].toFixed(1)+':1'+(x[1]>=x[2]?'':' (baixo; mínimo '+x[2]+':1, o texto fica difícil de ler)');box.appendChild(li);});
+    return d;
+  }
+  function mkPrevia(){var d=mkContraste();MARCA=mesclaMarca(MARCA_BASE,d);aplicaMarca(MARCA);}
+  function mkDesfazer(){mkPreencher(mesclaMarca(MARCA_BASE,mkSalvo));mkPrevia();}
+  function loadMarca(){
+    sb.rpc('obter_marca').then(function(r){mkSalvo=(r&&r.data&&typeof r.data==='object')?r.data:null;mkPreencher(mesclaMarca(MARCA_BASE,mkSalvo));mkContraste();});
+  }
+  (function(){
+    ['#mkFTexto','#mkFTitulo','#mkFDest'].forEach(function(sel){var sl=$(sel);Object.keys(FONTES).forEach(function(n){sl.appendChild(el('option',null,n)).value=n;});});
+    var box=$('#mkPres');
+    MK_PRESETS.forEach(function(p){
+      var b=el('button','btn');b.type='button';var sw=el('i');sw.style.background='linear-gradient(90deg,'+p.casca+' 0 40%,'+p.marca+' 40% 75%,'+p.destaque+' 75%)';b.appendChild(sw);b.appendChild(document.createTextNode(p.n));
+      b.addEventListener('click',function(){$('#mkCasca').value=p.casca;$('#mkMarca').value=p.marca;$('#mkDest').value=p.destaque;$('#mkFundo').value=p.fundo;$('#mkFTexto').value=p.fT;$('#mkFTitulo').value=p.fH;$('#mkFDest').value=p.fD;mkPrevia();});
+      box.appendChild(b);
+    });
+    $('#formMarca').addEventListener('input',mkPrevia);
+    $('#mkDesfaz').addEventListener('click',mkDesfazer);
+    $('#mkRestaura').addEventListener('click',function(){
+      confirmar('Voltar ao padrão do arquivo?',['Apaga a personalização salva e volta ao visual definido em marca.js.'],'Restaurar',true).then(function(ok){
+        if(!ok)return;sb.rpc('admin_restaurar_marca').then(function(r){if(r.error){toast('Não foi possível restaurar.',true);return;}mkSalvo=null;MARCA=MARCA_BASE;aplicaMarca(MARCA);mkPreencher(MARCA);mkContraste();toast('Visual padrão restaurado.');});});
+    });
+    $('#formMarca').addEventListener('submit',function(e){
+      e.preventDefault();var d=mkContraste();
+      var ruins=document.querySelectorAll('#mkCtr .ruim').length;
+      var salva=function(){var b=$('#mkSalvar');b.disabled=true;
+        sb.rpc('admin_salvar_marca',{p_dados:d}).then(function(r){b.disabled=false;
+          if(r.error){toast(/modulo_inativo/.test(r.error.message||'')?'O módulo Personalização está desligado.':'Não foi possível salvar. Confira os campos.',true);return;}
+          mkSalvo=d;toast('Personalização salva para todos.');});};
+      if(ruins)confirmar('Salvar com contraste baixo?',['Algumas combinações ficam difíceis de ler. Deseja salvar mesmo assim?'],'Salvar mesmo assim').then(function(ok){if(ok)salva();});
+      else salva();
+    });
+  })();
+
   // ===== Plano e módulos (só dono) =====
   var modDados=null;
   function loadModulos(){

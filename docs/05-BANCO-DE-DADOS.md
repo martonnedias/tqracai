@@ -83,6 +83,8 @@ Internas (schema `app_private`): `motor_pedido`, `calcular_montagens`, `pagament
 | 19 | Pagamentos (Asaas, webhook idempotente) |
 | 20 | Nota fiscal (homologação) |
 | 21 | Relatórios |
+| 22 | Módulos e planos |
+| 23 | Marca do painel (cores, fontes, nome, logo) |
 
 (Detalhe de cada arquivo em `supabase/LEIA-ME.md`.)
 
@@ -111,6 +113,36 @@ language sql stable security definer set search_path = public as $$
                    from instancia_modulos where modulo = m), false) $$;
 ```
 Uso: `using (tem_permissao('financeiro.ver') and modulo_ativo('gestao'))` em policies e `if not modulo_ativo('marketing') then raise exception ...` em RPCs. Seeds: Núcleo sempre `ativo`.
+
+### 9.1 Projeto mestre: cadastro de assinantes (proposta)
+```sql
+create table assinantes (
+  id uuid primary key default gen_random_uuid(),
+  razao_social text not null, nome_fantasia text, documento text unique,   -- CNPJ/CPF
+  segmento text, cidade text, uf char(2), site text, logo_url text,
+  status text not null default 'teste' check (status in ('teste','ativo','inadimplente','suspenso','cancelado')),
+  criado_em timestamptz default now()
+);
+create table assinante_contatos (
+  id uuid primary key default gen_random_uuid(), assinante_id uuid references assinantes on delete cascade,
+  tipo text check (tipo in ('responsavel','financeiro','tecnico')), nome text, email text, whatsapp text);
+create table assinante_contratos (
+  id uuid primary key default gen_random_uuid(), assinante_id uuid references assinantes on delete cascade,
+  plano text, addons text[] default '{}', ciclo text check (ciclo in ('mensal','anual')),
+  valor_centavos int, desconto_pct numeric(5,2) default 0, inicio date, vencimento date,
+  gateway_cliente text, gateway_assinatura text, aceite_lgpd_em timestamptz, aceite_versao text);
+create table assinante_instancias (
+  id uuid primary key default gen_random_uuid(), assinante_id uuid references assinantes on delete cascade,
+  supabase_ref text, url_site text, url_painel text, dominio text,
+  versao_migracao int, ultimo_acesso timestamptz, saude text);
+create table assinante_eventos (
+  id bigint generated always as identity primary key, assinante_id uuid references assinantes on delete cascade,
+  tipo text, detalhe jsonb, em timestamptz default now(), por uuid);
+```
+RLS: somente equipe do mestre; nenhuma policy para `anon`.
+
+### 9.2 Marca do painel (migração 23, já aplicada)
+`marca_painel(id=1, dados jsonb, atualizado_em)`; funções `obter_marca()`, `admin_salvar_marca(jsonb)`, `admin_restaurar_marca()`, `app_private.marca_valida(jsonb)`.
 
 **Multi-tenant (fase futura):** adicionar `loja_id` em todas as tabelas, RLS por `loja_id` do JWT e `modulo_ativo(loja, m)`.
 

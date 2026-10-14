@@ -42,10 +42,15 @@ Esforço relativo: **P** (≤ 1 dia) · **M** (2–4 dias) · **G** (1–2 seman
 - **Aceite:** desativar `gestao` ⇒ aba some **e** chamada direta a `rel_vendas` falha; Núcleo nunca desativa; testes cobrem os 3 planos.
 - **Risco:** esquecer uma RPC → checklist automatizado listando funções sem guarda.
 
-### Fase 2 — Painel mestre e licenças · **G**
-- Projeto Supabase do dono do produto: clientes, instâncias, plano, status, versão.
+### Fase 1b — Personalização da marca · **M** · ✅ entregue (migração 23 + tela Personalização)
+- Cores, fontes, nome e logo do painel pelo próprio cliente, com prévia ao vivo, validação no servidor e aviso de contraste.
+- Próximos passos: upload de logo/favicon e personalização do site público.
+
+### Fase 2 — Painel mestre, cadastro de assinantes e licenças · **G**
+- Projeto Supabase do dono do produto: **cadastro das empresas assinantes** (empresa, contatos, contrato, instância, cobrança, LGPD, histórico; ver PRD §8.4 e Banco §9.1), plano, status e versão.
+- Telas do mestre: lista com filtros, ficha do assinante, ligar/desligar módulo, suspender, abrir painel da loja.
 - Edge Function de licença (token assinado, cache e tolerância na instância).
-- **Aceite:** ligar/desligar módulo no mestre reflete na instância em ≤ 5 min; offline respeita tolerância.
+- **Aceite:** cadastrar uma empresa assinante, vincular plano e instância; ligar/desligar módulo no mestre reflete na loja em ≤ 5 min; offline respeita tolerância.
 - Depende da Fase 1.
 
 ### Fase 3 — Assistente de implantação · **G**

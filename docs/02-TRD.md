@@ -141,5 +141,17 @@ $$ select coalesce((select ativo and (ate is null or ate>now()) from instancia_m
 - **Painel mestre:** projeto Supabase separado do dono do produto; webhook Asaas → atualiza `instancia_modulos` da instância (via Edge Function com service role).
 - **Atualizações:** `migrations` idempotentes + tabela `versao_instancia`; script que aplica migrations em cada projeto.
 
+### 12.1 Cadastro de assinantes (projeto mestre)
+Um projeto Supabase **separado** (do dono do produto) guarda o cadastro; as lojas não enxergam umas às outras.
+- Tabelas: `assinantes`, `assinante_contatos`, `assinante_contratos`, `assinante_instancias`, `assinante_eventos` (ver `05-BANCO-DE-DADOS.md` §9.1).
+- Acesso: só usuários do mestre (RLS por `eh_equipe_mestre()`); sem acesso público.
+- Sincronia com a loja: Edge Function do mestre chama a loja (service role dela, guardada como secret do mestre) para `admin_definir_modulo`/`admin_aplicar_plano`; a loja também consulta uma **licença** assinada (cache + tolerância).
+- Webhook do gateway atualiza `assinante_contratos.status` e dispara a ativação/suspensão de módulos.
+
+### 12.2 Marca do painel
+- Tabela `marca_painel` (1 linha, `dados jsonb`); `obter_marca()` é pública (a tela de login usa), devolve `null` se o módulo `personalizacao` estiver desligado; `admin_salvar_marca`/`admin_restaurar_marca` exigem `config.gerir` + módulo ativo.
+- Validação no servidor (`app_private.marca_valida`): cores `#rrggbb`, fontes de lista liberada, logo `https://` ou caminho relativo, tamanhos máximos.
+- Painel: `aplicaMarca(M)` aplica variáveis CSS (`--casca`, `--brand`, `--ouro`, `--fundo`, `--font`, `--f-ui`, `--f-destaque`), carrega a fonte do Google Fonts sob demanda e mescla com `marca.js` (o banco vence).
+
 ## 13. Dívidas técnicas
 Fontes externas; arquivo único grande (`admin/index.html`); estados `.fld.err` e `.btn.load`; `prefers-reduced-motion` em `gira`; achados do relatório de acessibilidade (pendentes); textos de marca ainda fixos em pontos do site público; 18 dívidas listadas em `admin/SISTEMA-DE-DESIGN.md`.

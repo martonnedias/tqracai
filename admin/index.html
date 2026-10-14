@@ -577,7 +577,9 @@ html,body{max-width:100%;overflow-x:clip}
   #tabs .nav-g[role=button]:focus-visible{outline:2px solid var(--ouro);outline-offset:2px}
   #tabs .nav-g[role=button]::after{content:"";width:6px;height:6px;margin-right:4px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);transition:transform .15s}
   #tabs .nav-g.fechado::after{transform:rotate(-45deg)}
-  .side #tabs{overflow-y:hidden}
+  .side #tabs{overflow-y:auto;scrollbar-gutter:auto}
+  .side #tabs::-webkit-scrollbar{width:6px}.side #tabs::-webkit-scrollbar-thumb{background:transparent;border-radius:3px}.side #tabs:hover::-webkit-scrollbar-thumb{background:#4a3566}
+  .side #tabs{scrollbar-color:transparent transparent}.side #tabs:hover{scrollbar-color:#4a3566 transparent}
 }
 
 /* tela Personalização */

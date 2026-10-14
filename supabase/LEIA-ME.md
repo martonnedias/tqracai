@@ -85,3 +85,6 @@ Base da assinatura. Tabelas `modulos`, `planos`, `plano_modulos`, `instancia_mod
 - Trava no servidor: `tem_permissao` passa a exigir o módulo (financeiro/custos/estoque → `gestao`; promocoes → `marketing`); as funções `crm_*`, de pontos, `pagamento_admin_*` e `nota_*` chamam `app_private.exige_modulo`. Módulo desligado devolve `modulo_inativo:<módulo>`; nada é apagado.
 - `minhas_permissoes()` agora devolve também `modulos`. O menu do painel esconde o que está desligado.
 
+## Marca do painel (migração 23 — já aplicada)
+Cores, fontes, nome e logo do painel guardados em `marca_painel` e editados na tela **Personalização** (permissão `config.gerir` + módulo `personalizacao`). `obter_marca()` é pública (a tela de login usa); `admin_salvar_marca`/`admin_restaurar_marca` validam no servidor (cores `#rrggbb`, fontes de lista liberada, logo `https://`). Sem nada salvo, vale o arquivo `admin/marca.js`.
+

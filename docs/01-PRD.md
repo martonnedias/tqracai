@@ -70,6 +70,8 @@ Legenda: ✅ pronto · 🧪 homologação/teste · ⏳ pendente
 | Catálogo | Produtos, Montagem | ✅ | Grupos de opções, receitas, preços |
 | Sistema | Configurações | ✅ | 5 sub-abas (Loja, Pedidos, Empresa/fiscal, Pagamento, Entrega) |
 | | Usuários | ✅ | Perfis e permissões (Edge Function `admin-usuarios`) |
+| | Plano e módulos | ✅ | Liga/desliga módulos e aplica plano; trava no servidor |
+| | Personalização | ✅ | Cores, fontes, nome e logo do painel, com prévia e contraste |
 | | Ajuda | ✅ | Guia por módulo e dicas por campo |
 
 ### 5.3 Plataforma
@@ -94,7 +96,10 @@ Legenda: ✅ pronto · 🧪 homologação/teste · ⏳ pendente
 | RF-10 | Impressão de comanda e recibo | Média |
 | RF-11 | Nota fiscal (homologação) com cancelamento e XML de teste | Baixa (até contador) |
 | RF-12 | Troca de marca/vocabulário sem alterar código do painel | Média |
-| RF-13 | **Ativar/desativar módulos por instância** (ver §8) | Alta (fase SaaS) |
+| RF-13 | **Ativar/desativar módulos por instância** (ver §8) | Alta (fase SaaS) — ✅ entregue (migração 22) |
+| RF-14 | **Cadastro de empresas assinantes** no painel mestre: dados da empresa, contatos, plano, módulos, instância, contrato e cobrança (ver §8.4) | Alta (fase SaaS) |
+| RF-15 | **Personalização da marca pelo próprio cliente**: cores, fontes, nome e logo do painel, com prévia ao vivo e aviso de contraste (ver §8.5) | Alta — ✅ entregue (migração 23, tela Personalização) |
+| RF-16 | Histórico de eventos por assinante (ativação, troca de plano, suspensão, versão aplicada) | Média |
 
 ## 7. Requisitos não funcionais
 
@@ -132,6 +137,25 @@ Legenda: ✅ pronto · 🧪 homologação/teste · ⏳ pendente
 3. Painel esconde menus de módulos inativos (cosmético, não é a segurança).
 4. **Painel mestre** (do dono do produto) liga/desliga módulos por cliente; licença com cache e tolerância offline.
 5. Cobrança recorrente (Asaas) → webhook ativa/desativa módulos automaticamente.
+
+### 8.4 Cadastro de empresas assinantes (painel mestre)
+O painel mestre é um sistema **do dono do produto** (separado das lojas) e guarda quem assina:
+
+| Grupo | Campos |
+|---|---|
+| Empresa | Razão social, nome fantasia, CNPJ/CPF, segmento (açaí, pizzaria, hamburgueria...), cidade/UF, site, logo |
+| Contatos | Responsável, e-mail, WhatsApp, contato financeiro, contato técnico |
+| Contrato | Plano, módulos extras (add-ons), data de início, vencimento, ciclo (mensal/anual), valor, desconto, status (teste, ativo, inadimplente, suspenso, cancelado) |
+| Instância | Projeto Supabase, URL do site e do painel, domínio próprio, versão do sistema aplicada, último acesso, saúde (ativo/pausado) |
+| Cobrança | Cliente no gateway, assinatura recorrente, últimas cobranças, status do pagamento |
+| LGPD | Aceite do contrato e do termo de operador de dados, data e versão |
+| Histórico | Linha do tempo: criado, plano trocado, módulo ligado/desligado, suspenso, versão atualizada, observações |
+
+Telas: lista com filtros (status, plano, segmento, vencimento), ficha do assinante, botão "Ligar/desligar módulo", "Suspender", "Abrir painel da loja". Cada ação no mestre reflete na instância da loja (ver TRD §12).
+
+### 8.5 Personalização da marca (white-label)
+Já entregue: tela **Personalização** (módulo `personalizacao`). O cliente escolhe um modelo pronto ou ajusta 4 cores (fundo do menu, cor principal, destaque, fundo das telas), 3 fontes (textos, títulos, destaque), nome, subtítulo e logo. A prévia é ao vivo; o servidor valida cores (#rrggbb), fontes (lista liberada) e o logo (link https); avisos de contraste (WCAG) impedem combinações ilegíveis sem bloquear. Vale na tela de login também. "Voltar ao padrão" restaura o visual do arquivo `marca.js`.
+Ainda fora desta entrega: upload do logo, favicon próprio, personalização do **site público** (hoje só o painel) e domínio próprio.
 
 ## 9. Sugestões para deixar o sistema mais completo
 

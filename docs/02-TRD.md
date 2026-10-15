@@ -54,7 +54,7 @@ docs/                     # este conjunto
 
 ### 4.1 Autenticação e autorização
 - Equipe: Supabase Auth (e-mail/senha; MFA recomendado). Tabela `perfis` liga usuário → perfil.
-- Perfis: `dono` (`*`), `gerente`, `atendente`, `entregador`.
+- Perfis: `dono` (`*`, fixo), `gerente`, `atendente`, `entregador` (permissões editáveis pelo dono via `perfil_salvar`; código e nome não mudam) e personalizados.
 - Permissões: `pedidos.{ver,criar,status,status_entrega,cancelar,editar}`, `clientes.{ver,editar}`, `produtos.gerir`, `promocoes.gerir`, `config.gerir`, `financeiro.{ver,gerir}`, `custos.{ver,gerir}`, `estoque.{ver,gerir}`.
 - Funções auxiliares: `tem_permissao(p)`, `is_admin()`, `eh_dono()`, `minhas_permissoes()`.
 - **Fonte da verdade = RLS + RPC `SECURITY DEFINER`.** O front só esconde menus (`data-perm`, `can()`).

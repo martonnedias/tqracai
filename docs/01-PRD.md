@@ -69,7 +69,7 @@ Legenda: ✅ pronto · 🧪 homologação/teste · ⏳ pendente
 | | Estoque | ✅ | Insumos, compras, movimentos, baixa automática ao pagar |
 | Catálogo | Produtos, Montagem | ✅ | Grupos de opções, receitas, preços |
 | Sistema | Configurações | ✅ | 5 sub-abas (Loja, Pedidos, Empresa/fiscal, Pagamento, Entrega) |
-| | Usuários | ✅ | Perfis e permissões (Edge Function `admin-usuarios`) |
+| | Usuários | ✅ | Usuários, perfis e **edição das permissões de cada perfil** (Edge Function `admin-usuarios`) |
 | | Plano e módulos | ✅ | Liga/desliga módulos e aplica plano; trava no servidor |
 | | Personalização | ✅ | Cores, fontes, nome e logo do painel, com prévia e contraste |
 | | Ajuda | ✅ | Guia por módulo e dicas por campo |

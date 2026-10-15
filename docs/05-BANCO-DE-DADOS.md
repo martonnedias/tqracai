@@ -66,7 +66,7 @@ Internas (schema `app_private`): `motor_pedido`, `calcular_montagens`, `pagament
 ## 6. Segurança (RLS e permissões)
 - Padrão: toda tabela com RLS; `anon` só executa RPCs públicas.
 - Policies usam `tem_permissao('x.y')`, `is_admin()`, `eh_dono()`.
-- Perfis: `dono` (`*`), `gerente`, `atendente`, `entregador`.
+- Perfis: `dono` (`*`, fixo), `gerente`, `atendente`, `entregador` (as permissões destes três podem ser editadas pelo dono) e perfis personalizados.
 - Permissões: `pedidos.ver/criar/status/status_entrega/cancelar/editar`, `clientes.ver/editar`, `produtos.gerir`, `promocoes.gerir`, `config.gerir`, `financeiro.ver/gerir`, `custos.ver/gerir`, `estoque.ver/gerir`.
 
 ## 7. Chaves de `configuracoes`

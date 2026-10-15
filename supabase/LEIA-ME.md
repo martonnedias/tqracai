@@ -91,3 +91,6 @@ Cores, fontes, nome e logo do painel guardados em `marca_painel` e editados na t
 ## Cancelar pedido com motivo (migração 24 — já aplicada)
 `pedidos` ganha `motivo_cancelamento`, `detalhe_cancelamento`, `cancelado_em` e `cancelado_por`. A função `admin_cancelar_pedido(p_pedido, p_motivo, p_detalhe)` (permissão `pedidos.cancelar`) exige um motivo da lista (cliente desistiu, pagamento não confirmado, sem estoque, fora da área, pedido duplicado, erro no pedido, outro — este exige detalhes) e muda o status; o estorno do caixa, dos pontos e do estoque continua vindo dos gatilhos. Vale também para pedido já entregue. O gatilho `pedidos_guarda` trata os campos do cancelamento como parte do status.
 
+
+## 25 · Prova social (`20261101_25_prova_social.sql`)
+Aviso de pedidos recentes no site. Tabela `prova_social`, `obter_prova_social()` (pública, saneada), `admin_salvar_prova_social(jsonb)` (config.gerir + módulo marketing). Exemplos sempre aparecem com a etiqueta "Exemplo". Já aplicada em produção.

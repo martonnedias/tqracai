@@ -148,6 +148,11 @@ Um projeto Supabase **separado** (do dono do produto) guarda o cadastro; as loja
 - Sincronia com a loja: Edge Function do mestre chama a loja (service role dela, guardada como secret do mestre) para `admin_definir_modulo`/`admin_aplicar_plano`; a loja também consulta uma **licença** assinada (cache + tolerância).
 - Webhook do gateway atualiza `assinante_contratos.status` e dispara a ativação/suspensão de módulos.
 
+### 12.3 Prova social (aviso de pedidos no site)
+- Tabela `prova_social` (1 linha, `dados jsonb`); `admin_salvar_prova_social` exige `config.gerir` + módulo `marketing` e valida tudo em `app_private.prova_social_valida`.
+- `obter_prova_social()` é pública e devolve dados já saneados: pedidos reais só com primeiro nome/inicial, bairro e quantidade (nunca telefone/endereço); itens de exemplo saem com `tipo='exemplo'` e o site sempre exibe a etiqueta "Exemplo".
+- `prova-social.js` (site, blog e políticas; `data-local`) consulta a função, confere novos pedidos a cada 45 s, respeita locais, aparelhos, posição, atraso, intervalo e máximo por visita; `?ps=off` desliga.
+
 ### 12.2 Marca do painel
 - Tabela `marca_painel` (1 linha, `dados jsonb`); `obter_marca()` é pública (a tela de login usa), devolve `null` se o módulo `personalizacao` estiver desligado; `admin_salvar_marca`/`admin_restaurar_marca` exigem `config.gerir` + módulo ativo.
 - Validação no servidor (`app_private.marca_valida`): cores `#rrggbb`, fontes de lista liberada, logo `https://` ou caminho relativo, tamanhos máximos.

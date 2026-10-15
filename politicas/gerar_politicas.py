@@ -43,6 +43,8 @@ PAGES = [
 
 <h3>2.2 Dados guardados no seu aparelho</h3>
 <p>Se você marcar a opção “Lembrar meus dados neste aparelho”, o seu nome e endereço ficam salvos no armazenamento local do seu navegador, para agilizar o próximo pedido. Esses dados ficam somente no seu aparelho. Você pode apagá-los a qualquer momento desmarcando a opção ou limpando os dados do navegador.</p>
+<h3>2.3 Aviso de pedidos recentes</h3>
+<p>O site pode exibir um pequeno aviso com pedidos recentes de outros clientes. Nele aparecem apenas o primeiro nome (ou a inicial), o bairro e a quantidade, nunca telefone, endereço completo ou outros dados. Avisos marcados como “Exemplo” são ilustrativos e não representam pedidos reais.</p>
 
 <h3>2.3 Dados de navegação</h3>
 <p>Se você autorizar no aviso de cookies, usamos ferramentas de medição e publicidade (Google Analytics e Meta Pixel) que coletam dados como páginas visitadas, cliques nos botões de pedido, tipo de aparelho, navegador e localização aproximada. Veja a <a href="cookies.html">Política de Cookies</a>.</p>
@@ -253,6 +255,7 @@ mark.fill{{background:#f3cf7f;color:#2a0838;padding:0 4px;border-radius:4px;font
 <div><strong style="color:#fff">{v('nome')}</strong> · {v('razao')} · {v('doc')}<br>{v('endereco')}</div>
 <div>WhatsApp: <a href="{WA}" target="_blank" rel="noopener">{v('whatsapp')}</a> · {v('email')}<br>{" · ".join(f'<a href="{s}.html">{t}</a>' for s, t in TITLES.items())}</div>
 </div></footer>
+<script src="../prova-social.js" data-local="politicas" defer></script>
 </body></html>"""
 
 for slug, title, desc, body in PAGES:

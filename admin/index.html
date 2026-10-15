@@ -1444,11 +1444,11 @@ dialog#dlgCancel h3{margin:0 0 8px}.dlg-c .fld{margin-top:12px}.dlg-c textarea{w
   // ===== Sub-abas: agrupa partes de uma tela em abas internas =====
   var SUBABA={};
   function subAbas(secSel,defs){
-    var sec=$(secSel),bar=el('div','subabas'),panes={},btns={};bar.setAttribute('role','tablist');
+    var sec=$(secSel),pre=secSel.replace('#tab-',''),bar=el('div','subabas'),panes={},btns={};bar.setAttribute('role','tablist');
     defs.forEach(function(d,i){
-      var pane=el('div','subpane');pane.id='sp-'+d.id;pane.setAttribute('role','tabpanel');panes[d.id]=pane;
+      var pane=el('div','subpane');pane.id='sp-'+pre+'-'+d.id;pane.setAttribute('role','tabpanel');panes[d.id]=pane;
       d.sel.forEach(function(x){var n=typeof x==='string'?sec.querySelector(x):x;if(n)pane.appendChild(n);});
-      var b=el('button',null);b.type='button';b.setAttribute('role','tab');b.id='st-'+d.id;b.setAttribute('aria-controls',pane.id);
+      var b=el('button',null);b.type='button';b.setAttribute('role','tab');b.id='st-'+pre+'-'+d.id;b.setAttribute('aria-controls',pane.id);
       b.appendChild(document.createTextNode(d.rot));var nn=el('span','sb-n');nn.hidden=true;b.appendChild(nn);b.badge=nn;
       b.addEventListener('click',function(){mostra(d.id);});
       b.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(!k)return;e.preventDefault();var j=(i+k+defs.length)%defs.length;mostra(defs[j].id);btns[defs[j].id].focus();});

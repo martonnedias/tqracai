@@ -86,6 +86,7 @@ Internas (schema `app_private`): `motor_pedido`, `calcular_montagens`, `pagament
 | 22 | Módulos e planos |
 | 23 | Marca do painel (cores, fontes, nome, logo) |
 | 24 | Cancelar pedido com motivo (`admin_cancelar_pedido`) |
+| 26 | Selo "Novo" (chaves `novidades_*` em `configuracoes` e `obter_novidades()`) |
 | 25 | Prova social: aviso de pedidos no site (`prova_social`, `obter_prova_social`, `admin_salvar_prova_social`) |
 
 (Detalhe de cada arquivo em `supabase/LEIA-ME.md`.)

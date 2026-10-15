@@ -94,3 +94,6 @@ Cores, fontes, nome e logo do painel guardados em `marca_painel` e editados na t
 
 ## 25 · Prova social (`20261101_25_prova_social.sql`)
 Aviso de pedidos recentes no site. Tabela `prova_social`, `obter_prova_social()` (pública, saneada), `admin_salvar_prova_social(jsonb)` (config.gerir + módulo marketing). Exemplos sempre aparecem com a etiqueta "Exemplo". Já aplicada em produção.
+
+## 26 · Selo "Novo" (`20261102_26_novidades.sql`)
+Chaves `novidades_ativo`, `novidades_dias`, `novidades_ocultas` em `configuracoes` (validadas em `validar_config`) e `obter_novidades()` (qualquer usuário do painel). Já aplicada em produção. O registro das novidades fica em `admin/novidades.js`.

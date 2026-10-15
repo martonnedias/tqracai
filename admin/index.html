@@ -645,6 +645,8 @@ dialog#dlgCancel h3{margin:0 0 8px}.dlg-c .fld{margin-top:12px}.dlg-c textarea{w
 .ps-ex-l{display:grid;grid-template-columns:1.2fr 1.2fr 96px auto;gap:10px;align-items:end;margin-bottom:10px}.ps-ex-l .btn{height:40px}
 @media(max-width:700px){.ps-ex-l{grid-template-columns:1fr 1fr}.ps-ex-l .btn{grid-column:1/-1}}
 #pmDias{display:flex;flex-wrap:wrap;gap:6px 16px}#pmDias label{display:inline-flex;align-items:center;gap:6px;min-height:36px}
+.novo-selo{display:inline-block;margin-left:8px;padding:1px 7px;border-radius:999px;background:linear-gradient(135deg,#e8be62,#b8862e);color:#2a0838;font-size:.62rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;line-height:1.5;vertical-align:middle;white-space:nowrap}nav#tabs .btn .novo-selo{margin-left:auto}
+.nov-l{display:grid;gap:6px;margin:8px 0}.nov-l .chk{justify-content:flex-start}.nov-l small{color:var(--muted)}
 .acts{align-items:center;gap:8px;margin-top:12px}
 .acts>.btn.danger{margin-left:auto}
 .ped>.acts,.card>.acts{padding-top:12px;border-top:1px solid var(--line)}
@@ -1175,6 +1177,7 @@ dialog .da .btn{min-width:110px}
         <button class="btn sm" type="button" data-cfg="empresa">Empresa e fiscal</button>
         <button class="btn sm" type="button" data-cfg="pagamento">Pagamento</button>
         <button class="btn sm" type="button" data-cfg="entrega">Entrega</button>
+        <button class="btn sm" type="button" data-cfg="novidades">Novidades</button>
       </div>
       <form class="card cfg-card cfgform" id="formCfg" autocomplete="off" novalidate>
         <div class="cfg-pane" data-pane="loja">
@@ -1195,6 +1198,17 @@ dialog .da .btn{min-width:110px}
             <label class="fld">Base (vendas antes do sistema)<input data-chave="contador_base" type="number" min="0" required></label>
             <label class="fld">Ajuste manual <small>(pode ser negativo)</small><input data-chave="contador_ajuste" type="number" required></label>
           </div>
+        </div>
+        <div class="cfg-pane" data-pane="novidades" hidden>
+          <b>Selo "Novo"</b>
+          <p class="muted">Marca no menu as funções recém-lançadas para a equipe achar o que mudou. O selo some sozinho após os dias definidos, quando a pessoa abre a função, ou quando você desliga o item.</p>
+          <div class="grid2">
+            <label class="chk"><input data-chave="novidades_ativo" data-bool="1" type="checkbox"><span>Mostrar o selo "Novo"</span></label>
+            <label class="fld">Dias com o selo<input data-chave="novidades_dias" type="number" min="1" max="90" required></label>
+          </div>
+          <input data-chave="novidades_ocultas" type="hidden">
+          <b>Itens</b>
+          <div class="nov-l" id="novLista"></div>
         </div>
         <div class="cfg-pane" data-pane="pedidos" hidden>
           <b>Limites do pedido</b>
@@ -1415,6 +1429,7 @@ dialog .da .btn{min-width:110px}
 
 <script src="marca.js"></script>
 <script src="ajuda.js"></script>
+<script src="novidades.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
 <script>
 (function(){
@@ -1447,7 +1462,7 @@ dialog .da .btn{min-width:110px}
   // ===== Aviso de nova versão do painel =====
   var versaoBase=null;
   function checaVersao(){
-    var u=['index.html','ajuda.js'];
+    var u=['index.html','ajuda.js','novidades.js'];
     Promise.all(u.map(function(x){return fetch(x+(x==='index.html'?'':'')+'?v='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).catch(function(){return '';});})).then(function(t){
       var h=t.join('|').length+':'+t.map(function(x){var n=0;for(var i=0;i<x.length;i+=97)n=(n*31+x.charCodeAt(i))|0;return n;}).join(',');
       if(t.every(function(x){return !x;}))return;
@@ -1519,7 +1534,7 @@ dialog .da .btn{min-width:110px}
       show('app');clearInterval(timer);
       var primeira=document.querySelector('#tabs button:not([hidden])');
       if(primeira)abrirAba(primeira.dataset.tab);
-      loadAll();timer=setInterval(function(){if(can('pedidos.ver'))loadPedidos();loadCodigos();},30000);
+      loadAll();loadNovos();timer=setInterval(function(){if(can('pedidos.ver'))loadPedidos();loadCodigos();},30000);
       mfaStatus().then(function(on){$('#mfaBanner').hidden=on;});
     });
   }
@@ -1656,7 +1671,7 @@ dialog .da .btn{min-width:110px}
   document.addEventListener('click',function(e){if(e.target&&e.target.id==='novaVersaoGo')location.reload();});
   function abrirAba(t){
     if(tabAtual==='marca'&&t!=='marca'){MARCA=mesclaMarca(MARCA_BASE,mkSalvo);aplicaMarca(MARCA);}
-    tabAtual=t;marcaBnav();
+    tabAtual=t;marcaBnav();novoVisto('aba:'+t);
     try{window.scrollTo({top:0,left:0,behavior:'instant'});}catch(e){window.scrollTo(0,0);}
     document.querySelectorAll('#tabs button').forEach(function(x){x.classList.toggle('on',x.dataset.tab===t);});
     document.querySelectorAll('main > section[id^=tab-]').forEach(function(x){x.hidden=(x.id!=='tab-'+t);});
@@ -2293,7 +2308,7 @@ dialog .da .btn{min-width:110px}
   var cfgOriginal={};
   var CFG_ROT={whatsapp_pedidos:'WhatsApp dos pedidos',horario_abre:'Abre às',horario_fecha:'Fecha às',aviso_site:'Texto do aviso',aviso_ativo:'Aviso no site',
     pedido_min:'Mínimo por pedido',pedido_max:'Máximo por pedido',contador_base:'Base do contador',
-    contador_ajuste:'Ajuste do contador',pontos_por_real:'Pontos por R$ 1',pontos_por_brinde:'Pontos por brinde',aniversario_pontos:'Pontos do aniversário'};
+    contador_ajuste:'Ajuste do contador',pontos_por_real:'Pontos por R$ 1',pontos_por_brinde:'Pontos por brinde',aniversario_pontos:'Pontos do aniversário',novidades_ativo:'Selo "Novo"',novidades_dias:'Dias com o selo',novidades_ocultas:'Itens sem selo'};
   function loadConfig(){
     sb.from('configuracoes').select('chave,valor').then(function(r){
       if(r.error){toast('Não consegui carregar as configurações.',true);return;}
@@ -2304,9 +2319,9 @@ dialog .da .btn{min-width:110px}
       });
     });
     sb.rpc('obter_contador').then(function(r){$('#cntAtual').textContent=r.data==null?'—':Number(r.data).toLocaleString('pt-BR');});
-    loadPagamentos();loadBairros();
+    loadPagamentos();loadBairros();loadNovos();
   }
-  var CFG_FORM=['loja','pedidos','empresa'];
+  var CFG_FORM=['loja','pedidos','empresa','novidades'];
   function showCfg(k){
     document.querySelectorAll('#cfgSeg button').forEach(function(b){b.classList.toggle('on',b.dataset.cfg===k);});
     document.querySelectorAll('#tab-config .cfg-pane').forEach(function(p){p.hidden=p.dataset.pane!==k;});
@@ -2476,6 +2491,50 @@ dialog .da .btn{min-width:110px}
           mkSalvo=d;toast('Personalização salva para todos.');});};
       if(ruins)confirmar('Salvar com contraste baixo?',['Algumas combinações ficam difíceis de ler. Deseja salvar mesmo assim?'],'Salvar mesmo assim').then(function(ok){if(ok)salva();});
       else salva();
+    });
+  })();
+
+  // ===== Selo "Novo" =====
+  var NOVOS={ativo:true,dias:14,ocultas:''};
+  function novosVisto(){try{return JSON.parse(localStorage.getItem('tqr_novo_visto')||'[]');}catch(e){return[];}}
+  function novoAlvo(id){return id.indexOf('aba:')===0?document.querySelector('#tabs button[data-tab="'+id.slice(4)+'"]'):document.getElementById('st-'+id.slice(4));}
+  function novoAtivo(n){
+    var d=(Date.now()-new Date(n.desde+'T00:00:00').getTime())/864e5;
+    return NOVOS.ativo&&d>=0&&d<=NOVOS.dias&&(NOVOS.ocultas||'').split(',').indexOf(n.id)<0;
+  }
+  function aplicaNovos(){
+    document.querySelectorAll('.novo-selo').forEach(function(n){n.remove();});
+    var vis=novosVisto();
+    (window.TQR_NOVIDADES||[]).forEach(function(n){
+      if(!novoAtivo(n)||vis.indexOf(n.id)>=0)return;
+      var a=novoAlvo(n.id);if(a)a.appendChild(el('span','novo-selo','Novo'));
+    });
+  }
+  function novoVisto(id){
+    var v=novosVisto();if(v.indexOf(id)>=0)return;v.push(id);
+    try{localStorage.setItem('tqr_novo_visto',JSON.stringify(v));}catch(e){}
+    aplicaNovos();
+  }
+  function loadNovos(){
+    sb.rpc('obter_novidades').then(function(r){
+      var d=r&&r.data;if(d&&typeof d==='object'){NOVOS={ativo:d.ativo!==false,dias:+d.dias||14,ocultas:d.ocultas||''};}
+      aplicaNovos();desenhaNovosLista();
+    });
+  }
+  function desenhaNovosLista(){
+    var L=$('#novLista');if(!L)return;L.textContent='';
+    var oc=(cfgOriginal&&cfgOriginal.novidades_ocultas!=null?cfgOriginal.novidades_ocultas:NOVOS.ocultas||'').split(',');
+    (window.TQR_NOVIDADES||[]).forEach(function(n){
+      var d=Math.floor((Date.now()-new Date(n.desde+'T00:00:00').getTime())/864e5),rest=NOVOS.dias-d;
+      var l=el('label','chk'),c=document.createElement('input');c.type='checkbox';c.dataset.novId=n.id;c.checked=oc.indexOf(n.id)<0;
+      l.appendChild(c);var sp=el('span',null,n.rot+' ');sp.appendChild(el('small',null,'· lançado em '+n.desde.split('-').reverse().join('/')+(rest>0?' · selo some em '+rest+' dia(s)':' · prazo encerrado')));l.appendChild(sp);L.appendChild(l);
+    });
+  }
+  (function(){
+    var L=$('#novLista');
+    L.addEventListener('change',function(){
+      var off=[].filter.call(L.querySelectorAll('input[data-nov-id]'),function(c){return !c.checked;}).map(function(c){return c.dataset.novId;});
+      document.querySelector('[data-chave="novidades_ocultas"]').value=off.join(',');
     });
   })();
 

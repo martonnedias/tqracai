@@ -654,6 +654,14 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
 .top.scrolled .wrap{height:58px}
 @media (prefers-reduced-motion:reduce){[data-anim]{transition:none}[data-anim].pre{opacity:1;transform:none;filter:none}.hero .eyebrow,.hero h1,.hero .sub,.hero .quick,.hero .micro,.hero-visual{animation:none}.top .wrap{transition:none}}
 
+/* telas muito estreitas (<= 360px): nada pode ultrapassar a largura */
+.hero .wrap>*{min-width:0}
+@media (max-width:360px){.q-row{flex-wrap:wrap;justify-content:center}.q-total{text-align:center}.quick{padding:14px 12px}.hero h1{font-size:clamp(1.7rem,9vw,2.3rem)}.hero .micro{gap:6px 10px}}
+@media (max-width:320px){.ingr-list{grid-template-columns:1fr}.ingr .wrap>*,.ingr-item,.nutri{min-width:0}.nutri{padding:16px 14px}.ingr-item b,.nutri td,.nutri th{overflow-wrap:anywhere}}
+@media (max-width:360px){fieldset,.order-box,.order-fields,.order-sum{min-width:0}.qty-row{flex-wrap:wrap}.qchips{flex-wrap:wrap}}
+@media (max-width:240px){.wrap{padding-left:12px;padding-right:12px}.btn{white-space:normal;padding-left:14px;padding-right:14px}.nutri table{font-size:.78rem}.nutri th,.nutri td{padding-right:2px}}
+@media (max-width:300px){input,select,textarea{max-width:100%;min-width:0}.f-group,.field,.order-fields>*{min-width:0}}
+@media (max-width:300px){.q-btn{width:38px;height:38px}.q-step input{width:56px}.wrap{padding-left:10px;padding-right:10px}.hero-visual{min-height:240px}}
 /* ===== Hero: efeitos de movimento em toda a largura ===== */
 .hero{position:relative;isolation:isolate}
 .hero>.wrap{position:relative;z-index:1}

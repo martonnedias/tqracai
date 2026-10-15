@@ -88,3 +88,6 @@ Base da assinatura. Tabelas `modulos`, `planos`, `plano_modulos`, `instancia_mod
 ## Marca do painel (migração 23 — já aplicada)
 Cores, fontes, nome e logo do painel guardados em `marca_painel` e editados na tela **Personalização** (permissão `config.gerir` + módulo `personalizacao`). `obter_marca()` é pública (a tela de login usa); `admin_salvar_marca`/`admin_restaurar_marca` validam no servidor (cores `#rrggbb`, fontes de lista liberada, logo `https://`). Sem nada salvo, vale o arquivo `admin/marca.js`.
 
+## Cancelar pedido com motivo (migração 24 — já aplicada)
+`pedidos` ganha `motivo_cancelamento`, `detalhe_cancelamento`, `cancelado_em` e `cancelado_por`. A função `admin_cancelar_pedido(p_pedido, p_motivo, p_detalhe)` (permissão `pedidos.cancelar`) exige um motivo da lista (cliente desistiu, pagamento não confirmado, sem estoque, fora da área, pedido duplicado, erro no pedido, outro — este exige detalhes) e muda o status; o estorno do caixa, dos pontos e do estoque continua vindo dos gatilhos. Vale também para pedido já entregue. O gatilho `pedidos_guarda` trata os campos do cancelamento como parte do status.
+

@@ -85,6 +85,7 @@ Internas (schema `app_private`): `motor_pedido`, `calcular_montagens`, `pagament
 | 21 | Relatórios |
 | 22 | Módulos e planos |
 | 23 | Marca do painel (cores, fontes, nome, logo) |
+| 24 | Cancelar pedido com motivo (`admin_cancelar_pedido`) |
 
 (Detalhe de cada arquivo em `supabase/LEIA-ME.md`.)
 

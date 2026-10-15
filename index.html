@@ -214,8 +214,9 @@ h2{font-size:clamp(1.8rem,4.6vw,2.7rem);margin-bottom:14px}
 .plan ul{list-style:none;text-align:left;margin:16px 0 22px;display:grid;gap:8px;font-size:.9rem;color:var(--muted)}
 .plan ul li::before{content:"✓  ";color:var(--wa);font-weight:700}
 .plan .btn{margin-top:auto;width:100%;padding:15px 18px;font-size:.98rem}
+.plan .pimg{position:relative;z-index:1}
 .plan.best{border:2px solid var(--gold);background:linear-gradient(180deg,#3f1559,var(--card));transform:scale(1.04);box-shadow:0 30px 60px -25px rgba(232,190,98,.35)}
-.ribbon{position:absolute;top:-15px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;font-weight:700;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;padding:6px 16px;border-radius:999px;white-space:nowrap;box-shadow:0 8px 20px -6px rgba(224,38,43,.7)}
+.ribbon{z-index:5;position:absolute;top:-15px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;font-weight:700;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;padding:6px 16px;border-radius:999px;white-space:nowrap;box-shadow:0 8px 20px -6px rgba(224,38,43,.7)}
 .save{display:inline-block;background:rgba(37,211,102,.15);color:#7cf0a8;font-weight:700;font-size:.8rem;border-radius:999px;padding:3px 12px;margin-top:6px}
 .pay{display:flex;justify-content:center;gap:12px;margin-top:34px;flex-wrap:wrap;font-size:.88rem;color:var(--muted)}
 .pay span{border:1px solid var(--line);border-radius:999px;padding:6px 16px}

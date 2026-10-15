@@ -653,6 +653,35 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
 .top.scrolled{background:rgba(22,5,31,.95);box-shadow:0 10px 30px -12px rgba(0,0,0,.6)}
 .top.scrolled .wrap{height:58px}
 @media (prefers-reduced-motion:reduce){[data-anim]{transition:none}[data-anim].pre{opacity:1;transform:none;filter:none}.hero .eyebrow,.hero h1,.hero .sub,.hero .quick,.hero .micro,.hero-visual{animation:none}.top .wrap{transition:none}}
+
+/* ===== Hero: efeitos de movimento (modelo A) ===== */
+.hero-visual{--s:440px;--rise:520px}
+.hero-visual .fx{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;-webkit-mask-image:radial-gradient(ellipse 62% 62% at 50% 50%,#000 50%,transparent 100%);mask-image:radial-gradient(ellipse 62% 62% at 50% 50%,#000 50%,transparent 100%)}
+.hero-visual .aur{position:absolute;border-radius:50%;filter:blur(60px);mix-blend-mode:screen}
+.hero-visual .aur.a1{width:420px;height:420px;left:-80px;top:20px;background:radial-gradient(circle,#7a2cc4,transparent 65%);opacity:.7;animation:aDrift1 14s ease-in-out infinite alternate}
+.hero-visual .aur.a2{width:380px;height:380px;right:-90px;bottom:0;background:radial-gradient(circle,#e8a23a,transparent 65%);opacity:.4;animation:aDrift2 17s ease-in-out infinite alternate}
+@keyframes aDrift1{from{transform:translate(0,0) scale(1)}to{transform:translate(70px,-40px) scale(1.2)}}
+@keyframes aDrift2{from{transform:translate(0,0) scale(1.1)}to{transform:translate(-80px,50px) scale(.9)}}
+.hero-visual .halo{animation:aPulse 3.6s ease-in-out infinite}
+@keyframes aPulse{0%,100%{transform:translate(-50%,-50%) scale(.94);opacity:.75}50%{transform:translate(-50%,-50%) scale(1.1);opacity:1}}
+.hero-visual .ring.r2{border-style:dashed;animation:aSpin 40s linear infinite}
+.hero-visual .ring.r3{width:calc(var(--s) * .86);height:calc(var(--s) * .86);border:1.5px solid transparent;border-top-color:var(--gold);border-right-color:rgba(232,190,98,.25);animation:aSpin 9s linear infinite}
+@keyframes aSpin{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+.hero-visual .wave{position:absolute;left:50%;top:50%;width:calc(var(--s) * .66);height:calc(var(--s) * .66);margin:calc(var(--s) * -.33) 0 0 calc(var(--s) * -.33);border-radius:50%;border:2px solid rgba(255,214,140,.5);opacity:0;animation:aWave 4.2s ease-out infinite}
+.hero-visual .wave.w2{animation-delay:1.4s}.hero-visual .wave.w3{animation-delay:2.8s}
+@keyframes aWave{0%{transform:scale(.7);opacity:.7}100%{transform:scale(2);opacity:0}}
+.hero-visual .orbit{position:absolute;left:50%;top:50%;width:0;height:0;animation:aOrbit var(--d) linear infinite;animation-direction:var(--dir)}
+@keyframes aOrbit{to{transform:rotate(360deg)}}
+.hero-visual .orbit b{position:absolute;left:calc(var(--s) * var(--r));top:-9px;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#8a3fd6,#2a0f4a 70%);box-shadow:0 0 14px 3px rgba(150,70,220,.7),inset -2px -3px 4px rgba(0,0,0,.4)}
+.hero-visual .orbit b.gold{width:10px;height:10px;top:-5px;background:radial-gradient(circle,#fff6d8,#e8be62 65%,transparent);box-shadow:0 0 14px 4px rgba(232,190,98,.8)}
+.hero-visual .dust{position:absolute;bottom:-12px;width:5px;height:5px;border-radius:50%;background:radial-gradient(circle,#fff6d8,#e8be62 55%,transparent 72%);opacity:0;animation:aDust var(--t) linear infinite;animation-delay:var(--dl)}
+@keyframes aDust{0%{transform:translate(0,0);opacity:0}15%{opacity:.9}85%{opacity:.6}100%{transform:translate(var(--dx),calc(var(--rise) * -1));opacity:0}}
+.hero-free .shine2{position:absolute;inset:0;-webkit-mask:url(img/hero-solta-roxa.webp) center/100% 100% no-repeat;mask:url(img/hero-solta-roxa.webp) center/100% 100% no-repeat;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.7) 48%,rgba(255,236,190,.5) 52%,transparent 65%);background-size:260% 100%;background-position:130% 0;mix-blend-mode:overlay;pointer-events:none;animation:aSweep 4.8s ease-in-out infinite}
+@keyframes aSweep{0%,35%{background-position:130% 0}80%,100%{background-position:-60% 0}}
+@media (max-width:1100px){.hero-visual{--s:360px}}
+@media (max-width:760px){.hero-visual{--s:280px;--rise:360px}.hero-visual .aur,.hero-visual .wave.w3,.hero-visual .dust:nth-of-type(n+6){display:none}}
+@media (max-width:420px){.hero-visual{--s:230px;--rise:300px}.hero-visual .orbit b{width:13px;height:13px;top:-6px}}
+@media (prefers-reduced-motion:reduce){.hero-visual .fx *,.hero-visual .halo,.hero-visual .ring,.hero-free .shine2{animation:none!important}.hero-free .shine2{display:none}}
 </style>
 </head>
 <body>
@@ -693,9 +722,17 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
       <div class="micro"><span>Pedido mínimo: 1 garrafa</span><span>Pix ou cartão</span><span>Delivery ou retirada</span></div>
     </div>
     <div class="hero-visual">
-      <div class="ring r2"></div><div class="ring"></div><div class="halo"></div>
+      <div class="fx" aria-hidden="true">
+        <i class="aur a1"></i><i class="aur a2"></i>
+        <i class="wave"></i><i class="wave w2"></i><i class="wave w3"></i>
+        <i class="orbit" style="--d:16s;--dir:normal;--r:.58"><b></b></i>
+        <i class="orbit" style="--d:23s;--dir:reverse;--r:.68"><b class="gold"></b></i>
+        <i class="orbit" style="--d:30s;--dir:normal;--r:.49"><b class="gold"></b></i>
+        <span class="dust" style="left:8%;--t:11s;--dl:-1s;--dx:20px"></span><span class="dust" style="left:22%;--t:14s;--dl:-6s;--dx:-30px"></span><span class="dust" style="left:36%;--t:10s;--dl:-3s;--dx:25px"></span><span class="dust" style="left:50%;--t:13s;--dl:-9s;--dx:-20px"></span><span class="dust" style="left:62%;--t:12s;--dl:-5s;--dx:35px"></span><span class="dust" style="left:75%;--t:15s;--dl:-2s;--dx:-25px"></span><span class="dust" style="left:88%;--t:11s;--dl:-8s;--dx:15px"></span><span class="dust" style="left:44%;--t:16s;--dl:-12s;--dx:-35px"></span><span class="dust" style="left:16%;--t:13s;--dl:-10s;--dx:30px"></span><span class="dust" style="left:82%;--t:14s;--dl:-4s;--dx:-15px"></span>
+      </div>
+      <div class="ring r2"></div><div class="ring r1"></div><div class="ring r3"></div><div class="halo"></div>
       <div class="sparkles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-      <div class="hero-free" id="heroPhoto"><img src="img/hero-solta.webp" alt="Garrafa de 300 ml do #TQR Açaí com respingos de açaí e frutos" width="642" height="741" fetchpriority="high"></div>
+      <div class="hero-free" id="heroPhoto"><img src="img/hero-solta-roxa.webp" alt="Garrafa de 300 ml do #TQR Açaí com tampa roxa, respingos de açaí e frutos" width="642" height="741" fetchpriority="high"><span class="shine2" aria-hidden="true"></span></div>
       <div class="hero-badge hb1"><b>+1.000</b>garrafas vendidas</div>
       <div class="hero-badge hb2"><b>8h às 2h</b>todos os dias</div>
     </div>

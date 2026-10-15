@@ -134,7 +134,14 @@ async function salvarPerfil(b: Record<string, unknown>) {
   const perms = Array.isArray(b.permissoes) ? b.permissoes.map(String) : [];
   if (perms.some((p) => !PERMISSOES.includes(p))) throw new Erro("permissao_invalida");
   const { data: atual } = await sb.from("perfis").select("sistema").eq("id", id).maybeSingle();
-  if (atual?.sistema) throw new Erro("perfil_de_sistema");
+  if (!perms.length) throw new Erro("invalido:permissoes");
+  if (atual?.sistema) {
+    // perfis do sistema: o dono (acesso total) é fixo; nos demais só as permissões e a descrição podem mudar (código, nome e a marca "sistema" não)
+    if (id === "dono") throw new Erro("perfil_de_sistema");
+    const { error } = await sb.from("perfis").update({ descricao, permissoes: [...new Set(perms)] }).eq("id", id);
+    if (error) throw new Erro("falha_banco", 500);
+    return {};
+  }
   const { error } = await sb.from("perfis").upsert({ id, nome, descricao, permissoes: [...new Set(perms)], sistema: false });
   if (error) throw new Erro("falha_banco", 500);
   return {};

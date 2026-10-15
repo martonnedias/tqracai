@@ -627,6 +627,18 @@ dialog#dlgCancel{position:fixed;inset:0;margin:auto;max-height:calc(100vh - 24px
 dialog#dlgCancel::backdrop{background:rgba(20,8,36,.55)}
 dialog#dlgCancel h3{margin:0 0 8px}.dlg-c .fld{margin-top:12px}.dlg-c textarea{width:100%;min-height:72px;resize:vertical}
 .dlg-c .da{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+
+.subabas.cfg-seg{flex-wrap:nowrap;margin:4px 0 16px}
+.subabas button.btn{min-height:44px;padding:0 16px;border:0;border-bottom:3px solid transparent;border-radius:0;background:transparent;box-shadow:none;margin-bottom:-1px;font-weight:600;color:var(--muted)}
+.subabas button.btn.on{color:var(--brand);border-bottom-color:var(--brand);background:transparent}
+.subabas button.btn:hover{background:transparent;color:var(--text)}
+.perm-res{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}
+.perm-ed{margin-top:12px}
+.perm-grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:12px}
+.perm-g{border:1px solid var(--line);border-radius:var(--r-sm);padding:8px 14px 12px;margin:0;min-width:0}
+.perm-g legend{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700;color:var(--muted);padding:0 6px}
+.perm-g .chk{display:flex;gap:8px;align-items:flex-start;padding:5px 0}
+.perm-g .chk input{margin-top:3px}
 </style>
 </head>
 <body>
@@ -861,17 +873,12 @@ dialog#dlgCancel h3{margin:0 0 8px}.dlg-c .fld{margin-top:12px}.dlg-c textarea{w
       </div>
       <div class="cards cards-6" id="finCards"></div>
       <p class="muted" id="finPE"></p>
-      <div class="fin-grid">
-        <div class="fin-main">
-          <div class="rel-grid">
-            <div class="rel-card"><h3>Fluxo dos últimos 12 meses</h3><div id="finGrafFluxo"></div></div>
-            <div class="rel-card"><h3>Despesas do mês por categoria</h3><div id="finGrafCat"></div></div>
-          </div>
-          <h3>Lançamentos do mês</h3>
-          <div class="list lcompact" id="finLista"></div>
-          <h3>Resumo mensal</h3>
-          <div class="list lcompact" id="finFluxo"></div>
-        </div>
+      <div class="rel-grid" id="finPaneGraf">
+        <div class="rel-card"><h3>Fluxo dos últimos 12 meses</h3><div id="finGrafFluxo"></div></div>
+        <div class="rel-card"><h3>Despesas do mês por categoria</h3><div id="finGrafCat"></div></div>
+      </div>
+      <div class="fin-grid" id="finPaneLanc">
+        <div class="fin-main"><div class="list lcompact" id="finLista"></div></div>
         <aside class="fin-side">
           <form class="card" id="formLanc" autocomplete="off">
             <b>Novo lançamento</b>
@@ -891,6 +898,7 @@ dialog#dlgCancel h3{margin:0 0 8px}.dlg-c .fld{margin-top:12px}.dlg-c textarea{w
           </form>
         </aside>
       </div>
+      <div class="list lcompact" id="finFluxo"></div>
     </section>
 
     <section id="tab-pagamentos" hidden>
@@ -1019,6 +1027,8 @@ dialog#dlgCancel h3{margin:0 0 8px}.dlg-c .fld{margin-top:12px}.dlg-c textarea{w
       <p class="muted">O estoque sobe com as compras e desce sozinho quando um pedido é pago (pela ficha técnica de cada produto); cancelar devolve. Use contagem, perda e ajuste para acertar com a prateleira.</p>
       <div class="cards" id="estCards"></div>
       <div class="banner" id="estAlerta" hidden></div>
+      <div class="filters"><input type="search" id="estBusca" placeholder="Buscar insumo" aria-label="Buscar insumo"></div>
+      <div class="subabas" id="estChips" role="tablist" aria-label="Filtrar estoque"></div>
       <div class="list" id="listEstoque"></div>
     </section>
 
@@ -1138,7 +1148,7 @@ dialog#dlgCancel h3{margin:0 0 8px}.dlg-c .fld{margin-top:12px}.dlg-c textarea{w
 
     <section id="tab-config" hidden>
       <div class="phead"><h2>Configurações</h2></div>
-      <div class="seg cfg-seg" id="cfgSeg" role="tablist" aria-label="Seções das configurações">
+      <div class="subabas cfg-seg" id="cfgSeg" role="tablist" aria-label="Seções das configurações">
         <button class="btn sm on" type="button" data-cfg="loja">Loja e site</button>
         <button class="btn sm" type="button" data-cfg="pedidos">Pedidos</button>
         <button class="btn sm" type="button" data-cfg="empresa">Empresa e fiscal</button>
@@ -2300,8 +2310,13 @@ dialog#dlgCancel h3{margin:0 0 8px}.dlg-c .fld{margin-top:12px}.dlg-c textarea{w
   var PERM_ROT={'pedidos.ver':'Ver pedidos','pedidos.criar':'Criar pedido manual','pedidos.status':'Mudar status (confirmar, pago, saiu, entregue)',
     'pedidos.status_entrega':'Só marcar saiu para entrega / entregue','pedidos.cancelar':'Cancelar pedidos','pedidos.editar':'Editar dados do pedido',
     'clientes.ver':'Ver clientes','clientes.editar':'Editar clientes','produtos.gerir':'Produtos e preços','promocoes.gerir':'Promoções',
-    'config.gerir':'Configurações do site','financeiro.ver':'Ver valores e financeiro','financeiro.gerir':'Lançar e editar no financeiro'};
+    'config.gerir':'Configurações do site','financeiro.ver':'Ver valores e financeiro','financeiro.gerir':'Lançar e editar no financeiro',
+    'custos.ver':'Ver custos e margens','custos.gerir':'Editar custos, fichas técnicas e compras','estoque.ver':'Ver estoque','estoque.gerir':'Mexer no estoque (contagem, perda, ajuste)'};
+  var PERM_GRUPOS=[['Pedidos',['pedidos.ver','pedidos.criar','pedidos.status','pedidos.status_entrega','pedidos.cancelar','pedidos.editar']],['Clientes e marketing',['clientes.ver','clientes.editar','promocoes.gerir']],['Catálogo',['produtos.gerir']],['Gestão',['financeiro.ver','financeiro.gerir','custos.ver','custos.gerir','estoque.ver','estoque.gerir']],['Sistema',['config.gerir']]];
+  var PERM_DEP={'pedidos.criar':'pedidos.ver','pedidos.status':'pedidos.ver','pedidos.status_entrega':'pedidos.ver','pedidos.cancelar':'pedidos.ver','pedidos.editar':'pedidos.ver','clientes.editar':'clientes.ver','financeiro.gerir':'financeiro.ver','custos.gerir':'custos.ver','estoque.gerir':'estoque.ver'};
+  var PERFIL_PADRAO={gerente:['pedidos.ver','pedidos.criar','pedidos.status','pedidos.cancelar','pedidos.editar','clientes.ver','clientes.editar','produtos.gerir','promocoes.gerir','config.gerir','financeiro.ver'],atendente:['pedidos.ver','pedidos.criar','pedidos.status','clientes.ver','clientes.editar'],entregador:['pedidos.ver','pedidos.status_entrega']};
   var usrDados={usuarios:[],perfis:[],permissoes:[]};
+  var SA_USR=subAbas('#tab-usuarios',[{id:'usr',rot:'Usuários',sel:['#listUsr']},{id:'novo',rot:'Novo usuário',sel:['#formUsr']},{id:'perf',rot:'Perfis e permissões',sel:['#listPerfis','#formPerfil']}]);
   function chamarUsr(corpo){
     return sb.functions.invoke('admin-usuarios',{body:corpo}).then(function(r){
       if(!r.error)return r.data;
@@ -2310,7 +2325,7 @@ dialog#dlgCancel h3{margin:0 0 8px}.dlg-c .fld{margin-top:12px}.dlg-c textarea{w
     });
   }
   var ERRO_USR={email_ja_cadastrado:'Este e-mail já está cadastrado.',precisa_de_um_dono:'Precisa existir pelo menos um dono ativo.',nao_pode_em_si_mesmo:'Você não pode fazer isso na sua própria conta.',
-    perfil_em_uso:'Há usuários com este perfil.',perfil_de_sistema:'Perfis do sistema não podem ser alterados.',mfa_necessario:'Entre com o código de verificação em duas etapas.'};
+    perfil_em_uso:'Há usuários com este perfil.',perfil_de_sistema:'O perfil Dono não pode ser alterado.',mfa_necessario:'Entre com o código de verificação em duas etapas.'};
   function msgUsr(e){var m=String(e&&e.message||'');return ERRO_USR[m]||(m.indexOf('invalido')===0?'Confira os campos informados.':'Não consegui concluir. Tente de novo.');}
   // ===== Personalização: cores, fontes, nome e logo (grava no banco; prévia ao vivo) =====
   var MK_PRESETS=[
@@ -2445,16 +2460,60 @@ dialog#dlgCancel h3{margin:0 0 8px}.dlg-c .fld{margin-top:12px}.dlg-c textarea{w
     var up=$('#uPerfil');up.textContent='';usrDados.perfis.forEach(function(f){var o=el('option',null,f.nome);o.value=f.id;if(f.id==='atendente')o.selected=true;up.appendChild(o);});
     var pb=$('#listPerfis');pb.textContent='';
     usrDados.perfis.forEach(function(f){
-      var n=el('article','ped');n.appendChild(el('b',null,f.nome+(f.sistema?' (do sistema)':'')));
+      var n=el('article','ped'),top=el('div','top'),usam=usrDados.usuarios.filter(function(u){return u.perfil_id===f.id;}).length;
+      top.appendChild(el('b',null,f.nome+(f.sistema?' (do sistema)':'')));top.appendChild(el('span','muted',usam+' usuário'+(usam===1?'':'s')));n.appendChild(top);
       if(f.descricao)n.appendChild(el('span','muted',f.descricao));
-      n.appendChild(el('span','muted',f.permissoes.indexOf('*')>=0?'Acesso total':f.permissoes.map(function(p){return PERM_ROT[p]||p;}).join(' · ')));
-      if(!f.sistema){var a=el('div','acts'),x=el('button','btn sm danger','Excluir perfil');x.type='button';
+      var tot=f.permissoes.indexOf('*')>=0;
+      var rs=el('div','perm-res');
+      if(tot)rs.appendChild(el('span','tag pago','Acesso total'));
+      else f.permissoes.forEach(function(q){rs.appendChild(el('span','tag',PERM_ROT[q]||q));});
+      n.appendChild(rs);
+      var a=el('div','acts'),ed=el('div','hist perm-ed');ed.hidden=true;
+      if(!tot){var be=el('button','btn sm go','Editar permissões');be.type='button';be.addEventListener('click',function(){if(!ed.hidden){ed.hidden=true;return;}editorPerfil(f,ed,usam);ed.hidden=false;});a.appendChild(be);}
+      else a.appendChild(el('span','muted','O perfil Dono sempre tem acesso total e não pode ser editado.'));
+      if(!f.sistema){var x=el('button','btn sm danger','Excluir perfil');x.type='button';
         x.addEventListener('click',function(){confirmar('Excluir perfil?',[f.nome],'Excluir',true).then(function(ok){if(ok)chamarUsr({acao:'perfil_excluir',id:f.id}).then(function(){toast('Perfil excluído.');loadUsuarios();}).catch(function(e){toast(msgUsr(e),true);});});});
-        a.appendChild(x);n.appendChild(a);}
-      pb.appendChild(n);
+        a.appendChild(x);}
+      n.appendChild(a);n.appendChild(ed);pb.appendChild(n);
     });
+    SA_USR.badge('usr',usrDados.usuarios.length);SA_USR.badge('perf',usrDados.perfis.length);
     var pp=$('#pPerms');pp.textContent='';
     usrDados.permissoes.forEach(function(p){var l=el('label'),c=document.createElement('input');c.type='checkbox';c.value=p;l.appendChild(c);l.appendChild(el('span',null,PERM_ROT[p]||p));pp.appendChild(l);});
+    ligaDependencias(pp);
+  }
+  // marca/desmarca permissões dependentes: "gerir" exige "ver"; tirar "ver" tira o que depende dele
+  function ligaDependencias(box){
+    box.addEventListener('change',function(e){
+      var c=e.target;if(!c||c.type!=='checkbox')return;
+      function por(v){return box.querySelector('input[value="'+v+'"]');}
+      if(c.checked&&PERM_DEP[c.value]){var d=por(PERM_DEP[c.value]);if(d)d.checked=true;}
+      if(!c.checked)Object.keys(PERM_DEP).forEach(function(k){if(PERM_DEP[k]===c.value){var x=por(k);if(x)x.checked=false;}});
+    });
+  }
+  function editorPerfil(f,box,usam){
+    box.textContent='';
+    var grade=el('div','perm-grade');
+    PERM_GRUPOS.forEach(function(g){
+      var fs=el('fieldset','perm-g');fs.appendChild(el('legend',null,g[0]));
+      g[1].filter(function(q){return usrDados.permissoes.indexOf(q)>=0;}).forEach(function(q){
+        var l=el('label','chk'),c=document.createElement('input');c.type='checkbox';c.value=q;c.checked=f.permissoes.indexOf(q)>=0;l.appendChild(c);l.appendChild(el('span',null,PERM_ROT[q]||q));fs.appendChild(l);});
+      grade.appendChild(fs);
+    });
+    ligaDependencias(grade);box.appendChild(grade);
+    var ds=campo('Descrição','text',f.descricao||'',{maxlength:200});box.appendChild(ds[0]);
+    if(usam)box.appendChild(el('p','muted','Atenção: '+usam+' usuário'+(usam===1?' usa':'s usam')+' este perfil. A mudança vale para '+(usam===1?'essa pessoa':'essas pessoas')+' na próxima vez que abrirem ou atualizarem o painel.'));
+    var ac=el('div','acts'),sv=el('button','btn sm go','Salvar permissões'),cn=el('button','btn sm','Cancelar');sv.type=cn.type='button';
+    if(PERFIL_PADRAO[f.id]){var rs=el('button','btn sm','Restaurar padrão');rs.type='button';rs.addEventListener('click',function(){grade.querySelectorAll('input').forEach(function(i){i.checked=PERFIL_PADRAO[f.id].indexOf(i.value)>=0;});});ac.appendChild(rs);}
+    cn.addEventListener('click',function(){box.hidden=true;});
+    sv.addEventListener('click',function(){
+      var ps=[].slice.call(grade.querySelectorAll('input:checked')).map(function(i){return i.value;});
+      if(!ps.length){toast('Marque ao menos uma permissão.',true);return;}
+      confirmar('Salvar as permissões do perfil "'+f.nome+'"?',[ps.length+' permissõe'+(ps.length===1?'':'s')+' marcada'+(ps.length===1?'':'s')+'.'].concat(usam?[usam+' usuário'+(usam===1?'':'s')+' será'+(usam===1?'':'o')+' afetado'+(usam===1?'':'s')+'.']:[]),'Sim, salvar').then(function(ok){
+        if(!ok)return;sv.disabled=true;
+        chamarUsr({acao:'perfil_salvar',id:f.id,nome:f.nome,descricao:ds[1].value,permissoes:ps}).then(function(){toast('Permissões salvas.');loadUsuarios();}).catch(function(er){sv.disabled=false;toast(msgUsr(er),true);});
+      });
+    });
+    ac.appendChild(sv);ac.appendChild(cn);box.appendChild(ac);
   }
   function gerarSenha(){
     var cs='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789',b=new Uint32Array(14),o='';
@@ -2535,6 +2594,7 @@ dialog#dlgCancel h3{margin:0 0 8px}.dlg-c .fld{margin-top:12px}.dlg-c textarea{w
   var finCats=[],finMes='',finLinhas=[];
   function mesAtual(){return dia(new Date().toISOString()).slice(0,7);}
   function limitesMes(m){var a=m+'-01',d=new Date(m+'-01T12:00:00'),f=new Date(d.getFullYear(),d.getMonth()+1,0);return [a,m+'-'+String(f.getDate()).padStart(2,'0')];}
+  var SA_FIN=subAbas('#tab-financeiro',[{id:'graf',rot:'Gráficos',sel:['#finPaneGraf']},{id:'lanc',rot:'Lançamentos',sel:['#finPaneLanc']},{id:'mes',rot:'Resumo mensal',sel:['#finFluxo']}]);
   function initFinanceiro(){
     if(!$('#finMes').value)$('#finMes').value=mesAtual();
     if(!$('#lcData').value)$('#lcData').value=dia(new Date().toISOString());
@@ -2605,6 +2665,7 @@ dialog#dlgCancel h3{margin:0 0 8px}.dlg-c .fld{margin-top:12px}.dlg-c textarea{w
   function renderFinLista(){
     var f=$('#finFiltro').value,box=$('#finLista');box.textContent='';
     var rows=finLinhas.filter(function(l){return !f||(f==='pendente'?!l.pago:l.tipo===f);});
+    SA_FIN.badge('lanc',finLinhas.length||null);
     if(!rows.length){box.appendChild(el('p','empty','Nenhum lançamento.'));return;}
     rows.forEach(function(l){
       var n=el('article','ped'),top=el('div','top');
@@ -2935,6 +2996,8 @@ dialog#dlgCancel h3{margin:0 0 8px}.dlg-c .fld{margin-top:12px}.dlg-c textarea{w
       if(r.error){toast('Não consegui carregar o estoque.',true);return;}
       insumos=r.data||[];renderEstoque();});
   }
+  var estFiltro='todos';
+  $('#estBusca').addEventListener('input',function(){renderEstoque();});
   function renderEstoque(){
     var box=$('#listEstoque');box.textContent='';var ativos=insumos.filter(function(i){return i.ativo;});
     var baixos=ativos.filter(function(i){return +i.estoque_minimo>0&&+i.estoque_atual<=+i.estoque_minimo;});
@@ -2944,7 +3007,14 @@ dialog#dlgCancel h3{margin:0 0 8px}.dlg-c .fld{margin-top:12px}.dlg-c textarea{w
     var al=$('#estAlerta');al.hidden=!baixos.length;al.textContent='';
     if(baixos.length){al.appendChild(el('b',null,'Repor: '));al.appendChild(el('span',null,baixos.map(function(i){return i.nome+' (tem '+qtdTxt(i.estoque_atual,i.unidade)+', mínimo '+qtdTxt(i.estoque_minimo,i.unidade)+')';}).join(' · ')));}
     if(!ativos.length){box.appendChild(vazioAcao('Cadastre os insumos para controlar o estoque.','Ir para Custos','custos'));return;}
-    ativos.forEach(function(i){
+    var busca=$('#estBusca').value.trim().toLowerCase(),chips=$('#estChips');chips.textContent='';
+    var FE=[['todos','Todos',function(){return true;}],['repor','Repor',function(i){return +i.estoque_minimo>0&&+i.estoque_atual<=+i.estoque_minimo&&+i.estoque_atual>0;}],['zerados','Zerados',function(i){return +i.estoque_atual<=0;}],['ok','Em dia',function(i){return +i.estoque_atual>0&&!(+i.estoque_minimo>0&&+i.estoque_atual<=+i.estoque_minimo);}]];
+    var base=ativos.filter(function(i){return !busca||String(i.nome).toLowerCase().indexOf(busca)>=0;});
+    FE.forEach(function(f){var b=el('button',null);b.type='button';b.setAttribute('role','tab');b.setAttribute('aria-selected',estFiltro===f[0]?'true':'false');b.appendChild(document.createTextNode(f[1]));b.appendChild(el('span','sb-n',String(base.filter(f[2]).length)));b.addEventListener('click',function(){estFiltro=f[0];renderEstoque();});chips.appendChild(b);});
+    var fx=FE.filter(function(f){return f[0]===estFiltro;})[0][2];
+    var lista=base.filter(fx);
+    if(!lista.length){box.appendChild(el('p','empty','Nenhum insumo neste filtro.'));return;}
+    lista.forEach(function(i){
       var baixo=+i.estoque_minimo>0&&+i.estoque_atual<=+i.estoque_minimo,n=el('article','ped'),top=el('div','top');
       top.appendChild(el('b',null,i.nome));top.appendChild(el('span','tag '+(+i.estoque_atual<=0?'cancelado':baixo?'pendente':'pago'),+i.estoque_atual<=0?'Zerado':baixo?'Repor':'Ok'));n.appendChild(top);
       n.appendChild(el('span',null,'Em estoque: '+qtdTxt(i.estoque_atual,i.unidade)+' · mínimo '+qtdTxt(i.estoque_minimo,i.unidade)));

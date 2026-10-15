@@ -225,6 +225,14 @@ dialog#dlgImprimir::backdrop{background:rgba(29,23,38,.5)}dialog#dlgImprimir h3{
 .kcard .late{color:var(--bad);font-weight:600}
 .kcard .acts{margin-top:4px}
 .kcard .btn.sm{min-height:32px;padding:4px 10px}
+.kcard{min-width:0}.kcard .acts{display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:6px;margin-top:8px;align-items:stretch}
+.kcard .acts .btn{width:100%;margin:0;justify-content:center;text-align:center;white-space:nowrap;padding-left:6px;padding-right:6px}
+.kcard .acts .btn.go{grid-column:1/-1;order:1;min-height:36px}
+.kcard .acts .btn:not(.go):not(.danger):not(.wa){order:2}
+.kcard .acts .btn.wa{order:3}
+.kcard .acts .btn.danger{grid-column:1/-1;order:4;margin:0;background:transparent;border-color:transparent;color:var(--bad);min-height:28px;font-weight:600}
+.kcard .acts .btn.danger:hover{background:#fdecec;border-color:#f3c6c6}
+.kcard .acts .btn:only-child{grid-column:1/-1}
 .kvazio{font-size:.8125rem;color:var(--muted);text-align:center;padding:14px 4px}
 
 /* celular e tablet */

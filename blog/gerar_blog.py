@@ -143,6 +143,7 @@ FOOT = """<footer><div class="wrap">
 <div><strong style="color:#fff">#TQR Açaí</strong> · Sabor que refresca e energiza<br>Teresina – PI · Todos os dias, das 8h às 2h</div>
 <div>WhatsApp: <a href="{wa}" target="_blank" rel="noopener">(86) 99588-4770</a><br>Instagram: <a href="https://instagram.com/tqracai" target="_blank" rel="noopener">@tqracai</a></div>
 </div><div class="wrap" style="margin-top:16px;font-size:.8rem;gap:8px 18px;justify-content:flex-start"><a href="../politicas/termos.html">Termos de Uso</a><a href="../politicas/privacidade.html">Privacidade</a><a href="../politicas/cookies.html">Cookies</a><a href="../politicas/trocas-e-devolucoes.html">Trocas e devoluções</a></div></footer>
+<script src="../prova-social.js" data-local="blog" defer></script>
 </body></html>""".format(wa=WA_MSG)
 
 def card(a):

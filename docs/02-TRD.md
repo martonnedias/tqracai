@@ -104,6 +104,7 @@ MFA do dono · proteção contra senha vazada · Turnstile em `criar-pedido` · 
 - **Aviso de versão:** banner `#novaVersao`.
 - **Marca:** `aplicaMarca()` aplica variáveis CSS, textos e vocabulário (MutationObserver).
 - **Gráficos:** SVG próprio (barras, linhas, pizza, barras horizontais, pulso), tooltip customizado, alternativa em tabela.
+- **Selo "Novo":** toda função lançada entra em `admin/novidades.js` (id `aba:<tab>` ou `sub:<secao>-<sub>`, data `desde`). O painel marca o item por N dias (`novidades_dias`), até a pessoa abrir a aba ou até o dono desligar o item em Configurações → Novidades (`novidades_ativo`, `novidades_ocultas`; lidos por `obter_novidades()`). **Regra do projeto: ao lançar algo novo, acrescente a linha no registro.**
 - **Mobile:** barra inferior (`#bnav`) + diálogo "Mais".
 - **Impressão:** `#printArea` + `imprimirDoc`.
 

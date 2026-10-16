@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>#TQR Açaí | Açaí na garrafa em Teresina · Peça no WhatsApp</title>
-<meta name="description" content="Açaí tradicional cremoso na garrafa de 300 ml por R$ 16,99. Combo 3 por R$ 42. Delivery em toda Teresina das 8h às 2h. Peça pelo WhatsApp.">
+<title>#TQR Açaí | Açaí na garrafa em Teresina · Peça pelo site</title>
+<meta name="description" content="Açaí tradicional cremoso na garrafa de 300 ml por R$ 16,99. Combo 3 por R$ 42. Delivery em toda Teresina das 8h às 2h. Faça seu pedido pelo site.">
 <meta name="theme-color" content="#1a0624">
 <!-- Ao trocar para o domínio próprio, atualize BASE nestas 4 linhas e no sitemap.xml/robots.txt -->
 <link rel="canonical" href="https://martonnedias.github.io/tqracai/">
@@ -250,8 +250,8 @@ footer a{color:var(--gold2);text-decoration:none;display:inline-block;padding:9p
 
 /* WhatsApp flutuante */
 .skip{position:absolute;left:12px;top:-60px;z-index:200;background:#f3cf7f;color:#2a0838;padding:10px 16px;border-radius:8px;font-weight:700;text-decoration:none}.skip:focus{top:12px}
-.fab{position:fixed;right:18px;bottom:18px;z-index:60;width:62px;height:62px;border-radius:50%;background:#0f7a40;display:grid;place-items:center;box-shadow:0 10px 30px -6px rgba(37,211,102,.7);animation:pulse 2.4s infinite}
-.fab svg{width:32px;height:32px;color:#fff}
+.fab{position:fixed;right:18px;bottom:18px;z-index:60;width:62px;height:62px;border-radius:50%;background:linear-gradient(135deg,#f3d48a,#c8902e);display:grid;place-items:center;box-shadow:0 10px 30px -6px rgba(232,190,98,.7);animation:pulse 2.4s infinite}
+.fab svg{width:30px;height:30px;color:#2a0838}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(37,211,102,.55)}70%{box-shadow:0 0 0 18px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
 .mbar{display:none}
 
@@ -706,13 +706,14 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
 <!-- Ícone WhatsApp reutilizável -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="wa" viewBox="0 0 24 24"><path fill="currentColor" d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.39-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35zM12.05 21.5h-.01a9.4 9.4 0 0 1-4.8-1.31l-.34-.2-3.57.94.95-3.48-.22-.36a9.43 9.43 0 0 1-1.45-5.03c0-5.2 4.24-9.44 9.45-9.44 2.52 0 4.89.99 6.67 2.77a9.37 9.37 0 0 1 2.76 6.68c0 5.2-4.24 9.43-9.44 9.43zm8.04-17.47A11.3 11.3 0 0 0 12.05.7C5.79.7.69 5.8.69 12.06c0 2 .52 3.96 1.52 5.68L.6 23.6l6-1.57a11.33 11.33 0 0 0 5.43 1.38h.01c6.26 0 11.36-5.1 11.36-11.36 0-3.03-1.18-5.89-3.32-8.03z"/></symbol>
+  <symbol id="bag" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 7h12l-1 12H7L6 7Z M9 7a3 3 0 0 1 6 0"/></symbol>
 </svg>
 
 <header class="top" id="topbar"><span class="scroll-progress" aria-hidden="true"></span>
   <div class="wrap">
     <a href="#topo" class="brand"><img src="img/rotulo.webp" alt="#TQR Açaí" width="44" height="44"><span>#TQR Açaí</span></a>
     <nav class="nav" aria-label="Menu"><a href="#ofertas">Ofertas</a><a href="#como">Como funciona</a><a href="#pedido">Fazer pedido</a><a href="blog/index.html">Blog</a></nav>
-    <a class="btn btn-wa" data-wa="padrao" data-src="topbar" href="#"><svg><use href="#wa"/></svg><span class="t">Pedir agora</span></a>
+    <a class="btn btn-gold" data-cta="topbar" href="#pedido" aria-label="Fazer pedido"><svg><use href="#bag"/></svg><span class="t">Fazer pedido</span></a>
   </div>
 </header>
 
@@ -737,7 +738,6 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
         </div>
         <p class="q-hint" id="qHint">Combo 3 aplicado: R$ 14 cada</p>
         <a class="btn btn-gold q-go" href="#pedido" id="quickGo">Continuar meu pedido <span aria-hidden="true">→</span></a>
-        <a class="q-alt" data-wa="padrao" data-src="hero" href="#">ou fale direto no WhatsApp</a>
       </div>
       <div class="micro"><span>Pedido mínimo: 1 garrafa</span><span>Pix ou cartão</span><span>Delivery ou retirada</span></div>
     </div>
@@ -771,7 +771,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
   <div class="wrap center">
     <span class="eyebrow">Escolha o seu</span>
     <h2 class="rv">Quanto mais garrafas, <span class="gold">menos você paga</span></h2>
-    <p class="lead rv">Escolha uma opção e toque no botão. O pedido vai direto para o nosso WhatsApp.</p>
+    <p class="lead rv">Escolha uma opção e toque no botão para montar o seu pedido.</p>
     <div class="plans">
       <div class="plan rv">
         <div class="pimg cover"><img src="img/hf-hero.webp" alt="1 garrafa #TQR Açaí" loading="lazy" style="object-position:50% 40%"></div>
@@ -822,7 +822,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
         <li>Garrafa fechada de 300 ml que cabe na bolsa, na mochila da academia e na lancheira</li>
         <li>Dá pra fazer estoque: com 3 garrafas, cada uma sai por R$ 14</li>
       </ul>
-      <a class="btn btn-wa" data-wa="padrao" data-src="problema" href="#"><svg><use href="#wa"/></svg>Pedir minha garrafa</a>
+      <a class="btn btn-gold" data-cta="problema" href="#pedido"><svg><use href="#bag"/></svg>Pedir minha garrafa</a>
     </div>
   </div>
 </section>
@@ -1110,7 +1110,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
     <span class="eyebrow">Dúvidas</span>
     <h2 class="rv">Perguntas frequentes</h2>
     <div class="faq-list" style="text-align:left">
-      <details><summary>Como faço meu pedido?</summary><p>Use o formulário “Monte seu pedido” ou toque em qualquer botão verde. O pedido chega no nosso WhatsApp já organizado e a gente confirma com você.</p></details>
+      <details><summary>Como faço meu pedido?</summary><p>Use o formulário “Monte seu pedido”: todos os botões de pedido do site levam até ele. Ao enviar, o pedido fica registrado e abre no nosso WhatsApp já organizado, e a gente confirma com você.</p></details>
       <details><summary>Vocês entregam no meu bairro?</summary><p>Sim. Entregamos em todos os bairros de Teresina, todos os dias, das 8h às 2h da manhã.</p></details>
       <details><summary>Quanto custa a entrega?</summary><p>A taxa é a cobrada pelo aplicativo de entrega e varia conforme o bairro. Em pedidos de 5 garrafas ou mais, a entrega é grátis.</p></details>
       <details><summary>Posso retirar pessoalmente?</summary><p>Pode. Combine o horário e o local de retirada pelo WhatsApp.</p></details>
@@ -1137,7 +1137,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
   <div class="wrap">
     <div><strong style="color:#fff">#TQR Açaí</strong> · Sabor que refresca e energiza<br>Teresina – PI · Todos os dias, das 8h às 2h
       <p class="legal"><!-- PREENCHER: dados obrigatórios (Decreto 7.962/2013) -->CNPJ 59.270.529/0001-78 · Teresina – PI</p></div>
-    <div>WhatsApp: <a href="#" data-wa="padrao" data-src="rodape">(86) 99588-4770</a><br>Instagram: <a href="https://instagram.com/tqracai" target="_blank" rel="noopener">@tqracai</a><br><a href="blog/index.html">Blog #TQR</a></div>
+    <div>WhatsApp: <a href="#" data-wa="contato" data-src="rodape">(86) 99588-4770</a><br>Instagram: <a href="https://instagram.com/tqracai" target="_blank" rel="noopener">@tqracai</a><br><a href="blog/index.html">Blog #TQR</a></div>
   </div>
   <div class="wrap foot-links"><a href="politicas/termos.html">Termos de Uso</a><a href="politicas/privacidade.html">Privacidade</a><a href="politicas/cookies.html">Cookies</a><a href="politicas/trocas-e-devolucoes.html">Trocas e devoluções</a><a href="#" id="cookiePrefs">Preferências de cookies</a></div>
   <div class="wrap copy">© 2026 #TQR Açaí. Fotos ilustrativas; algumas imagens foram produzidas com auxílio de IA.</div>
@@ -1148,8 +1148,8 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
   <div class="cookie-btns"><button type="button" class="cbtn ghost" data-consent="essenciais">Só essenciais</button><button type="button" class="cbtn gold" data-consent="todos">Aceitar todos</button></div>
 </div>
 
-<a class="fab" data-wa="padrao" data-src="flutuante" href="#" aria-label="Pedir pelo WhatsApp"><svg><use href="#wa"/></svg></a>
-<div class="mbar" id="mbar"><div class="p">a partir de<b>R$ 14</b></div><a class="btn btn-wa" data-wa="padrao" data-src="barra-mobile" href="#"><svg><use href="#wa"/></svg>Pedir no WhatsApp</a></div>
+<a class="fab" data-cta="flutuante" href="#pedido" aria-label="Fazer pedido"><svg><use href="#bag"/></svg></a>
+<div class="mbar" id="mbar"><div class="p">a partir de<b>R$ 14</b></div><a class="btn btn-gold" data-cta="barra-mobile" href="#pedido"><svg><use href="#bag"/></svg>Fazer pedido</a></div>
 
 <script>
 (function(){
@@ -1157,11 +1157,12 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
     padrao:'Olá, TQR Açaí! 💜 Vim pelo site e quero fazer meu pedido.\n\n🥤 Quantidade: __ garrafa(s) de 300 ml\n🛵 Entrega ou retirada: __\n📍 Bairro: __\n💳 Pagamento: Pix ou cartão\n\nPode me confirmar o total?',
     combo:'Olá, TQR Açaí! 💜 Vim pelo site e quero o *Combo 3 por R$ 42*.\n\n🛵 Entrega ou retirada: __\n📍 Bairro: __\n💳 Pagamento: Pix ou cartão',
     kit:'Olá, TQR Açaí! 💜 Vim pelo site e quero *5 ou mais garrafas* (R$ 14 cada + entrega grátis).\n\n🥤 Quantidade: __\n📍 Bairro: __\n💳 Pagamento: Pix ou cartão',
+    contato:'Olá, TQR Açaí! 💜 Vim pelo site e tenho uma dúvida.',
     revenda:'Olá, TQR Açaí! Vim pelo site e quero saber como revender o #TQR Açaí no meu negócio.\n\n🏪 Tipo de negócio: __\n📍 Bairro: __\n📦 Quantidade estimada por semana: __'
   };
   // Os links usam o número vigente (window.TQR_FONE); o painel pode trocá-lo, então os links são refeitos quando a configuração chega.
   window.TQR_relink=function(){document.querySelectorAll('[data-wa]').forEach(function(a){
-    a.href='https://wa.me/'+window.TQR_FONE+'?text='+encodeURIComponent(MSG[a.dataset.wa]||MSG.padrao);});};
+    a.href='https://wa.me/'+window.TQR_FONE+'?text='+encodeURIComponent(MSG[a.dataset.wa]||MSG.contato);});};
   window.TQR_relink();
   document.querySelectorAll('[data-wa]').forEach(function(a){
     a.target='_blank'; a.rel='noopener';
@@ -1172,6 +1173,9 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
       try{if(window.fbq)fbq('track','Contact',p);}catch(e){}
     });
   });
+  document.querySelectorAll('[data-cta]').forEach(function(a){a.addEventListener('click',function(){var p={posicao:a.dataset.cta};
+    try{window.dataLayer=window.dataLayer||[];dataLayer.push(Object.assign({event:'pedido_cta'},p));}catch(e){}
+    try{if(window.gtag)gtag('event','pedido_cta',p);}catch(e){}});});
   // Animação ao rolar
   var io='IntersectionObserver' in window?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12}):null;
   document.querySelectorAll('.rv').forEach(function(el){io?io.observe(el):el.classList.add('in');});

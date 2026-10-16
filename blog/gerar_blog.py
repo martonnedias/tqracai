@@ -134,8 +134,8 @@ def head(title, desc, canonical_rel, img, schema):
 </head><body>
 <header class="top"><div class="wrap">
   <a class="brand" href="../index.html"><img src="../img/rotulo.webp" alt="" width="42" height="42"><span>#TQR Açaí</span></a>
-  <nav class="nav"><a href="../index.html#ofertas">Ofertas</a><a href="../index.html#pedido">Fazer pedido</a><a href="index.html">Blog</a></nav>
-  <a class="btn btn-gold" href="../index.html#pedido">Fazer pedido</a>
+  <nav class="nav"><a href="../index.html#ofertas">Ofertas</a><a href="../pedido.html">Fazer pedido</a><a href="index.html">Blog</a></nav>
+  <a class="btn btn-gold" href="../pedido.html">Fazer pedido</a>
 </div></header>
 """
 
@@ -169,7 +169,7 @@ for a in ARTICLES:
     <img src="../img/rotulo.webp" alt="" width="110" height="110">
     <div><h3>Bateu a vontade? <span class="gold">Tem #TQR no seu bairro.</span></h3>
     <p>300 ml por R$ 16,99 · Combo 3 por R$ 42 · 5 ou mais a R$ 14 cada com entrega grátis. Delivery em toda Teresina, das 8h às 2h.</p>
-    <div class="btns"><a class="btn btn-gold" href="../index.html#pedido">Montar meu pedido</a></div></div>
+    <div class="btns"><a class="btn btn-gold" href="../pedido.html">Montar meu pedido</a></div></div>
   </div>
 </main>
 <section class="related"><div class="wrap"><h2>Leia também</h2><div class="cards">{''.join(card(x) for x in rel)}</div></div></section>

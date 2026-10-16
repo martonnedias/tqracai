@@ -242,7 +242,7 @@ mark.fill{{background:#f3cf7f;color:#2a0838;padding:0 4px;border-radius:4px;font
 </head><body>
 <header class="top"><div class="wrap">
   <a class="brand" href="../index.html"><img src="../img/rotulo.webp" alt="" width="42" height="42"><span>#TQR Açaí</span></a>
-  <nav class="nav"><a href="../index.html#ofertas">Ofertas</a><a href="../index.html#pedido">Fazer pedido</a><a href="../blog/index.html">Blog</a></nav>
+  <nav class="nav"><a href="../index.html#ofertas">Ofertas</a><a href="../pedido.html">Fazer pedido</a><a href="../blog/index.html">Blog</a></nav>
   <a class="btn btn-wa" href="{WA}" target="_blank" rel="noopener">WhatsApp</a>
 </div></header>
 <main class="narrow">

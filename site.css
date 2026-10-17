@@ -787,3 +787,19 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
 @media (prefers-reduced-motion:reduce){.step::before,.pt-ring-pg{transition:none}.fx-luz::after{transition:none}}
 .pt-ring .pt-saldo b{display:block;font-size:2rem;line-height:1;font-weight:800}
 .pt-ring .pt-saldo small{display:block;font-size:.8rem;font-weight:600;color:#cdb9d8;margin-top:2px}
+/* Resultado dos pontos organizado: anel + resumo lado a lado, histórico em lista */
+.pt-top{display:flex;gap:20px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.pt-top .pt-ring{margin:0;flex:none}
+.pt-info{flex:1 1 220px;min-width:0;display:grid;gap:10px;justify-items:start}
+.pt-info p{margin:0}.pt-msg{font-weight:600;font-size:1.02rem;line-height:1.4}
+.pt-info .btn{padding:12px 22px;min-height:44px}
+.pt-info .hint{font-size:.85rem}
+.pt-hist{display:block;margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.1);font-size:.9rem}
+.pt-hist h4{margin:0 0 6px;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold2,#e8be62);font-weight:700}
+.pt-list{display:grid}.pt-list.aberta{max-height:280px;overflow:auto;padding-right:6px}
+.pt-row{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07);color:var(--muted)}
+.pt-row[hidden]{display:none}
+.pt-row .d{font-size:.8rem;font-variant-numeric:tabular-nums}.pt-row .l{color:#e9dcf2}
+.pt-row .p{font-variant-numeric:tabular-nums}.pt-row .p.mais{color:#7fe3ae}.pt-row .p.menos{color:#ff9c9c}
+.pt-mais{margin-top:10px;background:none;border:1px solid rgba(232,190,98,.4);color:var(--gold2,#e8be62);border-radius:999px;padding:8px 18px;font:inherit;font-size:.85rem;font-weight:600;cursor:pointer}
+@media (max-width:520px){.pt-top{flex-direction:column;text-align:center}.pt-info{justify-items:center;flex:none;width:100%}}

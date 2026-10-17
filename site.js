@@ -416,15 +416,28 @@
       rpc('acompanhar_pedido',{p_codigo:TRK.code,p_whatsapp:TRK.zap},8000).then(function(r){
         if(!r||!r.encontrado){var m=document.getElementById('trkMsg');if(m&&!TRK.ok){m.hidden=false;m.textContent='Não encontramos esse pedido para esse WhatsApp. Confira o número usado no pedido.';}return;}
         TRK.ok=true; trkRender(r); trkSchedule();
-      }).catch(function(){trkSchedule();});
+        if(TRK.fim)try{localStorage.setItem('tqr_last',JSON.stringify({c:TRK.code,w:TRK.zap,t:Date.now(),f:1}));}catch(e){}
+      }).catch(function(){
+        var m=document.getElementById('trkMsg'); if(m){m.hidden=false;m.textContent='Não consegui atualizar agora (conexão). Tentando de novo em instantes…';}
+        trkSchedule();
+      });
     }
     function trkSchedule(){clearTimeout(TRK.t); if(TRK.fim||!TRK.code)return; TRK.t=setTimeout(function(){if(document.hidden){trkSchedule();return;}trkTick();},20000);}
     function trkStart(code,zap){
       TRK.code=code; TRK.zap=zap; TRK.fim=false; TRK.ok=false;
-      try{localStorage.setItem('tqr_last',JSON.stringify({c:code,w:zap}));}catch(e){}
+      try{localStorage.setItem('tqr_last',JSON.stringify({c:code,w:zap,t:Date.now()}));}catch(e){}
       trkTick();
     }
     document.addEventListener('visibilitychange',function(){if(!document.hidden&&TRK.code&&!TRK.fim){clearTimeout(TRK.t);trkTick();}});
+    window.addEventListener('pageshow',function(e){if(e.persisted&&TRK.code&&!TRK.fim){clearTimeout(TRK.t);trkTick();}});
+    (function(){var b=document.getElementById('trkNow'); if(b)b.addEventListener('click',function(){var m=document.getElementById('trkMsg');if(m){m.hidden=false;m.textContent='Atualizando…';}clearTimeout(TRK.t);TRK.fim=false;trkTick();});})();
+    // pedido recente ainda em andamento: aviso no topo da página de pedido (a confirmação some ao recarregar)
+    (function(){
+      if(/[?&]acompanhar=/.test(location.search)||!document.getElementById('orderForm'))return;
+      var last=null;try{last=JSON.parse(localStorage.getItem('tqr_last')||'null');}catch(e){}
+      var bx=document.getElementById('lastOrder'); if(!bx||!last||!last.c||last.f||!last.t||Date.now()-last.t>24*3600*1000)return;
+      document.getElementById('lastOrderCod').textContent=last.c; document.getElementById('lastOrderLink').href='pedido.html?acompanhar='+encodeURIComponent(last.c); bx.hidden=false;
+    })();
     function mostraConf(o){
       var conf=document.getElementById('conf'); if(!conf)return;
       var cod=document.getElementById('confCod'); cod.hidden=!o.code; cod.textContent=o.code?'Pedido '+o.code:'';
@@ -438,6 +451,7 @@
       var hh=document.querySelector('.p-head'); if(hh)hh.hidden=true;
       document.title='Pedido recebido | #TQR Açaí';
       var st=document.querySelector('.p-steps'); if(st)st.hidden=true;
+      var lo=document.getElementById('lastOrder'); if(lo)lo.hidden=true;
       window.scrollTo(0,0); try{conf.focus({preventScroll:true});}catch(e){}
       if(o.code&&o.zap)trkStart(o.code,o.zap);
     }
@@ -451,7 +465,7 @@
       f.hidden=true; conf.hidden=false; document.title='Acompanhar pedido | #TQR Açaí';
       ['.p-head','.p-steps'].forEach(function(s){var e=document.querySelector(s);if(e)e.hidden=true;});
       var cb=document.getElementById('cartBar'); if(cb)cb.hidden=true;
-      if(last&&last.c===code&&last.w){trkStart(code,last.w);return;}
+      if(last&&last.c===code&&last.w){setTimeout(function(){trkStart(code,last.w);},0);return;}  // adiado: SB (banco) é definido mais abaixo neste arquivo
       var ask=document.getElementById('trkAsk'); ask.hidden=false; document.getElementById('trkList').hidden=true;
       ask.addEventListener('submit',function(e){e.preventDefault();var w=document.getElementById('trkZap').value.replace(/\D/g,''); if(w.length<10){var mm=document.getElementById('trkMsg');mm.hidden=false;mm.textContent='Informe o DDD e o número.';return;}
         ask.hidden=true; trkStart(code,w);});

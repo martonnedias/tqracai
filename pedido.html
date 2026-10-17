@@ -27,7 +27,7 @@ window.TQR_FONE='5586994144709';
 /* Proteção contra robôs (Cloudflare Turnstile). Vazio = desligado e o pedido vai direto ao banco.
    Preencher só depois de publicar a função supabase/functions/criar-pedido (veja o README dela). */
 window.TQR_TURNSTILE='';</script>
-<link rel="stylesheet" href="site.css?v=14">
+<link rel="stylesheet" href="site.css?v=16">
 </head>
 <body class="pedido-pg">
 <a class="skip" href="#topo">Ir para o conteúdo</a>
@@ -72,6 +72,13 @@ window.TQR_TURNSTILE='';</script>
           <div class="mont" id="montBox" hidden>
             <button type="button" class="btn btn-ghost" id="montAdd">✨ Monte o seu açaí: complementos e extras</button>
             <div id="montList"></div>
+          </div>
+          <div class="cardapio" id="cardapio" hidden>
+            <div class="ctabs" id="cardTabs" role="group" aria-label="Categorias do cardápio"></div>
+            <div class="cgrid" id="cardGrid"></div>
+            <h3 class="p-sub c-sub">Seu pedido</h3>
+            <div id="cardLinhas"></div>
+            <p class="hint" id="cardHint" role="alert" hidden></p>
           </div>
           <p class="hint" id="qtyHint"></p>
         </fieldset>
@@ -195,8 +202,9 @@ window.TQR_TURNSTILE='';</script>
   <div class="cookie-btns"><button type="button" class="cbtn ghost" data-consent="essenciais">Só essenciais</button><button type="button" class="cbtn gold" data-consent="todos">Aceitar todos</button></div>
 </div>
 
-<script src="site.js?v=11" defer></script>
+<script src="site.js?v=12" defer></script>
 <script src="efeitos.js?v=1" defer></script>
+<dialog id="optDlg" class="opt-dlg" aria-label="Escolha as opções"></dialog>
 <dialog id="pixDlg" style="max-width:380px;width:92vw;border:1px solid var(--line);border-radius:18px;background:var(--bg2);color:var(--text);padding:22px">
   <h3 style="margin:0 0 6px;font-size:1.2rem">Pague com Pix</h3>
   <p style="margin:0 0 10px;color:var(--muted)">Pedido <b data-pix="cod"></b> · <b data-pix="valor"></b></p>

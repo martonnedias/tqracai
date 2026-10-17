@@ -127,3 +127,6 @@ Base para vender o sistema a outros segmentos (hamburgueria etc.). Nada muda na 
 - `categorias_produto` (nome, ordem, ativo) e `produtos.categoria_id`; as categorias que já estavam como texto viraram cadastros.
 - `grupos_opcao.tipo`: `adicional` (soma preço e baixa estoque) ou `retirar` ("sem cebola": preço sempre 0, trigger `opcao_retirar_sem_preco`).
 - `obter_vitrine` passa a devolver `categorias`, `categoria_id` do produto e `tipo` do grupo.
+
+## 35 · Modo do cardápio (`20261111_35_modo_cardapio.sql`)
+Chave `modo_cardapio` em `configuracoes` (`garrafa` = padrão, igual à loja de açaí; `carrinho` = cardápio por categoria com vários produtos, cada um com as suas opções e "sem ingrediente"). `obter_config_publica` passa a devolver `modo_cardapio`. No site, o modo carrinho está em `site.js` (funções `montaCardapio`, `abrirOpcoes`, `renderLinhas`) e usa os mesmos RPCs de simulação/criação (`simular_pedido_v3`, `criar_pedido_v3`). Para ligar: `update configuracoes set valor='carrinho' where chave='modo_cardapio'` (a tela no painel vem na fatia 1C).

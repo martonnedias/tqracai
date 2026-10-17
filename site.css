@@ -841,3 +841,23 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
 .p-acesso b{font-size:1.5rem;letter-spacing:.08em;color:#f0cf7e;word-break:break-all}
 .p-acesso span{font-size:.82rem;color:#cdb9d8;line-height:1.45}
 .p-acesso .btn{padding:10px 20px;min-height:44px;margin-top:4px}
+/* ===== Modo carrinho: cardápio por categoria ===== */
+.modo-carrinho .p-prod,.modo-carrinho .qty-row,.modo-carrinho #packs,.modo-carrinho .p-sub:not(.c-sub),.modo-carrinho #extraProds,.modo-carrinho #montBox,.modo-carrinho #freBox{display:none!important}
+.cardapio{display:grid;gap:14px;min-width:0}
+.ctabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.ctab{flex:none;min-height:44px;padding:8px 18px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--text);font:inherit;font-weight:600;cursor:pointer}
+.ctab.on{border-color:var(--gold);background:rgba(232,190,98,.16);color:var(--gold2)}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.cprod{display:flex;flex-direction:column;gap:10px;padding:12px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.04);min-width:0}
+.cprod img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:12px}
+.cp-t{flex:1}.cp-t h4{margin:0 0 4px;font-size:1.02rem}.cp-t p{margin:0 0 6px;color:var(--muted);font-size:.88rem;line-height:1.4}
+.cp-p{color:var(--gold2);font-size:1.05rem}
+.cprod .btn{width:100%;min-height:44px}
+#cardLinhas{display:grid;gap:8px}
+.opt-dlg{width:min(94vw,440px);max-height:88vh;overflow:auto;border:1px solid var(--line);border-radius:20px;background:var(--bg2);color:var(--text);padding:20px}
+.opt-dlg::backdrop{background:rgba(0,0,0,.6)}
+.opt-dlg h3{margin:0 0 4px;font-size:1.2rem}.od-d{margin:0 0 12px;color:var(--muted);font-size:.9rem}
+.od-ft{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.od-ft .xs{display:flex;align-items:center;gap:8px}.od-ft .xs button{width:44px;height:44px;border-radius:50%;border:1px solid var(--gold);background:transparent;color:var(--gold2);font-size:1.2rem;cursor:pointer}
+.od-ft .btn{flex:1 1 120px;min-height:44px}
+#cardHint{color:#ff9b9b;font-weight:600}

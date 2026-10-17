@@ -767,3 +767,23 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
 .pix-qr{display:block;justify-self:center;width:200px;max-width:100%;height:auto;background:#fff;border-radius:14px;padding:4px}
 .p-last{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:0 0 18px;padding:12px 16px;border-radius:16px;background:rgba(232,190,98,.1);border:1px solid rgba(232,190,98,.4);font-size:.88rem;color:#e9dcf2}
 .p-last b{color:#f0cf7e}.p-last .btn{padding:8px 18px;min-height:40px}
+
+/* ===== Efeitos (efeitos.js) ===== */
+.fx-luz{position:relative}
+.fx-luz::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .25s;background:radial-gradient(340px circle at var(--mx,50%) var(--my,50%),rgba(232,190,98,.18),transparent 62%)}
+.fx-luz:hover::after{opacity:1}
+.btn-gold{will-change:translate}
+@media (min-width:900px){.step:not(:last-child)::after{content:"";position:absolute;top:1px;left:68px;width:calc(100% - 68px + 22px + 24px);height:3px;border-radius:3px;pointer-events:none;background:linear-gradient(90deg,#c8902e,#f7dc9b) no-repeat,rgba(232,190,98,.18);background-size:calc(var(--seg,0)*100%) 100%,100% 100%;box-shadow:0 0 10px rgba(232,190,98,calc(.5*var(--seg,0)))}}
+.step::before{z-index:2;transition:box-shadow .4s,transform .4s,filter .4s;filter:saturate(.55) brightness(.8)}
+.step.fx-on::before{filter:none;box-shadow:0 0 0 6px rgba(232,190,98,.16),0 0 20px rgba(232,190,98,.55);transform:scale(1.08)}
+.od-j{display:inline-block;height:1em;line-height:1;overflow:hidden;vertical-align:bottom}
+.od-f{display:flex;flex-direction:column;will-change:transform}
+.od-f>span{display:block;height:1em;line-height:1;text-align:center}
+.pt-ring{position:relative;width:140px;height:140px;margin:6px auto 10px}
+.pt-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.pt-ring-tr{stroke:rgba(255,255,255,.1)}
+.pt-ring-pg{stroke:var(--gold,#e8be62);transition:stroke-dashoffset 1.3s cubic-bezier(.2,.8,.2,1);filter:drop-shadow(0 0 6px rgba(232,190,98,.5))}
+.pt-ring .pt-saldo{position:absolute;inset:0;display:grid;place-content:center;text-align:center;font-size:1.05rem;line-height:1.15;margin:0}
+@media (prefers-reduced-motion:reduce){.step::before,.pt-ring-pg{transition:none}.fx-luz::after{transition:none}}
+.pt-ring .pt-saldo b{display:block;font-size:2rem;line-height:1;font-weight:800}
+.pt-ring .pt-saldo small{display:block;font-size:.8rem;font-weight:600;color:#cdb9d8;margin-top:2px}

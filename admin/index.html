@@ -1790,8 +1790,17 @@ dialog .da .btn{min-width:110px}
   var KCOLS=['pendente','confirmado','pago','saiu_entrega','entregue'],KATRASO={pendente:10,confirmado:60,pago:45};
   function idadeMin(iso){return Math.max(0,Math.round((Date.now()-new Date(iso).getTime())/60000));}
   function idadeTxt(m){return m<1?'agora':m<60?'há '+m+' min':m<1440?'há '+Math.floor(m/60)+' h '+(m%60?m%60+' min':''):'há '+Math.floor(m/1440)+' d';}
+  // pedido não pago só vira "pago" depois de confirmado na tela Pagamentos
+  var NAO_PAGO=['pendente','confirmado'];
+  function irPagamentos(){abrirAba('pagamentos');}
+  function btnPagamento(p,cls){
+    if(NAO_PAGO.indexOf(p.status)<0||!can('pedidos.status')||!can('financeiro.ver'))return null;
+    var b=el('button','btn '+(cls||'sm'),'Confirmar pagamento');b.type='button';b.title='O pedido só vira "pago" depois de confirmado em Pagamentos.';
+    b.setAttribute('aria-label','Confirmar o pagamento de '+p.codigo+' em Pagamentos');b.addEventListener('click',irPagamentos);return b;
+  }
   function podeMover(p,alvo){
     var i=KCOLS.indexOf(p.status),j=KCOLS.indexOf(alvo);if(i<0||j<=i)return false;
+    if(NAO_PAGO.indexOf(p.status)>=0&&NAO_PAGO.indexOf(alvo)<0)return false;
     return can('pedidos.status')||(can('pedidos.status_entrega')&&(alvo==='saiu_entrega'||alvo==='entregue'));
   }
   function pedirMover(p,alvo){
@@ -1810,6 +1819,7 @@ dialog .da .btn{min-width:110px}
     if(p.observacao)n.appendChild(el('span','muted','Obs.: '+p.observacao));
     var a=el('div','acts'),nx=NEXT[p.status];
     if(nx&&podeMover(p,nx)){var b=el('button','btn sm go','Avançar');b.type='button';b.setAttribute('aria-label','Avançar '+p.codigo+' para '+LABEL[nx]);b.addEventListener('click',function(){pedirMover(p,nx);});a.appendChild(b);}
+    var bpk=btnPagamento(p);if(bpk)a.appendChild(bpk);
     var pk=el('button','btn sm','Imprimir');pk.type='button';pk.addEventListener('click',function(){abrirImpressao(p,'comanda');});a.appendChild(pk);
     if(podeCancelar(p)){var kc=el('button','btn sm danger','Cancelar');kc.type='button';kc.setAttribute('aria-label','Cancelar pedido '+p.codigo);kc.addEventListener('click',function(){pedirCancelamento(p);});a.appendChild(kc);}
     if(c.whatsapp){var w=el('a','btn sm wa','WhatsApp');w.target='_blank';w.rel='noopener';w.href='https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent('Olá, '+first(c.nome)+'! Aqui é da '+EMPS+' 💜 Sobre o seu pedido '+p.codigo+'.');a.appendChild(w);}
@@ -1918,8 +1928,9 @@ dialog .da .btn{min-width:110px}
     n.appendChild(el('span','muted',hora(p.criado_em)+(p.origem==='manual'?' · pedido manual':'')));
     if(motivoCancTxt(p))n.appendChild(el('span','motivo',motivoCancTxt(p)));
     var a=el('div','acts'),mx=el('div','mais-menu');
-    var nx=NEXT[p.status],okSt=nx&&(can('pedidos.status')||(can('pedidos.status_entrega')&&(nx==='saiu_entrega'||nx==='entregue')));
+    var nx=NEXT[p.status],okSt=nx&&!(NAO_PAGO.indexOf(p.status)>=0&&NAO_PAGO.indexOf(nx)<0)&&(can('pedidos.status')||(can('pedidos.status_entrega')&&(nx==='saiu_entrega'||nx==='entregue')));
     if(okSt){var b=el('button','btn sm go','Marcar como '+LABEL[NEXT[p.status]].toLowerCase());b.type='button';b.addEventListener('click',function(){if(NEXT[p.status]==='entregue'){pedirEntrega(p);return;}confirmar('Alterar status do pedido?',[p.codigo+' · '+(c.nome||'Cliente'),LABEL[p.status]+'  →  '+LABEL[NEXT[p.status]]].concat(NEXT[p.status]==='pago'?['Entra no caixa e gera pontos para o cliente.']:[]),'Sim, alterar').then(function(ok){if(ok)mudar(p,NEXT[p.status],b);});});a.appendChild(b);}
+    var bpl=btnPagamento(p);if(bpl)a.appendChild(bpl);
     if(podeCancelar(p)){var x=el('button','btn sm danger','Cancelar pedido');x.type='button';x.addEventListener('click',function(){pedirCancelamento(p);});a.appendChild(x);}
     if(c.whatsapp){var av=p.status==='saiu_entrega'&&p.codigo_entrega,w=el('a','btn sm wa',av?'Avisar cliente':'WhatsApp');w.target='_blank';w.rel='noopener';
       var msgW=av?'Olá, '+first(c.nome)+'! Aqui é da '+EMPS+' 💜 Seu pedido '+p.codigo+(p.endereco?' saiu para entrega! 🛵':' está pronto para retirada! 🏠')+'\n\n🔑 Código '+(p.endereco?'de entrega':'de retirada')+': *'+p.codigo_entrega+'*\nInforme este código '+(p.endereco?'ao entregador':'no balcão')+'.\n\n🔎 Acompanhe: '+SITE_PEDIDO+'?acompanhar='+p.codigo:'Olá, '+first(c.nome)+'! Aqui é da '+EMPS+' 💜 Sobre o seu pedido '+p.codigo+'.';
@@ -2012,7 +2023,7 @@ dialog .da .btn{min-width:110px}
     btn.disabled=true;
     sb.from('pedidos').update({status:status}).eq('id',p.id).then(function(r){
       btn.disabled=false;
-      if(r.error){toast('Não consegui atualizar o pedido.',true);return;}
+      if(r.error){toast(/pagamento_nao_confirmado/.test(r.error.message||'')?'Confirme o pagamento na tela Pagamentos antes.':'Não consegui atualizar o pedido.',true);return;}
       toast(p.codigo+': '+LABEL[status]);loadPedidos();loadResumo();
     });
   }
@@ -3385,15 +3396,27 @@ dialog .da .btn{min-width:110px}
     [['Aprovado',brl(sum(aprov,function(x){return x.valor;}))],['Taxas reais',brl(sum(aprov,function(x){return x.taxa_real;}))],['Aguardando',String(pags.filter(function(x){return x.status==='pendente';}).length)],['Estornos/disputas',String(pags.filter(function(x){return x.status==='estornado'||x.status==='disputa';}).length)]].forEach(function(x){var c=el('div','stat');c.appendChild(el('small',null,x[0]));c.appendChild(el('b',null,x[1]));cards.appendChild(c);});
     var comPend={};pags.forEach(function(x){if(x.status==='pendente')comPend[x.pedido_id]=1;});
     var bp=$('#pagPend');bp.textContent='';
-    var cobraveis=pend.filter(function(p){return !comPend[p.id];});
-    if(!cobraveis.length)bp.appendChild(el('p','empty','Nenhum pedido aguardando cobrança.'));
+    var cobraveis=pend;
+    if(!cobraveis.length)bp.appendChild(el('p','empty','Nenhum pedido aguardando pagamento.'));
     cobraveis.forEach(function(p){
       var n=el('article','ped'),top=el('div','top');top.appendChild(el('b',null,p.codigo+' · '+brl(p.total)));top.appendChild(el('span','tag '+p.status,p.status));n.appendChild(top);
       if(can('financeiro.gerir')||can('pedidos.status')){
         var ac=el('div','acts'),b=el('button','btn sm go','Gerar cobrança Pix');b.type='button';
         if(gwAtivo==='nenhum'){b.disabled=true;b.title='Ligue o gateway (Teste ou Asaas) acima.';}
+        if(comPend[p.id]){b.disabled=true;b.textContent='Cobrança Pix em aberto';}
         b.addEventListener('click',function(){b.disabled=true;acaoGateway({acao:'cobrar',pedido_id:p.id},function(){return sb.rpc('pagamento_admin_cobrar_teste',{p_pedido:p.id,p_metodo:'pix'});}).then(function(x){if(x.error){toast(msgPag(x.error),true);b.disabled=false;return;}toast('Cobrança criada.');loadGateway();});});
-        ac.appendChild(b);n.appendChild(ac);
+        ac.appendChild(b);
+        if(can('pedidos.status')){
+          var cf=el('button','btn sm','Confirmar pagamento recebido');cf.type='button';
+          cf.addEventListener('click',function(){confirmar('Confirmar o pagamento?',[p.codigo+' · '+brl(p.total)+(p.forma_pagamento?' · '+(NOME_PAG[p.forma_pagamento]||p.forma_pagamento):''),'Confira se o dinheiro entrou na conta. O pedido vira "pago": entra no caixa, gera pontos e baixa o estoque.'],'Sim, recebi').then(function(ok){
+            if(!ok)return;cf.disabled=true;
+            sb.rpc('admin_confirmar_pagamento',{p_pedido:p.id}).then(function(r){cf.disabled=false;
+              if(r.error){var m=r.error.message||'';toast(/status_invalido/.test(m)?'Este pedido já foi pago ou cancelado.':/nao_autorizado|sem_permissao/.test(m)?'Você não tem permissão para confirmar pagamentos.':'Não consegui confirmar o pagamento.',true);loadGateway();return;}
+              toast(p.codigo+': pagamento confirmado.');loadGateway();loadPedidos();loadResumo();
+            });});});
+          ac.appendChild(cf);
+        }
+        n.appendChild(ac);
       }
       bp.appendChild(n);
     });

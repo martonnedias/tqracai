@@ -554,13 +554,19 @@
       var s=emv('00','01')+emv('01','11')+emv('26',emv('00','br.gov.bcb.pix')+emv('01',p.chave))+emv('52','0000')+emv('53','986')+emv('54',valor.toFixed(2))+emv('58','BR')+emv('59',asc(p.nome,25)||'LOJA')+emv('60',asc(p.cidade,15)||'BRASIL')+emv('62',emv('05',asc(txid,25).replace(/ /g,'')||'***'))+'6304';
       return s+crc16(s);
     }
+    // QR Code do Pix: biblioteca local (vendor/qrcode.js, MIT), carregada só quando precisa
+    function qrImg(img,texto){
+      function go(){try{var q=window.qrcode(0,'M');q.addData(texto);q.make();img.src='data:image/svg+xml;utf8,'+encodeURIComponent(q.createSvgTag({cellSize:4,margin:4,scalable:true}));img.hidden=false;}catch(e){img.hidden=true;}}
+      if(window.qrcode){go();return;}
+      var s=document.createElement('script');s.src='vendor/qrcode.js?v=1';s.onload=go;document.head.appendChild(s);
+    }
     function pixEstatico(code,tot){
       var box=document.getElementById('confPix'); if(!box||!code||!(tot>0))return;
       rpc('obter_pix_publico',{},7000).then(function(p){
         if(!p||!p.chave)return;
         var s=pixPayload(p,+tot,code.replace(/[^A-Za-z0-9]/g,''));
         document.getElementById('confPixVal').textContent=brl(tot);
-        var ta=document.getElementById('confPixCod'); ta.value=s;
+        var ta=document.getElementById('confPixCod'); ta.value=s; qrImg(document.getElementById('confPixQr'),s);
         document.getElementById('confPixCp').onclick=function(){var b=this;(navigator.clipboard?navigator.clipboard.writeText(s):Promise.reject()).then(function(){b.textContent='Código copiado! Cole no app do banco';},function(){ta.select();b.textContent='Selecione e copie o código';});};
         box.hidden=false;
       }).catch(function(){});

@@ -112,3 +112,6 @@ Configurações `pix_chave`, `pix_nome`, `pix_cidade` (Configurações > Funcion
 
 ## 31 · WhatsApp com 55 (`20261107_31_whatsapp_55.sql`)
 Correção: o site envia o WhatsApp sem o 55 e o banco guarda com 55; `acompanhar_pedido` e `pagamento_publico` agora aceitam os dois formatos (o Pix online e o acompanhamento não achavam o pedido). Aplicada em produção.
+
+## QR Code do Pix
+Sem mudança no banco. O QR é gerado no navegador (biblioteca local `vendor/qrcode.js`, qrcode-generator 1.4.4, MIT) a partir do mesmo copia e cola: na confirmação do site e no popup "Enviar Pix" do painel.

@@ -97,3 +97,9 @@ Aviso de pedidos recentes no site. Tabela `prova_social`, `obter_prova_social()`
 
 ## 26 · Selo "Novo" (`20261102_26_novidades.sql`)
 Chaves `novidades_ativo`, `novidades_dias`, `novidades_ocultas` em `configuracoes` (validadas em `validar_config`) e `obter_novidades()` (qualquer usuário do painel). Já aplicada em produção. O registro das novidades fica em `admin/novidades.js`.
+
+## 27 · Acompanhamento do pedido (`20261103_27_acompanhar_pedido.sql`)
+Função pública `acompanhar_pedido(codigo, whatsapp)`: devolve situação, modalidade, forma de pagamento, total e horário de cada etapa (a partir de `pedido_eventos`). Exige código **e** WhatsApp do pedido (como `pagamento_publico`). O site (`pedido.html`) consulta a cada 20 s na confirmação e em `?acompanhar=TQR-0001`; a mensagem do WhatsApp leva esse link. Aplicada em produção.
+
+## 28 · Código de entrega/retirada (`20261104_28_codigo_entrega.sql`)
+`pedidos.codigo_entrega` (PIN de 4 dígitos, gerado por padrão) e `entrega_codigo_ok`. `acompanhar_pedido` devolve o código só enquanto o status é `saiu_entrega`. `admin_concluir_entrega(pedido, codigo)` marca "entregue" conferindo o código (opcional); com `exigir_codigo_entrega = true` (Configurações) o gatilho `guarda_pedido` bloqueia "entregue" por qualquer outro caminho. Aplicada em produção.

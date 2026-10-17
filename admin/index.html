@@ -1195,6 +1195,7 @@ dialog .da .btn{min-width:110px}
             <label class="fld">Abre às<input data-chave="horario_abre" type="time" required></label>
             <label class="fld">Fecha às<input data-chave="horario_fecha" type="time" required></label>
           </div>
+          <label class="chk"><input data-chave="exigir_codigo_entrega" data-bool="1" type="checkbox"><span>Exigir o código do cliente para marcar "Entregue" <small class="muted">(desligado: o código é conferido se informado, mas pode concluir sem ele)</small></span></label>
           <b>Aviso no topo do site</b>
           <div class="grid2">
             <label class="fld">Texto do aviso<input data-chave="aviso_site" type="text" maxlength="160" placeholder="Ex.: Hoje fechamos às 22h"></label>
@@ -1430,6 +1431,15 @@ dialog .da .btn{min-width:110px}
     <p class="muted" id="ccAviso" role="note"></p>
     <div class="da"><button class="btn" type="button" id="ccNo">Manter pedido</button><button class="btn danger" type="button" id="ccYes">Cancelar pedido</button></div>
   </div>
+</dialog>
+<dialog id="dlgEntrega" aria-labelledby="dlgEntregaT">
+  <form class="dlg-c" id="deForm" autocomplete="off" novalidate>
+    <h3 id="dlgEntregaT">Concluir entrega</h3>
+    <div class="de" id="deInfo"></div>
+    <label class="fld">Código do cliente <small id="deDica">(opcional)</small><input id="deCod" type="text" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="4 dígitos"></label>
+    <p class="muted" id="deAviso" role="note">Peça ao cliente o código que aparece no acompanhamento do pedido ou no WhatsApp.</p>
+    <div class="da"><button class="btn" type="button" id="deNo">Voltar</button><button class="btn go" type="submit" id="deYes">Concluir</button></div>
+  </form>
 </dialog>
 <nav class="bnav" id="bnav" aria-label="Atalhos principais"></nav>
 <dialog id="dlgMais" class="mais-dlg" aria-label="Todas as telas"><div class="mais-h"><b>Todas as telas</b><button class="btn sm" type="button" id="maisFecha">Fechar</button></div><div id="maisLista"></div></dialog>
@@ -1752,7 +1762,7 @@ dialog .da .btn{min-width:110px}
   function badgePedidos(){var bb=document.getElementById('bnBadge');if(bb){var nn=pedidos.filter(function(p){return p.status==='pendente';}).length;bb.textContent=nn>99?'99+':String(nn);bb.hidden=!nn;}
     var b=document.querySelector('#tabs button[data-tab=pedidos]');if(!b)return;var n=pedidos.filter(function(p){return p.status==='pendente';}).length,bd=b.querySelector('.nbadge');if(!bd){bd=document.createElement('b');bd.className='nbadge';b.appendChild(bd);}bd.textContent=n>99?'99+':String(n);bd.hidden=!n;bd.setAttribute('aria-label',n+' pedidos pendentes');}
   function loadPedidos(){
-    sb.from('pedidos').select('id,codigo,status,total,forma_pagamento,endereco,bairro,observacao,origem,criado_em,atualizado_em,motivo_cancelamento,detalhe_cancelamento,modalidade,subtotal,desconto,taxa_entrega,cupom,extras,montagens,clientes(nome,whatsapp),itens_pedido(quantidade,nome_produto,brinde,preco_unitario,subtotal)')
+    sb.from('pedidos').select('id,codigo,status,total,forma_pagamento,endereco,bairro,observacao,origem,criado_em,atualizado_em,motivo_cancelamento,detalhe_cancelamento,modalidade,subtotal,desconto,taxa_entrega,cupom,extras,montagens,codigo_entrega,entrega_codigo_ok,clientes(nome,whatsapp),itens_pedido(quantidade,nome_produto,brinde,preco_unitario,subtotal)')
       .order('criado_em',{ascending:false}).limit(300).then(function(r){
         if(r.error){toast('Não consegui carregar os pedidos.',true);return;}
         avisar(r.data||[]);pedidos=r.data||[];renderPedidos();badgePedidos();if(tabAtual==='inicio')desenhaVivo();if(tabAtual==='pedidos')desenhaMini();
@@ -1769,6 +1779,7 @@ dialog .da .btn{min-width:110px}
   }
   function pedirMover(p,alvo){
     var c=p.clientes||{};
+    if(alvo==='entregue'){pedirEntrega(p);return;}
     confirmar('Alterar status do pedido?',[p.codigo+' · '+(c.nome||'Cliente'),LABEL[p.status]+'  →  '+LABEL[alvo]].concat(alvo==='pago'||(p.status==='pendente'||p.status==='confirmado')&&(alvo==='saiu_entrega'||alvo==='entregue')?['Entra no caixa e gera pontos para o cliente.']:[]),'Sim, alterar').then(function(ok){if(ok)mudar(p,alvo,{});});
   }
   function cardKanban(p){
@@ -1891,10 +1902,12 @@ dialog .da .btn{min-width:110px}
     if(motivoCancTxt(p))n.appendChild(el('span','motivo',motivoCancTxt(p)));
     var a=el('div','acts'),mx=el('div','mais-menu');
     var nx=NEXT[p.status],okSt=nx&&(can('pedidos.status')||(can('pedidos.status_entrega')&&(nx==='saiu_entrega'||nx==='entregue')));
-    if(okSt){var b=el('button','btn sm go','Marcar como '+LABEL[NEXT[p.status]].toLowerCase());b.type='button';b.addEventListener('click',function(){confirmar('Alterar status do pedido?',[p.codigo+' · '+(c.nome||'Cliente'),LABEL[p.status]+'  →  '+LABEL[NEXT[p.status]]].concat(NEXT[p.status]==='pago'?['Entra no caixa e gera pontos para o cliente.']:[]),'Sim, alterar').then(function(ok){if(ok)mudar(p,NEXT[p.status],b);});});a.appendChild(b);}
+    if(okSt){var b=el('button','btn sm go','Marcar como '+LABEL[NEXT[p.status]].toLowerCase());b.type='button';b.addEventListener('click',function(){if(NEXT[p.status]==='entregue'){pedirEntrega(p);return;}confirmar('Alterar status do pedido?',[p.codigo+' · '+(c.nome||'Cliente'),LABEL[p.status]+'  →  '+LABEL[NEXT[p.status]]].concat(NEXT[p.status]==='pago'?['Entra no caixa e gera pontos para o cliente.']:[]),'Sim, alterar').then(function(ok){if(ok)mudar(p,NEXT[p.status],b);});});a.appendChild(b);}
     if(podeCancelar(p)){var x=el('button','btn sm danger','Cancelar pedido');x.type='button';x.addEventListener('click',function(){pedirCancelamento(p);});a.appendChild(x);}
-    if(c.whatsapp){var w=el('a','btn sm wa','WhatsApp');w.target='_blank';w.rel='noopener';
-      w.href='https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent('Olá, '+first(c.nome)+'! Aqui é da '+EMPS+' 💜 Sobre o seu pedido '+p.codigo+'.');a.appendChild(w);}
+    if(c.whatsapp){var av=p.status==='saiu_entrega'&&p.codigo_entrega,w=el('a','btn sm wa',av?'Avisar cliente':'WhatsApp');w.target='_blank';w.rel='noopener';
+      var msgW=av?'Olá, '+first(c.nome)+'! Aqui é da '+EMPS+' 💜 Seu pedido '+p.codigo+(p.endereco?' saiu para entrega! 🛵':' está pronto para retirada! 🏠')+'\n\n🔑 Código '+(p.endereco?'de entrega':'de retirada')+': *'+p.codigo_entrega+'*\nInforme este código '+(p.endereco?'ao entregador':'no balcão')+'.\n\n🔎 Acompanhe: '+SITE_PEDIDO+'?acompanhar='+p.codigo:'Olá, '+first(c.nome)+'! Aqui é da '+EMPS+' 💜 Sobre o seu pedido '+p.codigo+'.';
+      w.href='https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent(msgW);a.appendChild(w);}
+    if(p.status==='entregue'&&p.entrega_codigo_ok)n.appendChild(el('span','muted','✓ Entrega conferida com o código do cliente'));
     var pb=el('button','btn sm','Imprimir');pb.type='button';pb.addEventListener('click',function(){abrirImpressao(p,'comanda');});mx.appendChild(pb);
     var hb=el('button','btn sm','Histórico');hb.type='button';
     var hl=el('div','hist');hl.hidden=true;
@@ -1910,6 +1923,30 @@ dialog .da .btn{min-width:110px}
     mx.appendChild(hb);
     if(mx.childNodes.length){var dt=document.createElement('details');dt.className='mais-acoes';var sm=document.createElement('summary');sm.textContent='⋯';sm.setAttribute('aria-label','Mais ações do pedido '+p.codigo);sm.title='Mais ações';dt.appendChild(sm);dt.appendChild(mx);a.appendChild(dt);}
     n.appendChild(a);n.appendChild(hl);return n;
+  }
+  // ===== Concluir entrega/retirada com o código do cliente (opcional, a menos que Configurações exija) =====
+  var SITE_PEDIDO=(window.TQR_BRAND&&window.TQR_BRAND.siteUrl?window.TQR_BRAND.siteUrl.replace(/\/?$/,'/'):'https://martonnedias.github.io/tqracai/')+'pedido.html';
+  function pedirEntrega(p){
+    var d=$('#dlgEntrega'),c=p.clientes||{},cod=$('#deCod'),yes=$('#deYes');
+    $('#deInfo').textContent=p.codigo+' · '+(c.nome||'Cliente')+' · '+(p.endereco?'Entrega':'Retirada');
+    cod.value='';yes.disabled=false;$('#deDica').textContent='(opcional)';
+    $('#deNo').onclick=function(){d.close();};
+    $('#deForm').onsubmit=function(e){
+      e.preventDefault();yes.disabled=true;
+      sb.rpc('admin_concluir_entrega',{p_pedido:p.id,p_codigo:cod.value.trim()||null}).then(function(r){
+        yes.disabled=false;
+        if(r.error){var m=r.error.message||'';
+          if(/codigo_obrigatorio/.test(m)){$('#deDica').textContent='(obrigatório)';toast('Informe o código do cliente para concluir.',true);cod.focus();}
+          else if(/codigo_incorreto/.test(m)){toast('Código incorreto. Confira com o cliente.',true);cod.select();}
+          else if(/status_invalido/.test(m)){d.close();toast('Este pedido já foi concluído ou cancelado.',true);loadPedidos();}
+          else if(/nao_autorizado|sem_permissao/.test(m))toast('Você não tem permissão para concluir entregas.',true);
+          else toast('Não consegui concluir o pedido.',true);
+          return;}
+        d.close();toast(p.codigo+': '+LABEL.entregue+(r.data?' (código conferido)':''));loadPedidos();loadResumo();
+      });
+    };
+    if(d.showModal)d.showModal();else d.setAttribute('open','');
+    cod.focus();
   }
   function mudar(p,status,btn){
     btn.disabled=true;
@@ -2314,7 +2351,7 @@ dialog .da .btn{min-width:110px}
 
   // ===== Configurações (formas de pagamento, bairros e chaves do site) =====
   var cfgOriginal={};
-  var CFG_ROT={whatsapp_pedidos:'WhatsApp dos pedidos',horario_abre:'Abre às',horario_fecha:'Fecha às',aviso_site:'Texto do aviso',aviso_ativo:'Aviso no site',
+  var CFG_ROT={whatsapp_pedidos:'WhatsApp dos pedidos',horario_abre:'Abre às',horario_fecha:'Fecha às',aviso_site:'Texto do aviso',aviso_ativo:'Aviso no site',exigir_codigo_entrega:'Exigir código na entrega',
     pedido_min:'Mínimo por pedido',pedido_max:'Máximo por pedido',contador_base:'Base do contador',
     contador_ajuste:'Ajuste do contador',pontos_por_real:'Pontos por R$ 1',pontos_por_brinde:'Pontos por brinde',aniversario_pontos:'Pontos do aniversário',novidades_ativo:'Selo "Novo"',novidades_dias:'Dias com o selo',novidades_ocultas:'Itens sem selo'};
   function loadConfig(){

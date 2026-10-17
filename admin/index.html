@@ -52,8 +52,8 @@ nav#tabs .btn:hover{background:var(--surface-2)}
 nav#tabs .btn.on{background:var(--brand-soft);color:var(--brand);font-weight:650}
 nav#tabs .btn.on svg{color:var(--brand)}
 .content{min-width:0;padding:0 28px}
-.content>.wrap,main.wrap{max-width:1000px;padding:0}
-main{padding:28px 0 96px}
+.content>.wrap,main.wrap{max-width:1000px;padding-left:0;padding-right:0}
+main.wrap{padding:28px 0 96px}
 #codSec{padding-top:20px}
 
 /* botões */
@@ -245,7 +245,7 @@ dialog#dlgImprimir::backdrop{background:rgba(29,23,38,.5)}dialog#dlgImprimir h3{
   .bar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.bar .btn{flex:none}.bar .brand{flex:none;margin-right:8px;white-space:nowrap}
   nav#tabs .btn{width:auto;white-space:nowrap;min-height:44px;padding:8px 12px}
   .content{padding:0 16px}
-  main{padding:20px 0 80px}
+  main.wrap{padding:20px 0 80px}
   #userTag{display:none}
   .bar{gap:6px;padding:10px 16px}
   .bar .btn.sm{min-height:40px;padding:6px 10px;font-size:.78rem}
@@ -283,7 +283,7 @@ nav#tabs .btn.on{background:linear-gradient(90deg,rgba(232,190,98,.2),rgba(232,1
 nav#tabs .btn.on svg{color:var(--gold)}
 .nbadge{background:var(--gold);color:#2a0838}
 .content{padding:0 32px}.content>.wrap,main.wrap{max-width:1080px}
-main{padding:26px 0 96px}
+main.wrap{padding:26px 0 96px}
 h2{font-size:1.45rem;letter-spacing:-.025em;margin:0 0 6px}
 main>section>h2+.muted{margin:0 0 20px;max-width:72ch;font-size:.9rem}
 h3{font-size:.95rem;font-weight:700;letter-spacing:-.01em;margin:22px 0 10px}
@@ -320,7 +320,7 @@ form.card>b:not(:first-child){margin-top:14px;padding-top:18px}
   .bar{padding:0 14px}.bar .brand{flex:1}
   .side{background:var(--side-bg);padding:0 8px;box-shadow:0 6px 16px -10px rgba(20,8,36,.6)}
   nav#tabs{padding:8px 0}nav#tabs .btn{min-height:42px;width:auto}
-  .content{padding:0 14px}main{padding:18px 0 80px}
+  .content{padding:0 14px}main.wrap{padding:18px 0 80px}
   .filters input,.filters select,.fld input,.fld select,.fld textarea,.row input,.row select{min-height:42px;font-size:1rem}
   h2{font-size:1.3rem}
 }
@@ -514,7 +514,7 @@ div.card>b{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:
   .bn.on{color:var(--ouro-2)}.bn.on svg{color:var(--ouro)}
   .bn-novo svg{background:var(--ouro);color:var(--casca);stroke:var(--casca);border-radius:50%;padding:4px;width:30px;height:30px;box-shadow:0 4px 10px -3px rgba(0,0,0,.6)}
   .bn .nbadge{position:absolute;top:2px;right:calc(50% - 22px);margin:0;min-width:18px;font-size:.65rem}
-  main{padding-bottom:96px}
+  main.wrap{padding-bottom:96px}
   .mais-dlg{display:block;border:0;padding:0;margin:auto 0 0;width:100%;max-width:none;max-height:85vh;border-radius:18px 18px 0 0;background:var(--surface);color:var(--text)}
   .mais-dlg:not([open]){display:none}.mais-dlg::backdrop{background:rgba(20,8,36,.55)}
   .mais-h{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surface)}
@@ -550,7 +550,7 @@ html,body{max-width:100%;overflow-x:clip}
   .stat small{font-size:.68rem;letter-spacing:.04em}
   .row{flex-wrap:wrap}.row>label,.row>.fld{flex:1 1 140px;min-width:0}
   .seg{display:flex;flex-wrap:wrap}.seg .btn{padding:0 10px}
-  .ini-top{padding-top:12px}
+
   .card,.rel-card{padding-left:14px;padding-right:14px}
   table{display:block;overflow-x:auto;max-width:100%}
   dialog{max-width:calc(100vw - 16px)}

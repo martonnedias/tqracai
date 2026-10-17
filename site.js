@@ -1,4 +1,5 @@
 function br(t){return window.TQR_br?window.TQR_br(t):t;}
+var UN1=document.documentElement.dataset.unid||'garrafa',UNS=document.documentElement.dataset.unids||'garrafas',PROX=document.documentElement.dataset.prox||'a próxima garrafa grátis',RESG=document.documentElement.dataset.resg||'minha garrafa grátis',PFX=document.documentElement.dataset.prefixo||'TQR';
 window.TQR_DEV=(function(){
   // aparelho reconhecido: chave secreta guardada neste aparelho (liberada no primeiro pedido), abre pontos e endereços salvos
   var K='tqr_dev';
@@ -174,7 +175,7 @@ window.TQR_DEV=(function(){
       var qt=document.querySelector('.q-head .q-tab');
       if(qt){qt.textContent=rs(UN)+' cada';if(COMBO){var bb=document.createElement('b');bb.textContent=COMBO.q+' por '+rs(COMBO.preco);qt.appendChild(document.createTextNode(' · '));qt.appendChild(bb);}}
       var mb=document.querySelector('.mbar .p b');
-      if(mb){var mn=UN;if(COMBO)mn=Math.min(mn,COMBO.preco/COMBO.q);if(FAIXA)mn=Math.min(mn,FAIXA.preco);mb.textContent=rs(mn);}
+      if(mb&&!mb.parentNode.dataset.fixo){var mn=UN;if(COMBO)mn=Math.min(mn,COMBO.preco/COMBO.q);if(FAIXA)mn=Math.min(mn,FAIXA.preco);mb.textContent=rs(mn);}
       if(qq)qset(qq.value);
     }
     rpc('obter_vitrine',{},6000).then(aplicaVitrine).catch(function(){});
@@ -468,7 +469,7 @@ window.TQR_DEV=(function(){
     function mostraConf(o){
       var conf=document.getElementById('conf'); if(!conf)return;
       var cod=document.getElementById('confCod'); cod.hidden=!o.code; cod.textContent=o.code?'Pedido '+o.code:'';
-      document.getElementById('confMsg').textContent=o.code?'Já estamos separando o seu açaí. A mensagem do pedido abre no nosso WhatsApp para confirmarmos valor, taxa e pagamento.':'A mensagem do pedido está pronta no WhatsApp. Envie para confirmarmos valor, taxa e pagamento.';
+      document.getElementById('confMsg').textContent=o.code?(document.getElementById('confMsg').dataset.ok||'Já estamos separando o seu pedido. A mensagem do pedido abre no nosso WhatsApp para confirmarmos valor, taxa e pagamento.'):'A mensagem do pedido está pronta no WhatsApp. Envie para confirmarmos valor, taxa e pagamento.';
       var it=document.getElementById('confItens'); it.textContent='';
       o.itens.concat([o.ent?'🛵 Entrega'+(o.bn?' – '+o.bn:''):'🏠 Retirada','💳 '+o.pagn]).forEach(function(t){var d=document.createElement('div');d.className='l';d.textContent=t.replace(/^•\s*/,'');it.appendChild(d);});
       document.getElementById('confTotal').textContent=brl(o.tot);
@@ -813,7 +814,7 @@ window.TQR_DEV=(function(){
       var qt=document.querySelector('.q-head .q-tab');
       if(qt){qt.textContent=rs(UN)+' cada';if(COMBO){var bb=document.createElement('b');bb.textContent=COMBO.q+' por '+rs(COMBO.preco);qt.appendChild(document.createTextNode(' · '));qt.appendChild(bb);}}
       var mb=document.querySelector('.mbar .p b');
-      if(mb){var mn=UN;if(COMBO)mn=Math.min(mn,COMBO.preco/COMBO.q);if(FAIXA)mn=Math.min(mn,FAIXA.preco);mb.textContent=rs(mn);}
+      if(mb&&!mb.parentNode.dataset.fixo){var mn=UN;if(COMBO)mn=Math.min(mn,COMBO.preco/COMBO.q);if(FAIXA)mn=Math.min(mn,FAIXA.preco);mb.textContent=rs(mn);}
       GRUPOS=(V.personalizacao||[]).filter(function(g){return g.opcoes&&g.opcoes.length;});MONT=[];renderMont();
       VIT=V;montaCardapio();
       renderPacks();renderExtras();update();aplicaPendente();
@@ -900,7 +901,7 @@ window.TQR_DEV=(function(){
       document.getElementById('endCod').hidden=false;msgEnd('');document.getElementById('endCodIn').focus();
     });
     document.getElementById('endCodOk').addEventListener('click',function(){
-      var c=(document.getElementById('endCodIn').value||'').trim(); if(c.replace(/[^A-Za-z0-9]/g,'').length<8){msgEnd('Digite o código de acesso completo (ex.: TQR-0027-K7F2).');return;}
+      var c=(document.getElementById('endCodIn').value||'').trim(); if(c.replace(/[^A-Za-z0-9]/g,'').length<8){msgEnd('Digite o código de acesso completo (ex.: '+PFX+'-0027-K7F2).');return;}
       rpc('entrar_com_codigo',{p_whatsapp:digits(),p_acesso:c},6000).then(function(tok){
         if(!tok){msgEnd('Código de acesso incorreto. Confira no seu pedido anterior. Depois de várias tentativas erradas é preciso esperar um pouco.');return;}
         SESS={w:digits(),t:tok};guardaSess();document.getElementById('endCod').hidden=true;document.getElementById('endCodIn').value='';msgEnd('');listaEnd();
@@ -1040,9 +1041,9 @@ window.TQR_DEV=(function(){
       setTimeout(function(){pg.style.strokeDashoffset=(C*(1-pct/100)).toFixed(1);},60);
       var top=mk('div','pt-top'),info=mk('div','pt-info');
       top.appendChild(ring);
-      info.appendChild(mk('p','pt-msg',d.garrafas_gratis>0?('Você tem '+d.garrafas_gratis+' garrafa'+(d.garrafas_gratis>1?'s':'')+' grátis para resgatar!'):('Faltam '+d.faltam+' pontos para a próxima garrafa grátis.')));
+      info.appendChild(mk('p','pt-msg',d.garrafas_gratis>0?('Você tem '+d.garrafas_gratis+' '+(d.garrafas_gratis>1?UNS:UN1)+' grátis para resgatar!'):('Faltam '+d.faltam+' pontos para '+PROX+'.')));
       if(d.garrafas_gratis>0){var a=mk('a','btn btn-wa','Resgatar pelo WhatsApp');a.target='_blank';a.rel='noopener';
-        a.href='https://wa.me/'+window.TQR_FONE+'?text='+encodeURIComponent(br('Olá, TQR Açaí! 💜 Quero resgatar minha garrafa grátis com os meus pontos.'));info.appendChild(a);}
+        a.href='https://wa.me/'+window.TQR_FONE+'?text='+encodeURIComponent(br('Olá, TQR Açaí! 💜 Quero resgatar '+RESG+' com os meus pontos.'));info.appendChild(a);}
       if(d.mes_aniversario)info.appendChild(mk('p','hint','🎂 Este é o mês do seu aniversário! Peça o seu brinde pelo WhatsApp.'));
       top.appendChild(info);res.appendChild(top);
       var hs=d.historico||[];
@@ -1070,14 +1071,14 @@ window.TQR_DEV=(function(){
       return rpcP('consultar_saldo',{p_whatsapp:dg(),p_token:tok}).then(mostra).catch(function(){
         window.TQR_DEV.clear();res.hidden=true;return Promise.reject();});
     }
-    function pedeCodigo(){codRow.hidden=false;res.hidden=true;say('Para ver seus pontos neste aparelho, informe o código de acesso de um pedido seu (ex.: TQR-0027-K7F2). Ele aparece na confirmação do pedido. Se você ainda não pediu por este site, faça um pedido e seus pontos aparecem aqui.');document.getElementById('ptCod').focus();}
+    function pedeCodigo(){codRow.hidden=false;res.hidden=true;say('Para ver seus pontos neste aparelho, informe o código de acesso de um pedido seu (ex.: '+PFX+'-0027-K7F2). Ele aparece na confirmação do pedido. Se você ainda não pediu por este site, faça um pedido e seus pontos aparecem aqui.');document.getElementById('ptCod').focus();}
     document.getElementById('ptPedir').addEventListener('click',function(){
       if(dg().length<10){say('Informe o DDD e o número.');return;}
       var d=window.TQR_DEV.get(dg());
       if(d){say('');consulta(d.t).catch(pedeCodigo);}else pedeCodigo();
     });
     document.getElementById('ptOk').addEventListener('click',function(){
-      var c=(document.getElementById('ptCod').value||'').trim(); if(c.replace(/[^A-Za-z0-9]/g,'').length<8){say('Digite o código de acesso completo (ex.: TQR-0027-K7F2).');return;}
+      var c=(document.getElementById('ptCod').value||'').trim(); if(c.replace(/[^A-Za-z0-9]/g,'').length<8){say('Digite o código de acesso completo (ex.: '+PFX+'-0027-K7F2).');return;}
       rpcP('entrar_com_codigo',{p_whatsapp:dg(),p_acesso:c}).then(function(tok){
         if(!tok){say('Código de acesso incorreto. Confira no seu pedido anterior. Depois de várias tentativas erradas é preciso esperar um pouco.');return;}
         window.TQR_DEV.set(dg(),tok,90);codRow.hidden=true;say('');

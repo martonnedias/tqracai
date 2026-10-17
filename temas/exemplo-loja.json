@@ -1,0 +1,23 @@
+{
+ "tema": "hamburgueria",
+ "nome": "Burger Lab",
+ "nome_curto": "Burger Lab",
+ "url": "https://www.exemplo.com.br/",
+ "logo": "img/rotulo.webp",
+ "cidade": "Fortaleza",
+ "uf": "CE",
+ "cidade_uf": "Fortaleza – CE",
+ "horario": "das 18h às 23h",
+ "horario_rodape": "Todos os dias, das 18h às 23h",
+ "horario_schema": "Mo-Su 18:00-23:00",
+ "telefone": "(85) 99999-0000",
+ "telefone_e164": "+55-85-99999-0000",
+ "whatsapp": "5585999990000",
+ "fone_nota": "Número de exemplo: troque pelo WhatsApp que recebe os pedidos",
+ "cnpj": "00.000.000/0001-00",
+ "instagram": "@burgerlab",
+ "instagram_url": "https://instagram.com/burgerlab",
+ "pagamentos": "Pix, Cartão",
+ "prefixo_pedido": "BRG",
+ "blog_nome": "Burger Lab"
+}

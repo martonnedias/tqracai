@@ -1,0 +1,23 @@
+{
+ "tema": "acai",
+ "nome": "#TQR Açaí",
+ "nome_curto": "TQR Açaí",
+ "url": "https://martonnedias.github.io/tqracai/",
+ "logo": "img/rotulo.webp",
+ "cidade": "Teresina",
+ "uf": "PI",
+ "cidade_uf": "Teresina – PI",
+ "horario": "das 8h às 2h",
+ "horario_rodape": "Todos os dias, das 8h às 2h",
+ "horario_schema": "Mo-Su 08:00-02:00",
+ "telefone": "(86) 99588-4770",
+ "telefone_e164": "+55-86-99588-4770",
+ "whatsapp": "5586994144709",
+ "fone_nota": "TEMPORÁRIO: número de teste. Original: 5586995884770",
+ "cnpj": "59.270.529/0001-78",
+ "instagram": "@tqracai",
+ "instagram_url": "https://instagram.com/tqracai",
+ "pagamentos": "Pix, Cartão",
+ "prefixo_pedido": "TQR",
+ "blog_nome": "#TQR"
+}

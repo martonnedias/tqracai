@@ -13,11 +13,26 @@
     if(!M||!M.nome||typeof s!=='string')return s;
     return s.replace(/#TQR Açaí/g,M.nome).replace(/TQR Açaí/g,nomeCurto());
   };
+  // o roxo decorativo (brilhos, órbitas, degradês) acompanha o tom da cor de destaque: só troca o matiz, mantém brilho e saturação
+  function hsl(a){var r=a[0]/255,g=a[1]/255,b=a[2]/255,mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,h=0,s=0,d=mx-mn;
+    if(d){s=l>.5?d/(2-mx-mn):d/(mx+mn);h=mx===r?(g-b)/d+(g<b?6:0):mx===g?(b-r)/d+2:(r-g)/d+4;h/=6;}return [h,s,l];}
+  function deHsl(h,s,l){function f(p,q,t){if(t<0)t+=1;if(t>1)t-=1;return t<1/6?p+(q-p)*6*t:t<1/2?q:t<2/3?p+(q-p)*(2/3-t)*6:p;}
+    if(!s)return [l*255,l*255,l*255];var q=l<.5?l*(1+s):l+s-l*s,p=2*l-q;return [f(p,q,h+1/3)*255,f(p,q,h)*255,f(p,q,h-1/3)*255];}
+  function tinge(a,H){var x=hsl(a);return deHsl(H,x[1],x[2]).map(Math.round);}
+  function roxos(d){
+    var H=hsl(rgb(d))[0],st=document.documentElement.style,cs=getComputedStyle(document.documentElement);
+    ['--pu','--go'].forEach(function(pre){for(var i=1;i<=80;i++){
+      var n=pre+i,v=(cs.getPropertyValue(n)||'').trim();if(!v)continue;
+      var base=document.documentElement.dataset[pre.slice(2)+i];if(!base){document.documentElement.dataset[pre.slice(2)+i]=v;base=v;}   // guarda o valor original (idempotente)
+      var a=/^#[0-9a-f]{6}$/i.test(base)?rgb(base.toLowerCase()):base.split(',').map(Number);if(a.length!==3||a.some(isNaN))continue;
+      var t=tinge(a,H);st.setProperty(n,/^#/.test(base)?toHex(t):t.join(','));
+    }});
+  }
   function cores(c){
     var r=document.documentElement.style, d=hex(c.destaque), d2=hex(c.destaque2), f=hex(c.fundo), f2=hex(c.fundo2);
     if(d){d2=d2||mix(d,'#ffffff',.55);
       r.setProperty('--gold',d);r.setProperty('--gold2',d2);r.setProperty('--gold3',mix(d,'#000000',.22));
-      r.setProperty('--gold4',mix(d,d2,.55));r.setProperty('--gold5',mix(d,d2,.62));r.setProperty('--gold-rgb',rgb(d).join(','));}
+      r.setProperty('--gold4',mix(d,d2,.55));r.setProperty('--gold5',mix(d,d2,.62));r.setProperty('--gold-rgb',rgb(d).join(','));roxos(d);}
     else if(d2){r.setProperty('--gold2',d2);}
     if(f){f2=f2||mix(f,'#ffffff',.04);
       r.setProperty('--bg',f);r.setProperty('--bg2',f2);r.setProperty('--bg3',mix(f2,'#ffffff',.04));r.setProperty('--bg4',mix(f,'#ffffff',.12));

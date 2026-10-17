@@ -1,0 +1,22 @@
+
+<section class="pts" id="pontos">
+  <div class="wrap center">
+    <span class="eyebrow">Programa de pontos</span>
+    <h2 class="rv">Quanto mais você pede, <span class="gold">mais ganha</span></h2>
+    <p class="lead rv">Cada pedido pago vira pontos. Junte e troque por {{tema.brinde}}.</p>
+    <div class="pt-grid">
+      <div class="pt-card rv"><div class="pn gold" id="ptReal">1 ponto</div><p>a cada <b>R$ 1</b> em pedidos pagos.</p></div>
+      <div class="pt-card rv"><div class="pn gold" id="ptBrinde">100 pontos</div><p>valem <b>{{tema.brinde}}</b>. Dá para juntar e resgatar várias.</p></div>
+      <div class="pt-card rv"><div class="pn gold">🎂</div><p>No <b>mês do seu aniversário</b> você ganha pontos de brinde, uma vez por ano. Informe a data de nascimento no cadastro.</p></div>
+    </div>
+    <div class="pt-check" id="ptCheck">
+      <h3>Consulte seus pontos</h3>
+      <p class="hint" style="color:var(--muted)">Neste aparelho, onde você já fez pedido, seus pontos aparecem direto. Em outro aparelho, informe o WhatsApp e o código de acesso de um pedido seu.</p>
+      <div class="row"><input type="tel" id="ptZap" inputmode="tel" autocomplete="tel" placeholder="(00) 90000-0000" aria-label="Seu WhatsApp"><button type="button" class="btn btn-gold" id="ptPedir">Ver meus pontos</button></div>
+      <div class="row" id="ptCodRow" hidden><input type="text" id="ptCod" inputmode="text" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="{{loja.prefixo_pedido}}-0000-XXXX" aria-label="Código de acesso do pedido"><button type="button" class="btn btn-gold" id="ptOk">Confirmar</button></div>
+      <p class="hint" id="ptMsg" role="status" hidden></p>
+      <div id="ptRes" hidden></div>
+    </div>
+    <p class="lead" style="margin:18px auto 0;font-size:.82rem">Os pontos entram quando o pagamento é confirmado. Pedido cancelado após o pagamento tem os pontos estornados.</p>
+  </div>
+</section>

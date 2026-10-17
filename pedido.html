@@ -27,7 +27,7 @@ window.TQR_FONE='5586994144709';
 /* Proteção contra robôs (Cloudflare Turnstile). Vazio = desligado e o pedido vai direto ao banco.
    Preencher só depois de publicar a função supabase/functions/criar-pedido (veja o README dela). */
 window.TQR_TURNSTILE='';</script>
-<link rel="stylesheet" href="site.css?v=13">
+<link rel="stylesheet" href="site.css?v=14">
 </head>
 <body class="pedido-pg">
 <a class="skip" href="#topo">Ir para o conteúdo</a>
@@ -94,8 +94,8 @@ window.TQR_TURNSTILE='';</script>
               <div class="full" id="endBox" hidden>
                 <button type="button" class="btn btn-ghost" id="btnEnd">📍 Usar um endereço salvo</button>
                 <div id="endCod" hidden>
-                  <p class="hint">Vamos te mandar um código de 6 dígitos pelo WhatsApp. Pode levar alguns minutos. Digite aqui quando chegar:</p>
-                  <div class="endcod"><input id="endCodIn" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000" aria-label="Código de 6 dígitos"><button type="button" class="btn btn-gold" id="endCodOk">Confirmar</button></div>
+                  <p class="hint">Para ver seus endereços salvos, informe o código de acesso de um pedido seu (ex.: TQR-0027-K7F2). Ele aparece na confirmação do pedido.</p>
+                  <div class="endcod"><input id="endCodIn" type="text" inputmode="text" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="TQR-0000-XXXX" aria-label="Código de acesso do pedido"><button type="button" class="btn btn-gold" id="endCodOk">Confirmar</button></div>
                 </div>
                 <p class="hint" id="endMsg" role="status" hidden></p>
                 <div id="endLista" hidden></div>
@@ -175,6 +175,7 @@ window.TQR_TURNSTILE='';</script>
         <button class="btn btn-gold" type="button" id="confPixCp">Copiar código Pix</button>
         <small>Depois de pagar, é só nos avisar no WhatsApp.</small>
       </section>
+      <div class="p-acesso" id="confAcesso" hidden><small>Seu código de acesso</small><b id="confAcessoCod"></b><span>Guarde este código: com ele você vê seus pontos e endereços salvos em outro aparelho. Neste aparelho já está tudo liberado.</span><button type="button" class="btn btn-ghost" id="confAcessoCp">Copiar código</button></div>
       <div class="cbox"><div id="confItens"></div><div class="ctot"><span>Total</span><b id="confTotal"></b></div></div>
       <div class="cacts"><a class="btn btn-gold" id="confWa" href="#" target="_blank" rel="noopener"><svg><use href="#wa"/></svg>Abrir confirmação no WhatsApp</a><a class="btn btn-ghost" href="pedido.html">Fazer outro pedido</a><a class="clink" href="index.html">Voltar ao início</a></div>
     </section>
@@ -194,7 +195,7 @@ window.TQR_TURNSTILE='';</script>
   <div class="cookie-btns"><button type="button" class="cbtn ghost" data-consent="essenciais">Só essenciais</button><button type="button" class="cbtn gold" data-consent="todos">Aceitar todos</button></div>
 </div>
 
-<script src="site.js?v=10" defer></script>
+<script src="site.js?v=11" defer></script>
 <script src="efeitos.js?v=1" defer></script>
 <dialog id="pixDlg" style="max-width:380px;width:92vw;border:1px solid var(--line);border-radius:18px;background:var(--bg2);color:var(--text);padding:22px">
   <h3 style="margin:0 0 6px;font-size:1.2rem">Pague com Pix</h3>

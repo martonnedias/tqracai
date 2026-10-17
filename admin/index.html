@@ -1195,6 +1195,12 @@ dialog .da .btn{min-width:110px}
             <label class="fld">Abre às<input data-chave="horario_abre" type="time" required></label>
             <label class="fld">Fecha às<input data-chave="horario_fecha" type="time" required></label>
           </div>
+          <b>Pix da loja <small class="muted">(para enviar o Pix já com o valor do pedido)</small></b>
+          <div class="grid3">
+            <label class="fld">Chave Pix <small>(CPF/CNPJ, e-mail, celular com +55 ou chave aleatória)</small><input data-chave="pix_chave" type="text" maxlength="77" autocomplete="off" placeholder="Ex.: 59270529000178"></label>
+            <label class="fld">Nome do recebedor <small>(até 25 letras, sem acento)</small><input data-chave="pix_nome" type="text" maxlength="25" autocomplete="off" placeholder="TQR ACAI"></label>
+            <label class="fld">Cidade <small>(até 15 letras, sem acento)</small><input data-chave="pix_cidade" type="text" maxlength="15" autocomplete="off" placeholder="TERESINA"></label>
+          </div>
           <label class="chk"><input data-chave="exigir_codigo_entrega" data-bool="1" type="checkbox"><span>Exigir o código do cliente para marcar "Entregue" <small class="muted">(desligado: o código é conferido se informado, mas pode concluir sem ele)</small></span></label>
           <b>Aviso no topo do site</b>
           <div class="grid2">
@@ -1439,6 +1445,16 @@ dialog .da .btn{min-width:110px}
     <label class="fld">Código do cliente <small id="deDica">(opcional)</small><input id="deCod" type="text" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="4 dígitos"></label>
     <p class="muted" id="deAviso" role="note">Peça ao cliente o código que aparece no acompanhamento do pedido ou no WhatsApp.</p>
     <div class="da"><button class="btn" type="button" id="deNo">Voltar</button><button class="btn go" type="submit" id="deYes">Concluir</button></div>
+  </form>
+</dialog>
+<dialog id="dlgPix" aria-labelledby="dlgPixT">
+  <form class="dlg-c" id="pxForm" autocomplete="off" novalidate>
+    <h3 id="dlgPixT">Enviar Pix com valor</h3>
+    <div class="de" id="pxInfo"></div>
+    <label class="fld">Valor a cobrar (R$) <small>ajuste se a taxa de entrega mudou</small><input id="pxValor" type="text" inputmode="decimal"></label>
+    <label class="fld">Pix copia e cola<textarea id="pxCod" rows="4" readonly></textarea></label>
+    <p class="muted" id="pxAviso" role="note"></p>
+    <div class="da"><button class="btn" type="button" id="pxNo">Fechar</button><button class="btn" type="button" id="pxCopia">Copiar</button><button class="btn go" type="submit" id="pxWa">Enviar por WhatsApp</button></div>
   </form>
 </dialog>
 <nav class="bnav" id="bnav" aria-label="Atalhos principais"></nav>
@@ -1907,6 +1923,7 @@ dialog .da .btn{min-width:110px}
     if(c.whatsapp){var av=p.status==='saiu_entrega'&&p.codigo_entrega,w=el('a','btn sm wa',av?'Avisar cliente':'WhatsApp');w.target='_blank';w.rel='noopener';
       var msgW=av?'Olá, '+first(c.nome)+'! Aqui é da '+EMPS+' 💜 Seu pedido '+p.codigo+(p.endereco?' saiu para entrega! 🛵':' está pronto para retirada! 🏠')+'\n\n🔑 Código '+(p.endereco?'de entrega':'de retirada')+': *'+p.codigo_entrega+'*\nInforme este código '+(p.endereco?'ao entregador':'no balcão')+'.\n\n🔎 Acompanhe: '+SITE_PEDIDO+'?acompanhar='+p.codigo:'Olá, '+first(c.nome)+'! Aqui é da '+EMPS+' 💜 Sobre o seu pedido '+p.codigo+'.';
       w.href='https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent(msgW);a.appendChild(w);}
+    if(p.forma_pagamento==='pix'&&(p.status==='pendente'||p.status==='confirmado')&&c.whatsapp&&can('pedidos.status')){var px=el('button','btn sm','Enviar Pix');px.type='button';px.addEventListener('click',function(){pedirPix(p);});a.appendChild(px);}
     if(p.status==='entregue'&&p.entrega_codigo_ok)n.appendChild(el('span','muted','✓ Entrega conferida com o código do cliente'));
     var pb=el('button','btn sm','Imprimir');pb.type='button';pb.addEventListener('click',function(){abrirImpressao(p,'comanda');});mx.appendChild(pb);
     var hb=el('button','btn sm','Histórico');hb.type='button';
@@ -1925,6 +1942,43 @@ dialog .da .btn{min-width:110px}
     n.appendChild(a);n.appendChild(hl);return n;
   }
   // ===== Concluir entrega/retirada com o código do cliente (opcional, a menos que Configurações exija) =====
+  // ===== Pix com valor (BR Code estático): chave da loja + valor do pedido, sem gateway =====
+  function emv(id,v){v=String(v);return id+('0'+v.length).slice(-2)+v;}
+  function crc16(s){var c=0xFFFF,i,j;for(i=0;i<s.length;i++){c^=s.charCodeAt(i)<<8;for(j=0;j<8;j++)c=(c&0x8000)?((c<<1)^0x1021)&0xFFFF:(c<<1)&0xFFFF;}return ('000'+c.toString(16).toUpperCase()).slice(-4);}
+  function asc(t,n){return String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9 ]/g,'').toUpperCase().trim().slice(0,n);}
+  function pixPayload(chave,nome,cidade,valor,txid){
+    var conta=emv('00','br.gov.bcb.pix')+emv('01',chave);
+    var p=emv('00','01')+emv('01','11')+emv('26',conta)+emv('52','0000')+emv('53','986')+(valor>0?emv('54',valor.toFixed(2)):'')+emv('58','BR')+emv('59',asc(nome,25)||'LOJA')+emv('60',asc(cidade,15)||'BRASIL')+emv('62',emv('05',asc(txid,25).replace(/ /g,'')||'***'))+'6304';
+    return p+crc16(p);
+  }
+  window.TQR_pixPayload=pixPayload;
+  function pedirPix(p){
+    var c=p.clientes||{},d=$('#dlgPix'),vi=$('#pxValor'),cod=$('#pxCod'),av=$('#pxAviso');
+    $('#pxInfo').textContent=p.codigo+' · '+(c.nome||'Cliente')+' · total do pedido '+brl(p.total);
+    vi.value=Number(p.total).toFixed(2).replace('.',',');cod.value='';av.textContent='Carregando a chave Pix da loja…';
+    var pix=null;
+    function gera(){
+      var v=parseFloat(String(vi.value).replace(/\./g,'').replace(',','.'));
+      if(!pix||!pix.chave||!(v>0)){cod.value='';return null;}
+      var s=pixPayload(pix.chave,pix.nome,pix.cidade,v,p.codigo.replace(/[^A-Za-z0-9]/g,''));cod.value=s;return {s:s,v:v};
+    }
+    vi.oninput=gera;
+    sb.rpc('obter_pix_loja').then(function(r){
+      pix=r.data;
+      if(r.error||!pix||!pix.chave){av.textContent='A chave Pix da loja ainda não foi cadastrada. Peça ao dono para preencher em Configurações > Funcionamento > Pix da loja.';return;}
+      av.textContent='Confira o valor. O cliente paga pelo app do banco e o valor já vem preenchido. Depois de receber, marque o pedido como pago.';gera();
+    });
+    $('#pxNo').onclick=function(){d.close();};
+    $('#pxCopia').onclick=function(){var g=gera();if(!g){toast('Preencha o valor e a chave Pix.',true);return;}(navigator.clipboard?navigator.clipboard.writeText(g.s):Promise.reject()).then(function(){toast('Pix copia e cola copiado.');},function(){cod.select();toast('Selecione e copie o código.');});};
+    $('#pxForm').onsubmit=function(e){
+      e.preventDefault();var g=gera();
+      if(!g){toast('Preencha o valor e a chave Pix.',true);return;}
+      if(!c.whatsapp){toast('Cliente sem WhatsApp.',true);return;}
+      window.open('https://wa.me/'+c.whatsapp+'?text='+encodeURIComponent('Olá, '+first(c.nome)+'! Aqui é da '+EMPS+' 💜 Segue o Pix do seu pedido '+p.codigo+' no valor de *'+brl(g.v)+'*.\n\nÉ só abrir o app do seu banco, escolher *Pix copia e cola* e colar o código abaixo (o valor já vem preenchido):\n\n'+g.s+'\n\nQuando pagar, é só nos avisar por aqui. Obrigado!'),'_blank','noopener');
+      d.close();
+    };
+    if(d.showModal)d.showModal();else d.setAttribute('open','');
+  }
   var SITE_PEDIDO=(window.TQR_BRAND&&window.TQR_BRAND.siteUrl?window.TQR_BRAND.siteUrl.replace(/\/?$/,'/'):'https://martonnedias.github.io/tqracai/')+'pedido.html';
   function pedirEntrega(p){
     var d=$('#dlgEntrega'),c=p.clientes||{},cod=$('#deCod'),yes=$('#deYes');
@@ -2351,7 +2405,7 @@ dialog .da .btn{min-width:110px}
 
   // ===== Configurações (formas de pagamento, bairros e chaves do site) =====
   var cfgOriginal={};
-  var CFG_ROT={whatsapp_pedidos:'WhatsApp dos pedidos',horario_abre:'Abre às',horario_fecha:'Fecha às',aviso_site:'Texto do aviso',aviso_ativo:'Aviso no site',exigir_codigo_entrega:'Exigir código na entrega',
+  var CFG_ROT={whatsapp_pedidos:'WhatsApp dos pedidos',horario_abre:'Abre às',horario_fecha:'Fecha às',aviso_site:'Texto do aviso',aviso_ativo:'Aviso no site',pix_chave:'Chave Pix',pix_nome:'Nome no Pix',pix_cidade:'Cidade no Pix',exigir_codigo_entrega:'Exigir código na entrega',
     pedido_min:'Mínimo por pedido',pedido_max:'Máximo por pedido',contador_base:'Base do contador',
     contador_ajuste:'Ajuste do contador',pontos_por_real:'Pontos por R$ 1',pontos_por_brinde:'Pontos por brinde',aniversario_pontos:'Pontos do aniversário',novidades_ativo:'Selo "Novo"',novidades_dias:'Dias com o selo',novidades_ocultas:'Itens sem selo'};
   function loadConfig(){

@@ -384,6 +384,44 @@
       var pp=document.getElementById('pProdPreco'); if(pp)pp.textContent=rs(UN);
       var pn=document.getElementById('pProdNome'); if(pn&&MAIN)pn.textContent=MAIN.nome;
     }
+    // ===== Acompanhamento do pedido: consulta o status no banco e atualiza a linha do tempo =====
+    var TRK={code:null,zap:null,t:null,ent:true,fim:false};
+    function hm(s){try{return new Date(s).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}catch(e){return '';}}
+    function trkRender(r){
+      var ol=document.getElementById('trkList'),msg=document.getElementById('trkMsg'); if(!ol)return;
+      var idx={pendente:0,confirmado:1,pago:1,saiu_entrega:2,entregue:3}[r.status];
+      var ev={}; (r.eventos||[]).forEach(function(e){var k=e.status==='pago'?'confirmado':e.status; if(!ev[k]||e.em<ev[k])ev[k]=e.em; if(e.status==='pago')ev.pago=e.em;});
+      var ret=!!r.retirada, canc=r.status==='cancelado';
+      var steps=[['Pedido recebido','Obrigado!',r.criado_em],
+        [ev.pago?'Confirmado e pago':'Confirmado','Valor, taxa e pagamento',ev.confirmado],
+        [ret?'Pronto para retirar':'A caminho',ret?'Avisamos quando estiver pronto':'Avisamos quando sair',ev.saiu_entrega],
+        [ret?'Retirado':'Entregue','Agite e tome',ev.entregue]];
+      ol.textContent=''; ol.hidden=false;
+      steps.forEach(function(s,i){
+        var done=!canc&&idx>=i, now=!canc&&idx===i&&i<3, li=document.createElement('li');
+        if(done)li.className='on'+(now?' now':'');
+        var n=document.createElement('i'); n.textContent=done?'✓':String(i+1);
+        var sp=document.createElement('span'),b=document.createElement('b'); b.textContent=s[0]; sp.appendChild(b);
+        sp.appendChild(document.createTextNode(done&&s[2]?(i===0?'Hoje às ':'às ')+hm(s[2]):s[1]));
+        li.appendChild(n); li.appendChild(sp); ol.appendChild(li);
+      });
+      TRK.fim=canc||r.status==='entregue';
+      if(msg){msg.hidden=false;msg.textContent=canc?'Este pedido foi cancelado. Se foi um engano, fale com a gente no WhatsApp.':(r.status==='entregue'?'Pedido '+(ret?'retirado':'entregue')+'. Bom açaí! 💜':'Atualiza sozinho. Última checagem às '+hm(new Date())+'.');}
+    }
+    function trkTick(){
+      if(!TRK.code||TRK.fim)return;
+      rpc('acompanhar_pedido',{p_codigo:TRK.code,p_whatsapp:TRK.zap},8000).then(function(r){
+        if(!r||!r.encontrado){var m=document.getElementById('trkMsg');if(m&&!TRK.ok){m.hidden=false;m.textContent='Não encontramos esse pedido para esse WhatsApp. Confira o número usado no pedido.';}return;}
+        TRK.ok=true; trkRender(r); trkSchedule();
+      }).catch(function(){trkSchedule();});
+    }
+    function trkSchedule(){clearTimeout(TRK.t); if(TRK.fim||!TRK.code)return; TRK.t=setTimeout(function(){if(document.hidden){trkSchedule();return;}trkTick();},20000);}
+    function trkStart(code,zap){
+      TRK.code=code; TRK.zap=zap; TRK.fim=false; TRK.ok=false;
+      try{localStorage.setItem('tqr_last',JSON.stringify({c:code,w:zap}));}catch(e){}
+      trkTick();
+    }
+    document.addEventListener('visibilitychange',function(){if(!document.hidden&&TRK.code&&!TRK.fim){clearTimeout(TRK.t);trkTick();}});
     function mostraConf(o){
       var conf=document.getElementById('conf'); if(!conf)return;
       var cod=document.getElementById('confCod'); cod.hidden=!o.code; cod.textContent=o.code?'Pedido '+o.code:'';
@@ -398,7 +436,23 @@
       document.title='Pedido recebido | #TQR Açaí';
       var st=document.querySelector('.p-steps'); if(st)st.hidden=true;
       window.scrollTo(0,0); try{conf.focus({preventScroll:true});}catch(e){}
+      if(o.code&&o.zap)trkStart(o.code,o.zap);
     }
+    (function(){
+      var m=/[?&]acompanhar=([A-Za-z0-9-]{4,20})/.exec(location.search), conf=document.getElementById('conf'); if(!m||!conf)return;
+      var code=m[1].toUpperCase(), last=null; try{last=JSON.parse(localStorage.getItem('tqr_last')||'null');}catch(e){}
+      document.getElementById('confCod').hidden=false; document.getElementById('confCod').textContent='Pedido '+code;
+      document.getElementById('confMsg').textContent='Veja em que etapa está o seu pedido.';
+      conf.querySelector('h2').textContent='Acompanhe seu pedido';
+      conf.querySelector('.cbox').hidden=true; document.getElementById('confWa').hidden=true;
+      f.hidden=true; conf.hidden=false; document.title='Acompanhar pedido | #TQR Açaí';
+      ['.p-head','.p-steps'].forEach(function(s){var e=document.querySelector(s);if(e)e.hidden=true;});
+      var cb=document.getElementById('cartBar'); if(cb)cb.hidden=true;
+      if(last&&last.c===code&&last.w){trkStart(code,last.w);return;}
+      var ask=document.getElementById('trkAsk'); ask.hidden=false; document.getElementById('trkList').hidden=true;
+      ask.addEventListener('submit',function(e){e.preventDefault();var w=document.getElementById('trkZap').value.replace(/\D/g,''); if(w.length<10){var mm=document.getElementById('trkMsg');mm.hidden=false;mm.textContent='Informe o DDD e o número.';return;}
+        ask.hidden=true; trkStart(code,w);});
+    })();
     function cartExtra(q,c){
       document.querySelectorAll('#packs .pack').forEach(function(b,i,all){
         var v=+b.dataset.q,next=all[i+1]?+all[i+1].dataset.q:Infinity;
@@ -699,7 +753,7 @@
           // total oficial: o da criação do pedido; os detalhes vêm da simulação (só se os dois batem)
           var T=(S&&(!r||r.total==null||Math.abs(+r.total-+S.total)<0.01))?S:null;
           var tot=r&&r.total!=null?+r.total:(T?+T.total:c.total), L=['Olá, TQR Açaí! 💜 Quero fazer um pedido pelo site:',''];
-          if(code)L.push('🔖 *Pedido:* '+code);
+          if(code){L.push('🔖 *Pedido:* '+code);L.push('🔎 *Acompanhe:* '+location.origin+location.pathname+'?acompanhar='+code);}
           var itensTxt=T&&T.itens?T.itens.map(function(l){return '• '+l.quantidade+'× '+l.nome;}):linhasTexto().map(function(t){return '• '+t;});
           L.push('🥤 *Itens:*'); itensTxt.forEach(function(t){L.push(t);});
           var mtx=T?montTexto(T):[];if(mtx.length){L.push('✨ *Montagem:*');mtx.forEach(function(t){L.push('• '+t);});}
@@ -724,7 +778,7 @@
           try{if(window.fbq)fbq('track','Lead',{value:tot,currency:'BRL'});}catch(e){}
           btn.disabled=false; btn.innerHTML=lbl;
           if(code&&pagv==='pix'&&!window.__semPix)mostraPix(code,dg);
-          mostraConf({code:code,tot:tot,url:url,itens:itensTxt.concat(mtx.map(function(t){return '✨ '+t;})),ent:ent,bn:bn,pagn:pagn});
+          mostraConf({code:code,zap:dg,tot:tot,url:url,itens:itensTxt.concat(mtx.map(function(t){return '✨ '+t;})),ent:ent,bn:bn,pagn:pagn});
           var w=window.open(url,'_blank'); if(w){try{w.opener=null;}catch(e){}}
         }
         var obs=[ent?'':'Retirada',ent&&v('ref')?'Ref.: '+v('ref'):'',v('obs')].filter(Boolean).join(' | ')||null;

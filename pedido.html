@@ -27,7 +27,7 @@ window.TQR_FONE='5586994144709';
 /* Proteção contra robôs (Cloudflare Turnstile). Vazio = desligado e o pedido vai direto ao banco.
    Preencher só depois de publicar a função supabase/functions/criar-pedido (veja o README dela). */
 window.TQR_TURNSTILE='';</script>
-<link rel="stylesheet" href="site.css?v=1">
+<link rel="stylesheet" href="site.css?v=2">
 </head>
 <body class="pedido-pg">
 <a class="skip" href="#topo">Ir para o conteúdo</a>
@@ -152,12 +152,17 @@ window.TQR_TURNSTILE='';</script>
       <h2>Pedido <span class="script gold">recebido!</span></h2>
       <p class="cod" id="confCod" hidden></p>
       <p class="lead" id="confMsg">Já estamos separando o seu açaí. A mensagem do pedido abre no nosso WhatsApp para confirmarmos valor, taxa e pagamento.</p>
-      <ol class="tl" aria-label="Acompanhe o pedido">
+      <ol class="tl" id="trkList" aria-label="Acompanhe o pedido">
         <li class="on"><i>✓</i><span><b>Pedido recebido</b>Agora mesmo</span></li>
         <li><i>2</i><span><b>Confirmação no WhatsApp</b>Valor, taxa e pagamento</span></li>
         <li><i>3</i><span><b>A caminho ou pronto para retirar</b>Avisamos quando sair</span></li>
-        <li><i>4</i><span><b>Entregue</b>Agite e tome</span></li>
+        <li><i>4</i><span><b>Entregue ou retirado</b>Agite e tome</span></li>
       </ol>
+      <p class="trk-note" id="trkMsg" hidden></p>
+      <form class="trk-ask" id="trkAsk" hidden>
+        <label for="trkZap">Para ver o andamento, digite o WhatsApp usado no pedido</label>
+        <div><input id="trkZap" type="tel" inputmode="tel" autocomplete="tel" placeholder="(86) 99999-9999"><button class="btn btn-gold" type="submit">Ver pedido</button></div>
+      </form>
       <div class="cbox"><div id="confItens"></div><div class="ctot"><span>Total</span><b id="confTotal"></b></div></div>
       <div class="cacts"><a class="btn btn-gold" id="confWa" href="#" target="_blank" rel="noopener"><svg><use href="#wa"/></svg>Abrir confirmação no WhatsApp</a><a class="btn btn-ghost" href="pedido.html">Fazer outro pedido</a><a class="clink" href="index.html">Voltar ao início</a></div>
     </section>
@@ -177,7 +182,7 @@ window.TQR_TURNSTILE='';</script>
   <div class="cookie-btns"><button type="button" class="cbtn ghost" data-consent="essenciais">Só essenciais</button><button type="button" class="cbtn gold" data-consent="todos">Aceitar todos</button></div>
 </div>
 
-<script src="site.js?v=1" defer></script>
+<script src="site.js?v=2" defer></script>
 <dialog id="pixDlg" style="max-width:380px;width:92vw;border:1px solid var(--line);border-radius:18px;background:var(--bg2);color:var(--text);padding:22px">
   <h3 style="margin:0 0 6px;font-size:1.2rem">Pague com Pix</h3>
   <p style="margin:0 0 10px;color:var(--muted)">Pedido <b data-pix="cod"></b> · <b data-pix="valor"></b></p>

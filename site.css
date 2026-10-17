@@ -747,3 +747,11 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
 .cartbar.off{display:none!important}
 .f-group,.order-fields,.order-box>*{min-width:0}
 .packs{max-width:100%}
+.p-conf .tl .now i{box-shadow:0 0 0 0 rgba(232,190,98,.6);animation:trkp 1.8s ease-out infinite}
+.p-conf .tl .now b{color:var(--gold1,#f0cf7e)}
+@keyframes trkp{to{box-shadow:0 0 0 12px rgba(232,190,98,0)}}
+.trk-note{margin:0;font-size:.82rem;color:#a995b8;text-align:center}
+.trk-ask{width:100%;text-align:left;display:grid;gap:8px;font-size:.85rem;color:#cdb9d8}
+.trk-ask div{display:flex;gap:8px;flex-wrap:wrap}
+.trk-ask input{flex:1 1 180px;min-width:0;height:50px;border-radius:14px;border:1.5px solid #4a2b66;background:var(--bg);color:#fff;padding:0 14px;font:inherit;font-size:16px}
+@media (prefers-reduced-motion:reduce){.p-conf .tl .now i{animation:none}}

@@ -121,3 +121,9 @@ Sem mudança no banco. O QR é gerado no navegador (biblioteca local `vendor/qrc
 
 ## 33 · Aparelho reconhecido e código de acesso (`20261109_33_aparelho_reconhecido.sql`)
 Fim do código enviado à mão. `registrar_aparelho(pedido, whatsapp)` roda logo depois do pedido (só nos 5 primeiros minutos, uma única vez) e entrega a chave do aparelho (180 dias, guardada em `sessoes_cliente` como antes) e o código de acesso `TQR-0027-K7F2` (`pedidos.chave_acesso`, 4 letras/números aleatórios). `entrar_com_codigo(whatsapp, código de acesso)` serve para outro aparelho (token de 90 dias; 5 erros por número em 30 min bloqueiam; limite global). `consultar_saldo`, `listar/salvar/apagar_endereco` seguem iguais, agora com a chave do aparelho. `solicitar_codigo` e `verificar_codigo` perderam a permissão pública; o bloco "Clientes pedindo código" saiu do painel. Pedidos anteriores à migração não geram acesso. Aplicada em produção (em partes, por causa do bloqueio da tabela pedidos).
+
+## 34 · Cardápio configurável (`20261110_34_cardapio_configuravel.sql`)
+Base para vender o sistema a outros segmentos (hamburgueria etc.). Nada muda na loja atual.
+- `categorias_produto` (nome, ordem, ativo) e `produtos.categoria_id`; as categorias que já estavam como texto viraram cadastros.
+- `grupos_opcao.tipo`: `adicional` (soma preço e baixa estoque) ou `retirar` ("sem cebola": preço sempre 0, trigger `opcao_retirar_sem_preco`).
+- `obter_vitrine` passa a devolver `categorias`, `categoria_id` do produto e `tipo` do grupo.

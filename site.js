@@ -454,6 +454,7 @@
       var lo=document.getElementById('lastOrder'); if(lo)lo.hidden=true;
       window.scrollTo(0,0); try{conf.focus({preventScroll:true});}catch(e){}
       if(o.code&&o.zap)trkStart(o.code,o.zap);
+      try{if(window.TQR_confete)window.TQR_confete();}catch(e){}
     }
     (function(){
       var m=/[?&]acompanhar=([A-Za-z0-9-]{4,20})/.exec(location.search), conf=document.getElementById('conf'); if(!m||!conf)return;
@@ -879,10 +880,17 @@
     var TIPO={ganho:'Pedido pago',resgate:'Resgate',estorno:'Estorno',ajuste:'Ajuste',aniversario:'Aniversário'};
     function mostra(d){
       res.textContent='';res.hidden=false;codRow.hidden=true;say('');
-      var s=mk('div','pt-saldo gold',d.saldo+' pontos');res.appendChild(s);
-      var bar=mk('div','pt-bar'),i=document.createElement('i');bar.appendChild(i);res.appendChild(bar);
       var pct=d.saldo>=d.por_brinde?100:Math.max(0,Math.round(Math.max(d.saldo,0)%d.por_brinde/d.por_brinde*100));
-      setTimeout(function(){i.style.width=pct+'%';},50);
+      // anel de progresso: traço tracejado do tamanho da volta; o vazio é puxado até a porcentagem
+      var NS='http://www.w3.org/2000/svg',ring=mk('div','pt-ring'),sv=document.createElementNS(NS,'svg');
+      sv.setAttribute('viewBox','0 0 120 120');sv.setAttribute('aria-hidden','true');
+      var tr=document.createElementNS(NS,'circle'),pg=document.createElementNS(NS,'circle'),C=2*Math.PI*52;
+      [tr,pg].forEach(function(c){c.setAttribute('cx','60');c.setAttribute('cy','60');c.setAttribute('r','52');c.setAttribute('fill','none');c.setAttribute('stroke-width','9');});
+      tr.setAttribute('class','pt-ring-tr');pg.setAttribute('class','pt-ring-pg');pg.setAttribute('stroke-linecap','round');
+      pg.style.strokeDasharray=C.toFixed(1);pg.style.strokeDashoffset=C.toFixed(1);
+      sv.appendChild(tr);sv.appendChild(pg);ring.appendChild(sv);
+      var s=mk('div','pt-saldo gold'),sn=mk('b',null,String(d.saldo)),sl=mk('small',null,' pontos');s.appendChild(sn);s.appendChild(sl);ring.appendChild(s);res.appendChild(ring);
+      setTimeout(function(){pg.style.strokeDashoffset=(C*(1-pct/100)).toFixed(1);},60);
       res.appendChild(mk('p',null,d.garrafas_gratis>0?('Você tem '+d.garrafas_gratis+' garrafa'+(d.garrafas_gratis>1?'s':'')+' grátis para resgatar!'):('Faltam '+d.faltam+' pontos para a próxima garrafa grátis.')));
       if(d.garrafas_gratis>0){var a=mk('a','btn btn-wa','Resgatar pelo WhatsApp');a.target='_blank';a.rel='noopener';a.style.marginTop='10px';
         a.href='https://wa.me/'+window.TQR_FONE+'?text='+encodeURIComponent('Olá, TQR Açaí! 💜 Quero resgatar minha garrafa grátis com os meus pontos.');res.appendChild(a);}

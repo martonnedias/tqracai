@@ -891,11 +891,33 @@
       sv.appendChild(tr);sv.appendChild(pg);ring.appendChild(sv);
       var s=mk('div','pt-saldo gold'),sn=mk('b',null,String(d.saldo)),sl=mk('small',null,' pontos');s.appendChild(sn);s.appendChild(sl);ring.appendChild(s);res.appendChild(ring);
       setTimeout(function(){pg.style.strokeDashoffset=(C*(1-pct/100)).toFixed(1);},60);
-      res.appendChild(mk('p',null,d.garrafas_gratis>0?('Você tem '+d.garrafas_gratis+' garrafa'+(d.garrafas_gratis>1?'s':'')+' grátis para resgatar!'):('Faltam '+d.faltam+' pontos para a próxima garrafa grátis.')));
-      if(d.garrafas_gratis>0){var a=mk('a','btn btn-wa','Resgatar pelo WhatsApp');a.target='_blank';a.rel='noopener';a.style.marginTop='10px';
-        a.href='https://wa.me/'+window.TQR_FONE+'?text='+encodeURIComponent('Olá, TQR Açaí! 💜 Quero resgatar minha garrafa grátis com os meus pontos.');res.appendChild(a);}
-      if(d.mes_aniversario)res.appendChild(mk('p','hint','🎂 Este é o mês do seu aniversário! Peça o seu brinde pelo WhatsApp.'));
-      var h=mk('div','pt-hist');(d.historico||[]).forEach(function(x){h.appendChild(mk('span',null,new Date(x.em).toLocaleDateString('pt-BR')+' · '+(TIPO[x.tipo]||x.tipo)+' '+(x.pontos>0?'+':'')+x.pontos));});res.appendChild(h);
+      var top=mk('div','pt-top'),info=mk('div','pt-info');
+      top.appendChild(ring);
+      info.appendChild(mk('p','pt-msg',d.garrafas_gratis>0?('Você tem '+d.garrafas_gratis+' garrafa'+(d.garrafas_gratis>1?'s':'')+' grátis para resgatar!'):('Faltam '+d.faltam+' pontos para a próxima garrafa grátis.')));
+      if(d.garrafas_gratis>0){var a=mk('a','btn btn-wa','Resgatar pelo WhatsApp');a.target='_blank';a.rel='noopener';
+        a.href='https://wa.me/'+window.TQR_FONE+'?text='+encodeURIComponent('Olá, TQR Açaí! 💜 Quero resgatar minha garrafa grátis com os meus pontos.');info.appendChild(a);}
+      if(d.mes_aniversario)info.appendChild(mk('p','hint','🎂 Este é o mês do seu aniversário! Peça o seu brinde pelo WhatsApp.'));
+      top.appendChild(info);res.appendChild(top);
+      var hs=d.historico||[];
+      if(hs.length){
+        var hb=mk('div','pt-hist'),lista=mk('div','pt-list'),MAX=5;
+        hb.appendChild(mk('h4',null,'Últimos movimentos'));
+        hs.forEach(function(x,n){
+          var row=mk('div','pt-row'+(n>=MAX?' extra':'')),p=+x.pontos;
+          if(n>=MAX)row.hidden=true;
+          row.appendChild(mk('span','d',new Date(x.em).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})));
+          row.appendChild(mk('span','l',TIPO[x.tipo]||x.tipo));
+          row.appendChild(mk('b','p '+(p>=0?'mais':'menos'),(p>0?'+':'')+p));
+          lista.appendChild(row);
+        });
+        hb.appendChild(lista);
+        if(hs.length>MAX){
+          var mais=mk('button','pt-mais','Ver todos os '+hs.length+' movimentos');mais.type='button';
+          mais.addEventListener('click',function(){var abre=lista.classList.toggle('aberta');lista.querySelectorAll('.extra').forEach(function(r){r.hidden=!abre;});mais.textContent=abre?'Mostrar menos':'Ver todos os '+hs.length+' movimentos';});
+          hb.appendChild(mais);
+        }
+        res.appendChild(hb);
+      }
     }
     function consulta(tok){
       return rpcP('consultar_saldo',{p_whatsapp:dg(),p_token:tok}).then(mostra).catch(function(){

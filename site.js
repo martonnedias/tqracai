@@ -405,6 +405,9 @@
         sp.appendChild(document.createTextNode(done&&s[2]?(i===0?'Hoje às ':'às ')+hm(s[2]):s[1]));
         li.appendChild(n); li.appendChild(sp); ol.appendChild(li);
       });
+      var cc=document.getElementById('trkCode');
+      if(cc){var tem=!!r.codigo_entrega; cc.hidden=!tem;
+        if(tem){document.getElementById('trkCodeT').textContent=ret?'Seu código de retirada':'Seu código de entrega';document.getElementById('trkCodeV').textContent=r.codigo_entrega;document.getElementById('trkCodeD').textContent=ret?'Informe este código no balcão para receber o pedido.':'Informe este código ao entregador quando ele chegar.';}}
       TRK.fim=canc||r.status==='entregue';
       if(msg){msg.hidden=false;msg.textContent=canc?'Este pedido foi cancelado. Se foi um engano, fale com a gente no WhatsApp.':(r.status==='entregue'?'Pedido '+(ret?'retirado':'entregue')+'. Bom açaí! 💜':'Atualiza sozinho. Última checagem às '+hm(new Date())+'.');}
     }

@@ -27,7 +27,7 @@ window.TQR_FONE='5586994144709';
 /* Proteção contra robôs (Cloudflare Turnstile). Vazio = desligado e o pedido vai direto ao banco.
    Preencher só depois de publicar a função supabase/functions/criar-pedido (veja o README dela). */
 window.TQR_TURNSTILE='';</script>
-<link rel="stylesheet" href="site.css?v=2">
+<link rel="stylesheet" href="site.css?v=3">
 </head>
 <body class="pedido-pg">
 <a class="skip" href="#topo">Ir para o conteúdo</a>
@@ -158,6 +158,7 @@ window.TQR_TURNSTILE='';</script>
         <li><i>3</i><span><b>A caminho ou pronto para retirar</b>Avisamos quando sair</span></li>
         <li><i>4</i><span><b>Entregue ou retirado</b>Agite e tome</span></li>
       </ol>
+      <div class="trk-code" id="trkCode" role="status" hidden><small id="trkCodeT"></small><b id="trkCodeV"></b><span id="trkCodeD"></span></div>
       <p class="trk-note" id="trkMsg" hidden></p>
       <form class="trk-ask" id="trkAsk" hidden>
         <label for="trkZap">Para ver o andamento, digite o WhatsApp usado no pedido</label>
@@ -182,7 +183,7 @@ window.TQR_TURNSTILE='';</script>
   <div class="cookie-btns"><button type="button" class="cbtn ghost" data-consent="essenciais">Só essenciais</button><button type="button" class="cbtn gold" data-consent="todos">Aceitar todos</button></div>
 </div>
 
-<script src="site.js?v=2" defer></script>
+<script src="site.js?v=3" defer></script>
 <dialog id="pixDlg" style="max-width:380px;width:92vw;border:1px solid var(--line);border-radius:18px;background:var(--bg2);color:var(--text);padding:22px">
   <h3 style="margin:0 0 6px;font-size:1.2rem">Pague com Pix</h3>
   <p style="margin:0 0 10px;color:var(--muted)">Pedido <b data-pix="cod"></b> · <b data-pix="valor"></b></p>

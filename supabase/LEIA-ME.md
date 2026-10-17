@@ -109,3 +109,6 @@ Configurações `pix_chave`, `pix_nome`, `pix_cidade` (Configurações > Funcion
 
 ## 30 · Pix na confirmação do site (`20261106_30_pix_publico.sql`)
 `obter_pix_publico()` (público) devolve a chave Pix da loja ou `null`. Na confirmação de pedido pago por Pix (retirada, entrega por bairro ou frete grátis), se não houver gateway ligado, o site mostra o copia e cola com o valor do pedido. Entrega por aplicativo (taxa confirmada depois) não mostra: o painel envia o Pix depois. Aplicada em produção.
+
+## 31 · WhatsApp com 55 (`20261107_31_whatsapp_55.sql`)
+Correção: o site envia o WhatsApp sem o 55 e o banco guarda com 55; `acompanhar_pedido` e `pagamento_publico` agora aceitam os dois formatos (o Pix online e o acompanhamento não achavam o pedido). Aplicada em produção.

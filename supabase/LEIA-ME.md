@@ -106,3 +106,6 @@ Função pública `acompanhar_pedido(codigo, whatsapp)`: devolve situação, mod
 
 ## 29 · Pix com valor (`20261105_29_pix_com_valor.sql`)
 Configurações `pix_chave`, `pix_nome`, `pix_cidade` (Configurações > Funcionamento > Pix da loja) e a função `obter_pix_loja()` (quem muda status de pedido lê). O painel monta o Pix "copia e cola" (BR Code estático, CRC16) com o valor do pedido e o identificador `TQR0007`, no botão "Enviar Pix" do pedido, sem gateway. Não confirma o pagamento sozinho: marque o pedido como pago ao receber. Aplicada em produção.
+
+## 30 · Pix na confirmação do site (`20261106_30_pix_publico.sql`)
+`obter_pix_publico()` (público) devolve a chave Pix da loja ou `null`. Na confirmação de pedido pago por Pix (retirada, entrega por bairro ou frete grátis), se não houver gateway ligado, o site mostra o copia e cola com o valor do pedido. Entrega por aplicativo (taxa confirmada depois) não mostra: o painel envia o Pix depois. Aplicada em produção.

@@ -525,8 +525,8 @@
     }
     // ===== Pix online (só aparece quando o gateway está ligado no painel; senão segue o fluxo do WhatsApp) =====
     function mostraPix(codigo,zap){
-      rpc('pagamento_publico',{p_codigo:codigo,p_whatsapp:zap,p_criar:true},9000).then(function(r){
-        if(!r||!r.disponivel||!r.pix_copia_cola)return;
+      return rpc('pagamento_publico',{p_codigo:codigo,p_whatsapp:zap,p_criar:true},9000).then(function(r){
+        if(!r||!r.disponivel||!r.pix_copia_cola)return false;
         var d=document.getElementById('pixDlg');
         d.querySelector('[data-pix=cod]').textContent=codigo;
         d.querySelector('[data-pix=valor]').textContent=brl(+r.valor);
@@ -543,6 +543,26 @@
             else if(x.status==='expirado'||x.status==='recusado'){clearInterval(t);st.textContent='Esse Pix expirou. Fale com a gente no WhatsApp para gerar outro.';}
           }).catch(function(){});
         },5000);
+        return true;
+      }).catch(function(){return false;});
+    }
+    // ===== Pix com o valor do pedido (BR Code estático com a chave da loja), quando não há gateway ligado =====
+    function emv(id,v){v=String(v);return id+('0'+v.length).slice(-2)+v;}
+    function crc16(s){var c=0xFFFF,i,k;for(i=0;i<s.length;i++){c^=s.charCodeAt(i)<<8;for(k=0;k<8;k++)c=(c&0x8000)?((c<<1)^0x1021)&0xFFFF:(c<<1)&0xFFFF;}return ('000'+c.toString(16).toUpperCase()).slice(-4);}
+    function asc(t,n){return String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9 ]/g,'').toUpperCase().trim().slice(0,n);}
+    function pixPayload(p,valor,txid){
+      var s=emv('00','01')+emv('01','11')+emv('26',emv('00','br.gov.bcb.pix')+emv('01',p.chave))+emv('52','0000')+emv('53','986')+emv('54',valor.toFixed(2))+emv('58','BR')+emv('59',asc(p.nome,25)||'LOJA')+emv('60',asc(p.cidade,15)||'BRASIL')+emv('62',emv('05',asc(txid,25).replace(/ /g,'')||'***'))+'6304';
+      return s+crc16(s);
+    }
+    function pixEstatico(code,tot){
+      var box=document.getElementById('confPix'); if(!box||!code||!(tot>0))return;
+      rpc('obter_pix_publico',{},7000).then(function(p){
+        if(!p||!p.chave)return;
+        var s=pixPayload(p,+tot,code.replace(/[^A-Za-z0-9]/g,''));
+        document.getElementById('confPixVal').textContent=brl(tot);
+        var ta=document.getElementById('confPixCod'); ta.value=s;
+        document.getElementById('confPixCp').onclick=function(){var b=this;(navigator.clipboard?navigator.clipboard.writeText(s):Promise.reject()).then(function(){b.textContent='Código copiado! Cole no app do banco';},function(){ta.select();b.textContent='Selecione e copie o código';});};
+        box.hidden=false;
       }).catch(function(){});
     }
     (function(){var d=document.getElementById('pixDlg');if(!d)return;
@@ -780,7 +800,8 @@
           try{if(window.gtag)gtag('event','pedido_formulario',pp);}catch(e){}
           try{if(window.fbq)fbq('track','Lead',{value:tot,currency:'BRL'});}catch(e){}
           btn.disabled=false; btn.innerHTML=lbl;
-          if(code&&pagv==='pix'&&!window.__semPix)mostraPix(code,dg);
+          var gwPix=(code&&pagv==='pix'&&!window.__semPix)?mostraPix(code,dg):Promise.resolve(false);
+          if(code&&pagv==='pix'&&mod!=='entrega_app')gwPix.then(function(g){if(!g)pixEstatico(code,tot);});
           mostraConf({code:code,zap:dg,tot:tot,url:url,itens:itensTxt.concat(mtx.map(function(t){return '✨ '+t;})),ent:ent,bn:bn,pagn:pagn});
           var w=window.open(url,'_blank'); if(w){try{w.opener=null;}catch(e){}}
         }

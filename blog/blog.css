@@ -75,3 +75,8 @@ footer a{color:var(--gold2);text-decoration:none}
 :focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 footer a{display:inline-block;padding:10px 0}
+
+/* Acesso fácil a "Meus pontos" */
+.nav .nav-pts{display:inline-flex;align-items:center;gap:6px;color:var(--gold2,#f0cf7e);font-weight:600;padding:6px 12px;border:1px solid rgba(232,190,98,.4);border-radius:999px;background:rgba(232,190,98,.08)}
+.nav .nav-pts:hover{background:rgba(232,190,98,.18);color:#fff}
+.i-star{width:15px;height:15px;flex:none}

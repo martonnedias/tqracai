@@ -803,3 +803,16 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
 .pt-row .p{font-variant-numeric:tabular-nums}.pt-row .p.mais{color:#7fe3ae}.pt-row .p.menos{color:#ff9c9c}
 .pt-mais{margin-top:10px;background:none;border:1px solid rgba(232,190,98,.4);color:var(--gold2,#e8be62);border-radius:999px;padding:8px 18px;font:inherit;font-size:.85rem;font-weight:600;cursor:pointer}
 @media (max-width:520px){.pt-top{flex-direction:column;text-align:center}.pt-info{justify-items:center;flex:none;width:100%}}
+
+/* Acesso fácil a "Meus pontos" */
+.nav .nav-pts{display:inline-flex;align-items:center;gap:6px;color:var(--gold2);font-weight:600;padding:6px 12px;border:1px solid rgba(232,190,98,.4);border-radius:999px;background:rgba(232,190,98,.08)}
+.nav .nav-pts:hover{background:rgba(232,190,98,.18);color:#fff}
+.i-star{width:15px;height:15px;flex:none}
+.top-pts{display:none;align-items:center;gap:6px;color:var(--gold2);font-weight:700;font-size:.85rem;text-decoration:none;padding:8px 14px;min-height:40px;border:1px solid rgba(232,190,98,.5);border-radius:999px;background:rgba(232,190,98,.1)}
+@media (max-width:900px){.top-pts{display:inline-flex;margin-left:auto;margin-right:10px}}
+@media (max-width:380px){.top-pts span{display:none}.top-pts{padding:8px 11px}}
+.p-right{display:flex;align-items:center;gap:14px}
+.p-pts{display:inline-flex;align-items:center;gap:6px;color:var(--gold2);text-decoration:none;font-weight:600;font-size:.88rem;white-space:nowrap;padding:6px 12px;border:1px solid rgba(232,190,98,.4);border-radius:999px}
+.p-pts:hover{background:rgba(232,190,98,.15)}
+@media (max-width:620px){.p-right{gap:8px}.p-pts{padding:6px 10px;font-size:.8rem}.p-back{font-size:.78rem}}
+@media (max-width:620px){.p-top .brand span{display:none}.p-back .vt{display:none}.p-back{font-size:1.1rem;padding:4px 6px}.p-pts .pt-t{font-size:.8rem}}

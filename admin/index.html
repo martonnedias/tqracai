@@ -596,6 +596,7 @@ html,body{max-width:100%;overflow-x:clip}
 .mk-ctr li{display:flex;gap:8px;align-items:center}.mk-ctr .ok{color:var(--ok)}.mk-ctr .ruim{color:var(--bad);font-weight:650}
 .mk-amostra{margin:14px 0 0;padding:14px 16px;border-radius:var(--r);background:var(--fundo);border:1px dashed var(--brand-line);display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
 .mk-amostra .script-h{font-size:1.7rem;color:var(--brand)}
+.mk-sbtn{display:inline-block;padding:6px 16px;border-radius:999px;font-weight:700;font-size:.85rem}
 .mk-pres .btn{display:inline-flex;align-items:center;gap:8px}
 #tab-marca .card{max-width:none;margin-bottom:16px}#tab-marca .card h3{margin:0 0 10px}#tab-marca .card h3+*{margin-top:0}
 .mk-pres i{display:inline-block;width:46px;height:18px;border-radius:5px;border:1px solid rgba(0,0,0,.15)}
@@ -1364,6 +1365,21 @@ dialog .da .btn{min-width:110px}
             <label class="fld">Subtítulo<input id="mkSub" type="text" maxlength="70"></label>
           </div>
           <label class="fld">Endereço do logo <small>(link https da imagem; deixe vazio para manter o atual)</small><input id="mkLogo" type="text" maxlength="250" placeholder="https://..."></label>
+        </div>
+        <div class="card" id="mkPaneSite">
+          <h3>Marca do site (o que o cliente vê)</h3>
+          <p class="muted">Nome, logo e cores do site de pedidos. Vale para todas as páginas (início, pedido, blog e políticas) depois de salvar. Deixe em branco para manter o visual padrão.</p>
+          <label class="fld">Nome da loja no site<input id="mkSNome" type="text" maxlength="40" placeholder="Ex.: Burger Lab"></label>
+          <div class="row2">
+            <label class="fld">Logo <small>(envie uma imagem JPG, PNG ou WebP de até 2 MB)</small><input id="mkSLogoArq" type="file" accept="image/jpeg,image/png,image/webp"></label>
+            <label class="fld">Endereço do logo <small>(preenchido ao enviar)</small><input id="mkSLogo" type="text" maxlength="250" placeholder="https://..."></label>
+          </div>
+          <label class="chk"><input id="mkSCoresOn" type="checkbox"><span>Personalizar as cores do site</span></label>
+          <div class="mk-cores" id="mkSCores">
+            <label class="fld">Cor de destaque (botões e detalhes)<input id="mkSDest" type="color" value="#e8be62"></label>
+            <label class="fld">Fundo do site<input id="mkSFundo" type="color" value="#16051f"></label>
+          </div>
+          <p class="mk-amostra" id="mkSAmostra"><b>Nome da loja</b> <span class="mk-sbtn">Pedir agora</span></p>
         </div>
         <div class="card" id="mkPaneCores">
           <h3>Cores</h3>
@@ -2574,7 +2590,7 @@ dialog .da .btn{min-width:110px}
     perfil_em_uso:'Há usuários com este perfil.',perfil_de_sistema:'O perfil Dono não pode ser alterado.',mfa_necessario:'Entre com o código de verificação em duas etapas.'};
   function msgUsr(e){var m=String(e&&e.message||'');return ERRO_USR[m]||(m.indexOf('invalido')===0?'Confira os campos informados.':'Não consegui concluir. Tente de novo.');}
   // ===== Personalização: cores, fontes, nome e logo (grava no banco; prévia ao vivo) =====
-  var SA_MK=subAbas('#tab-marca',[{id:'modelos',rot:'Modelos',sel:['#mkPaneModelos']},{id:'ident',rot:'Nome e logo',sel:['#mkPaneIdent']},{id:'cores',rot:'Cores',sel:['#mkPaneCores']},{id:'fontes',rot:'Fontes',sel:['#mkPaneFontes']}],{host:'#formMarca',before:'#mkRodape'});
+  var SA_MK=subAbas('#tab-marca',[{id:'modelos',rot:'Modelos',sel:['#mkPaneModelos']},{id:'ident',rot:'Nome e logo',sel:['#mkPaneIdent']},{id:'site',rot:'Site',sel:['#mkPaneSite']},{id:'cores',rot:'Cores',sel:['#mkPaneCores']},{id:'fontes',rot:'Fontes',sel:['#mkPaneFontes']}],{host:'#formMarca',before:'#mkRodape'});
   var MK_PRESETS=[
     {n:'Berinjela e ouro (padrão)',casca:'#1a0a2b',marca:'#59298a',destaque:'#e8be62',fundo:'#f5f1f9',fT:'Inter',fH:'Poppins',fD:'Kaushan Script'},
     {n:'Verde folha',casca:'#0f2a1d',marca:'#1f7a4d',destaque:'#f0c24b',fundo:'#f2f7f3',fT:'Inter',fH:'Montserrat',fD:'Pacifico'},
@@ -2588,23 +2604,48 @@ dialog .da .btn{min-width:110px}
   function lum(h){var v=hex2rgb(h).map(function(c){c/=255;return c<=.03928?c/12.92:Math.pow((c+.055)/1.055,2.4);});return .2126*v[0]+.7152*v[1]+.0722*v[2];}
   function ratio(a,b){var l1=lum(a),l2=lum(b);return (Math.max(l1,l2)+.05)/(Math.min(l1,l2)+.05);}
   var mkSalvo=null;
+  function mkSite(){
+    var s={},nm=$('#mkSNome').value.trim(),lg=$('#mkSLogo').value.trim();
+    if(nm)s.nome=nm;
+    if(/^https:\/\/[^\s"'<>]{4,250}$/.test(lg)||/^img\/[A-Za-z0-9_.\/-]{1,120}$/.test(lg))s.logo=lg;
+    if($('#mkSCoresOn').checked){var d=$('#mkSDest').value;s.cores={destaque:d,destaque2:mixHex(d,'#ffffff',.55),fundo:$('#mkSFundo').value,fundo2:mixHex($('#mkSFundo').value,'#ffffff',.04)};}
+    return Object.keys(s).length?s:null;
+  }
+  function mkPreencherSite(st){
+    st=st||{};var c=st.cores||{};
+    $('#mkSNome').value=st.nome||'';$('#mkSLogo').value=st.logo||'';
+    $('#mkSCoresOn').checked=!!(c.destaque||c.fundo);$('#mkSDest').value=c.destaque||'#e8be62';$('#mkSFundo').value=c.fundo||'#16051f';
+    mkAmostraSite();
+  }
+  function mkAmostraSite(){
+    var on=$('#mkSCoresOn').checked,am=$('#mkSAmostra'),d=$('#mkSDest').value,f=$('#mkSFundo').value;
+    $('#mkSCores').style.opacity=on?'1':'.5';
+    am.style.background=on?f:'#16051f';am.style.color='#f6eefa';am.firstChild.textContent=$('#mkSNome').value.trim()||'Nome da loja';
+    var b=am.querySelector('.mk-sbtn');b.style.background=on?d:'#e8be62';b.style.color='#2a0838';
+  }
   function mkRascunho(){
     var casca=$('#mkCasca').value,marca=$('#mkMarca').value,dest=$('#mkDest').value,fundo=$('#mkFundo').value;
     var lg=$('#mkLogo').value.trim();
-    return {nome:$('#mkNome').value.trim(),subtitulo:$('#mkSub').value.trim(),logo:/^https:\/\/\S{4,}$/.test(lg)?lg:'',
+    var d={nome:$('#mkNome').value.trim(),subtitulo:$('#mkSub').value.trim(),logo:/^https:\/\/\S{4,}$/.test(lg)?lg:'',
       cores:{casca:casca,casca2:mixHex(casca,'#ffffff',.1),marca:marca,marcaHover:mixHex(marca,'#000000',.18),destaque:dest,destaque2:mixHex(dest,'#ffffff',.45),fundo:fundo},
       fonteTexto:$('#mkFTexto').value,fonteTitulo:$('#mkFTitulo').value,fonteDestaque:$('#mkFDest').value};
+    var st=mkSite();if(st)d.site=st;
+    return d;
   }
   function mkPreencher(m){
     var c=m.cores||{};
     $('#mkNome').value=m.nome||'';$('#mkSub').value=m.subtitulo||'';$('#mkLogo').value=/^https:/.test(m.logo||'')?m.logo:'';
     $('#mkCasca').value=c.casca||'#1a0a2b';$('#mkMarca').value=c.marca||'#59298a';$('#mkDest').value=c.destaque||'#e8be62';$('#mkFundo').value=c.fundo||'#f5f1f9';
     $('#mkFTexto').value=m.fTexto||'Inter';$('#mkFTitulo').value=m.fTitulo||'Poppins';$('#mkFDest').value=m.fDestaque||'Kaushan Script';
+    mkPreencherSite(mkSalvo&&mkSalvo.site);
   }
   function mkContraste(){
     var d=mkRascunho(),c=d.cores,box=$('#mkCtr');box.textContent='';
     [['Texto branco sobre a cor principal (botões)',ratio(c.marca,'#ffffff'),4.5],['Detalhes sobre o fundo do menu',ratio(c.destaque,c.casca),3],['Texto branco sobre o fundo do menu',ratio('#ffffff',c.casca),4.5],['Texto escuro sobre o fundo das telas',ratio('#1d1726',c.fundo),7]].forEach(function(x){
       var li=el('li',x[1]>=x[2]?'ok':'ruim');li.textContent=(x[1]>=x[2]?'✓ ':'⚠ ')+x[0]+': '+x[1].toFixed(1)+':1'+(x[1]>=x[2]?'':' (baixo; mínimo '+x[2]+':1, o texto fica difícil de ler)');box.appendChild(li);});
+    if(d.site&&d.site.cores){var sc=d.site.cores;
+      [['Texto claro sobre o fundo do site',ratio('#f6eefa',sc.fundo),4.5],['Texto dos botões sobre a cor de destaque do site',ratio('#2a0838',sc.destaque),4.5],['Destaque sobre o fundo do site',ratio(sc.destaque,sc.fundo),3]].forEach(function(x){
+        var li=el('li',x[1]>=x[2]?'ok':'ruim');li.textContent=(x[1]>=x[2]?'✓ ':'⚠ ')+x[0]+': '+x[1].toFixed(1)+':1'+(x[1]>=x[2]?'':' (baixo; mínimo '+x[2]+':1, o texto fica difícil de ler)');box.appendChild(li);});}
     return d;
   }
   function mkPrevia(){var d=mkContraste();MARCA=mesclaMarca(MARCA_BASE,d);aplicaMarca(MARCA);}
@@ -2620,10 +2661,15 @@ dialog .da .btn{min-width:110px}
       b.addEventListener('click',function(){$('#mkCasca').value=p.casca;$('#mkMarca').value=p.marca;$('#mkDest').value=p.destaque;$('#mkFundo').value=p.fundo;$('#mkFTexto').value=p.fT;$('#mkFTitulo').value=p.fH;$('#mkFDest').value=p.fD;mkPrevia();});
       box.appendChild(b);
     });
-    $('#formMarca').addEventListener('input',mkPrevia);
+    $('#formMarca').addEventListener('input',function(){mkAmostraSite();mkPrevia();});
+    $('#mkSCoresOn').addEventListener('change',function(){mkAmostraSite();mkPrevia();});
+    $('#mkSLogoArq').addEventListener('change',function(){
+      var f=this.files&&this.files[0];if(!f)return;
+      enviarFoto(f,'marca').then(function(url){$('#mkSLogo').value=url;toast('Logo enviado. Clique em "Salvar para todos".');mkPrevia();}).catch(function(e){toast(msgFoto(e),true);});
+    });
     $('#mkDesfaz').addEventListener('click',mkDesfazer);
     $('#mkRestaura').addEventListener('click',function(){
-      confirmar('Voltar ao padrão do arquivo?',['Apaga a personalização salva e volta ao visual definido em marca.js.'],'Restaurar',true).then(function(ok){
+      confirmar('Voltar ao padrão do arquivo?',['Apaga a personalização salva (painel e site) e volta ao visual definido em marca.js e ao padrão do site.'],'Restaurar',true).then(function(ok){
         if(!ok)return;sb.rpc('admin_restaurar_marca').then(function(r){if(r.error){toast('Não foi possível restaurar.',true);return;}mkSalvo=null;MARCA=MARCA_BASE;aplicaMarca(MARCA);mkPreencher(MARCA);mkContraste();toast('Visual padrão restaurado.');});});
     });
     $('#formMarca').addEventListener('submit',function(e){

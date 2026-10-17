@@ -135,3 +135,7 @@ Chave `modo_cardapio` em `configuracoes` (`garrafa` = padrão, igual à loja de 
 - Produtos > **Categorias**: criar, ordenar, ocultar e renomear; o produto escolhe a categoria num seletor (grava `categoria_id` e mantém o nome em `categoria`).
 - Montagem: o grupo ganha **Tipo** (Adicional ou Retirar ingrediente), ao criar e ao editar.
 - Configurações > Pedidos: **Modo do cardápio** (Garrafa ou Carrinho) liga o cardápio por categoria no site.
+
+## 36 · Marca do site (`20261112_36_marca_site.sql`)
+`marca_painel.dados` ganha o objeto `site` (`nome`, `slogan`, `logo`, `cores.{destaque,destaque2,fundo,fundo2}`), validado em `app_private.marca_valida` (hex `#rrggbb`, logo `https://…` ou `img/…`, nome sem `<` `>`). A leitura pública continua em `obter_marca()`; se o módulo `personalizacao` estiver desligado ou nada salvo, o site usa o visual padrão.
+No site, `marca-site.js` (carregado antes de `site.js`) aplica nome, logo e cores via variáveis CSS (`--gold`, `--bg`… e os canais `--gold-rgb`, `--bg-rgb`), guarda cópia em `localStorage['tqr_marca_site']` (não pisca na abertura) e expõe `TQR_br()` para trocar o nome nas mensagens de WhatsApp e títulos. O `site.css` e o `blog.css` passaram a usar essas variáveis no lugar das cores fixas (sem mudança visual com o padrão: conferido por comparação de imagens). Painel: Personalização > **Site**.

@@ -6,6 +6,6 @@ window.TQR_NOVIDADES = [
   { id: 'aba:produtos', rot: 'Categorias e modo carrinho', desde: '2026-10-17' },
   { id: 'aba:pedidos',  rot: 'Código de entrega e Pix com valor', desde: '2026-10-17' },
   { id: 'aba:prova',   rot: 'Prova social',      desde: '2026-10-15' },
-  { id: 'aba:marca',   rot: 'Personalização',    desde: '2026-10-30' },
+  { id: 'aba:marca',   rot: 'Personalização do site (nome, logo e cores)', desde: '2026-10-17' },
   { id: 'aba:modulos', rot: 'Plano e módulos',   desde: '2026-10-29' }
 ];

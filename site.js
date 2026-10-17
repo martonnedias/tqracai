@@ -1,3 +1,4 @@
+function br(t){return window.TQR_br?window.TQR_br(t):t;}
 window.TQR_DEV=(function(){
   // aparelho reconhecido: chave secreta guardada neste aparelho (liberada no primeiro pedido), abre pontos e endereços salvos
   var K='tqr_dev';
@@ -18,7 +19,7 @@ window.TQR_DEV=(function(){
   };
   // Os links usam o número vigente (window.TQR_FONE); o painel pode trocá-lo, então os links são refeitos quando a configuração chega.
   window.TQR_relink=function(){document.querySelectorAll('[data-wa]').forEach(function(a){
-    a.href='https://wa.me/'+window.TQR_FONE+'?text='+encodeURIComponent(MSG[a.dataset.wa]||MSG.contato);});};
+    a.href='https://wa.me/'+window.TQR_FONE+'?text='+encodeURIComponent(br(MSG[a.dataset.wa]||MSG.contato));});};
   window.TQR_relink();
   document.querySelectorAll('[data-wa]').forEach(function(a){
     a.target='_blank'; a.rel='noopener';
@@ -475,7 +476,7 @@ window.TQR_DEV=(function(){
       f.hidden=true; conf.hidden=false;
       var cb=document.getElementById('cartBar'); if(cb)cb.hidden=true;
       var hh=document.querySelector('.p-head'); if(hh)hh.hidden=true;
-      document.title='Pedido recebido | #TQR Açaí';
+      document.title=br('Pedido recebido | #TQR Açaí');
       var st=document.querySelector('.p-steps'); if(st)st.hidden=true;
       var lo=document.getElementById('lastOrder'); if(lo)lo.hidden=true;
       window.scrollTo(0,0); try{conf.focus({preventScroll:true});}catch(e){}
@@ -490,7 +491,7 @@ window.TQR_DEV=(function(){
       document.getElementById('confMsg').textContent='Veja em que etapa está o seu pedido.';
       conf.querySelector('h2').textContent='Acompanhe seu pedido';
       conf.querySelector('.cbox').hidden=true; document.getElementById('confWa').hidden=true;
-      f.hidden=true; conf.hidden=false; document.title='Acompanhar pedido | #TQR Açaí';
+      f.hidden=true; conf.hidden=false; document.title=br('Acompanhar pedido | #TQR Açaí');
       ['.p-head','.p-steps'].forEach(function(s){var e=document.querySelector(s);if(e)e.hidden=true;});
       var cb=document.getElementById('cartBar'); if(cb)cb.hidden=true;
       if(last&&last.c===code&&last.w){setTimeout(function(){trkStart(code,last.w);},0);return;}  // adiado: SB (banco) é definido mais abaixo neste arquivo
@@ -942,7 +943,7 @@ window.TQR_DEV=(function(){
         function go(code,r){
           // total oficial: o da criação do pedido; os detalhes vêm da simulação (só se os dois batem)
           var T=(S&&(!r||r.total==null||Math.abs(+r.total-+S.total)<0.01))?S:null;
-          var tot=r&&r.total!=null?+r.total:(T?+T.total:c.total), L=['Olá, TQR Açaí! 💜 Quero fazer um pedido pelo site:',''];
+          var tot=r&&r.total!=null?+r.total:(T?+T.total:c.total), L=[br('Olá, TQR Açaí! 💜 Quero fazer um pedido pelo site:'),''];
           if(code){L.push('🔖 *Pedido:* '+code);L.push('🔎 *Acompanhe:* '+location.origin+location.pathname+'?acompanhar='+code);}
           var itensTxt=T&&T.itens?T.itens.map(function(l){return '• '+l.quantidade+'× '+l.nome;}):linhasTexto().map(function(t){return '• '+t;});
           L.push('🥤 *Itens:*'); itensTxt.forEach(function(t){L.push(t);});
@@ -1041,7 +1042,7 @@ window.TQR_DEV=(function(){
       top.appendChild(ring);
       info.appendChild(mk('p','pt-msg',d.garrafas_gratis>0?('Você tem '+d.garrafas_gratis+' garrafa'+(d.garrafas_gratis>1?'s':'')+' grátis para resgatar!'):('Faltam '+d.faltam+' pontos para a próxima garrafa grátis.')));
       if(d.garrafas_gratis>0){var a=mk('a','btn btn-wa','Resgatar pelo WhatsApp');a.target='_blank';a.rel='noopener';
-        a.href='https://wa.me/'+window.TQR_FONE+'?text='+encodeURIComponent('Olá, TQR Açaí! 💜 Quero resgatar minha garrafa grátis com os meus pontos.');info.appendChild(a);}
+        a.href='https://wa.me/'+window.TQR_FONE+'?text='+encodeURIComponent(br('Olá, TQR Açaí! 💜 Quero resgatar minha garrafa grátis com os meus pontos.'));info.appendChild(a);}
       if(d.mes_aniversario)info.appendChild(mk('p','hint','🎂 Este é o mês do seu aniversário! Peça o seu brinde pelo WhatsApp.'));
       top.appendChild(info);res.appendChild(top);
       var hs=d.historico||[];

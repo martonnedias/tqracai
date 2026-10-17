@@ -255,6 +255,7 @@ mark.fill{{background:#f3cf7f;color:#2a0838;padding:0 4px;border-radius:4px;font
 <div><strong style="color:#fff">{v('nome')}</strong> · {v('razao')} · {v('doc')}<br>{v('endereco')}</div>
 <div>WhatsApp: <a href="{WA}" target="_blank" rel="noopener">{v('whatsapp')}</a> · {v('email')}<br>{" · ".join(f'<a href="{s}.html">{t}</a>' for s, t in TITLES.items())}</div>
 </div></footer>
+<script src="../marca-site.js?v=1" defer></script>
 <script src="../prova-social.js" data-local="politicas" defer></script>
 </body></html>"""
 

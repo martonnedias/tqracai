@@ -34,7 +34,7 @@ window.TQR_TURNSTILE='';</script>
 {"@context":"https://schema.org","@type":"FoodEstablishment","name":"#TQR Açaí","servesCuisine":"Açaí","telephone":"+55-86-99588-4770","priceRange":"R$ 14–17","address":{"@type":"PostalAddress","addressLocality":"Teresina","addressRegion":"PI","addressCountry":"BR"},"areaServed":"Teresina","openingHours":"Mo-Su 08:00-02:00","paymentAccepted":"Pix, Cartão","taxID":"59.270.529/0001-78","sameAs":["https://instagram.com/tqracai"],"image":"https://martonnedias.github.io/tqracai/img/og-image.jpg"}
 </script>
 
-<link rel="stylesheet" href="site.css?v=13">
+<link rel="stylesheet" href="site.css?v=14">
 </head>
 <body>
 <a class="skip" href="#topo">Ir para o conteúdo</a>
@@ -325,9 +325,9 @@ window.TQR_TURNSTILE='';</script>
     </div>
     <div class="pt-check" id="ptCheck">
       <h3>Consulte seus pontos</h3>
-      <p class="hint" style="color:var(--muted)">Para proteger seus dados, confirmamos o número com um código enviado pelo WhatsApp.</p>
+      <p class="hint" style="color:var(--muted)">Neste aparelho, onde você já fez pedido, seus pontos aparecem direto. Em outro aparelho, informe o WhatsApp e o código de acesso de um pedido seu.</p>
       <div class="row"><input type="tel" id="ptZap" inputmode="tel" autocomplete="tel" placeholder="(86) 99999-9999" aria-label="Seu WhatsApp"><button type="button" class="btn btn-gold" id="ptPedir">Ver meus pontos</button></div>
-      <div class="row" id="ptCodRow" hidden><input type="text" id="ptCod" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="Código de 6 dígitos" aria-label="Código de 6 dígitos"><button type="button" class="btn btn-gold" id="ptOk">Confirmar</button></div>
+      <div class="row" id="ptCodRow" hidden><input type="text" id="ptCod" inputmode="text" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="TQR-0000-XXXX" aria-label="Código de acesso do pedido"><button type="button" class="btn btn-gold" id="ptOk">Confirmar</button></div>
       <p class="hint" id="ptMsg" role="status" hidden></p>
       <div id="ptRes" hidden></div>
     </div>
@@ -397,7 +397,7 @@ window.TQR_TURNSTILE='';</script>
 <a class="fab" data-cta="flutuante" href="pedido.html" aria-label="Fazer pedido"><svg><use href="#bag"/></svg></a>
 <div class="mbar" id="mbar"><div class="p">a partir de<b>R$ 14</b></div><a class="btn btn-gold" data-cta="barra-mobile" href="pedido.html"><svg><use href="#bag"/></svg>Fazer pedido</a></div>
 
-<script src="site.js?v=10" defer></script>
+<script src="site.js?v=11" defer></script>
 <script src="efeitos.js?v=1" defer></script>
 <dialog id="pixDlg" style="max-width:380px;width:92vw;border:1px solid var(--line);border-radius:18px;background:var(--bg2);color:var(--text);padding:22px">
   <h3 style="margin:0 0 6px;font-size:1.2rem">Pague com Pix</h3>

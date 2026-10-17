@@ -1,3 +1,13 @@
+window.TQR_DEV=(function(){
+  // aparelho reconhecido: chave secreta guardada neste aparelho (liberada no primeiro pedido), abre pontos e endereços salvos
+  var K='tqr_dev';
+  function n(w){w=String(w||'').replace(/\D/g,'');return w.length>11?w.replace(/^55/,''):w;}
+  return {
+    get:function(w){try{var o=JSON.parse(localStorage.getItem(K)||'null');if(o&&o.t&&o.w&&o.e>Date.now()&&(w===undefined||n(o.w)===n(w)))return o;}catch(e){}return null;},
+    set:function(w,t,dias){try{localStorage.setItem(K,JSON.stringify({w:n(w),t:t,e:Date.now()+(dias||90)*864e5}));}catch(e){}},
+    clear:function(){try{localStorage.removeItem(K);}catch(e){}}
+  };
+})();
 (function(){
   var MSG={
     padrao:'Olá, TQR Açaí! 💜 Vim pelo site e quero fazer meu pedido.\n\n🥤 Quantidade: __ garrafa(s) de 300 ml\n🛵 Entrega ou retirada: __\n📍 Bairro: __\n💳 Pagamento: Pix ou cartão\n\nPode me confirmar o total?',
@@ -454,6 +464,7 @@
       var lo=document.getElementById('lastOrder'); if(lo)lo.hidden=true;
       window.scrollTo(0,0); try{conf.focus({preventScroll:true});}catch(e){}
       if(o.code&&o.zap)trkStart(o.code,o.zap);
+      if(o.code&&o.zap&&window.TQR_registraAparelho)window.TQR_registraAparelho(o.code,o.zap);
       try{if(window.TQR_confete)window.TQR_confete();}catch(e){}
     }
     (function(){
@@ -471,6 +482,15 @@
       ask.addEventListener('submit',function(e){e.preventDefault();var w=document.getElementById('trkZap').value.replace(/\D/g,''); if(w.length<10){var mm=document.getElementById('trkMsg');mm.hidden=false;mm.textContent='Informe o DDD e o número.';return;}
         ask.hidden=true; trkStart(code,w);});
     })();
+    window.TQR_registraAparelho=function(code,zap){
+      rpc('registrar_aparelho',{p_codigo:code,p_whatsapp:zap},8000).then(function(r){
+        if(!r||!r.ok)return;
+        SESS={w:zap,t:r.token};window.TQR_DEV.set(zap,r.token,180);
+        var bx=document.getElementById('confAcesso'); if(!bx)return;
+        document.getElementById('confAcessoCod').textContent=r.acesso; bx.hidden=false;
+        var cp=document.getElementById('confAcessoCp'); if(cp)cp.onclick=function(){var b=this;(navigator.clipboard?navigator.clipboard.writeText(r.acesso):Promise.reject()).then(function(){b.textContent='Copiado!';},function(){b.textContent='Anote o código acima';});};
+      }).catch(function(){});
+    };
     function cartExtra(q,c){
       document.querySelectorAll('#packs .pack').forEach(function(b,i,all){
         var v=+b.dataset.q,next=all[i+1]?+all[i+1].dataset.q:Infinity;
@@ -719,10 +739,10 @@
     function digits(){return wf.value.replace(/\D/g,'');}
     // ===== Endereços salvos (exigem confirmar o número com um código enviado pelo WhatsApp) =====
     var SESS=null;
-    try{var ss=JSON.parse(sessionStorage.getItem('tqr_sess')||'null');if(ss&&ss.t&&ss.w)SESS=ss;}catch(e){}
+    (function(){var d=window.TQR_DEV.get();if(d)SESS={w:d.w,t:d.t};})();
     function msgEnd(t){var m=document.getElementById('endMsg');m.textContent=t||'';m.hidden=!t;}
-    function guardaSess(){try{if(SESS)sessionStorage.setItem('tqr_sess',JSON.stringify(SESS));else sessionStorage.removeItem('tqr_sess');}catch(e){}}
-    function sessOk(){return !!(SESS&&SESS.w===digits());}
+    function guardaSess(){if(SESS)window.TQR_DEV.set(SESS.w,SESS.t,90);else window.TQR_DEV.clear();}
+    function sessOk(){return !!(SESS&&String(SESS.w).replace(/^55/,'')===digits().replace(/^55/,''));}
     function preencheEnd(e){
       f.elements.rua.value=e.rua||''; f.elements.comp.value=e.complemento||''; f.elements.ref.value=e.referencia||'';
       var bs=document.getElementById('bairroSel');
@@ -745,20 +765,18 @@
           ac.appendChild(u);ac.appendChild(x);r.appendChild(t);r.appendChild(ac);box.appendChild(r);
         });
         document.getElementById('salvarEndFld').hidden=false;
-      }).catch(function(){SESS=null;guardaSess();document.getElementById('endLista').hidden=true;msgEnd('Sua confirmação expirou. Peça um novo código.');});
+      }).catch(function(){SESS=null;guardaSess();document.getElementById('endLista').hidden=true;msgEnd('Este aparelho não está mais reconhecido. Informe o código de acesso de um pedido seu.');});
     }
     document.getElementById('btnEnd').addEventListener('click',function(){
       if(sessOk()){listaEnd();return;}
-      rpc('solicitar_codigo',{p_whatsapp:digits()},6000).then(function(){
-        document.getElementById('endCod').hidden=false;msgEnd('Pedido enviado. Assim que o código chegar no seu WhatsApp, digite acima.');document.getElementById('endCodIn').focus();
-      }).catch(function(){msgEnd('Muitos pedidos de código. Tente de novo em alguns minutos.');});
+      document.getElementById('endCod').hidden=false;msgEnd('');document.getElementById('endCodIn').focus();
     });
     document.getElementById('endCodOk').addEventListener('click',function(){
-      var c=(document.getElementById('endCodIn').value||'').trim(); if(c.length!==6){msgEnd('Digite os 6 dígitos.');return;}
-      rpc('verificar_codigo',{p_whatsapp:digits(),p_codigo:c},6000).then(function(tok){
-        if(!tok){msgEnd('Código incorreto ou vencido. Confira ou peça outro.');return;}
+      var c=(document.getElementById('endCodIn').value||'').trim(); if(c.replace(/[^A-Za-z0-9]/g,'').length<8){msgEnd('Digite o código de acesso completo (ex.: TQR-0027-K7F2).');return;}
+      rpc('entrar_com_codigo',{p_whatsapp:digits(),p_acesso:c},6000).then(function(tok){
+        if(!tok){msgEnd('Código de acesso incorreto. Confira no seu pedido anterior. Depois de várias tentativas erradas é preciso esperar um pouco.');return;}
         SESS={w:digits(),t:tok};guardaSess();document.getElementById('endCod').hidden=true;document.getElementById('endCodIn').value='';msgEnd('');listaEnd();
-      }).catch(function(){msgEnd('Não consegui confirmar agora. Tente de novo.');});
+      }).catch(function(){msgEnd('Não consegui confirmar agora. Confira o código e tente de novo; após várias tentativas erradas é preciso esperar um pouco.');});
     });
     function salvarEnderecoSeQuiser(){
       if(!sessOk()||!f.elements.rua.value.trim()||document.getElementById('salvarEndFld').hidden||!document.getElementById('salvarEnd').checked||tipo()!=='entrega')return;
@@ -921,26 +939,29 @@
     }
     function consulta(tok){
       return rpcP('consultar_saldo',{p_whatsapp:dg(),p_token:tok}).then(mostra).catch(function(){
-        try{sessionStorage.removeItem('tqr_sess');}catch(e){}
-        res.hidden=true;return Promise.reject();});
+        window.TQR_DEV.clear();res.hidden=true;return Promise.reject();});
     }
+    function pedeCodigo(){codRow.hidden=false;res.hidden=true;say('Para ver seus pontos neste aparelho, informe o código de acesso de um pedido seu (ex.: TQR-0027-K7F2). Ele aparece na confirmação do pedido. Se você ainda não pediu por este site, faça um pedido e seus pontos aparecem aqui.');document.getElementById('ptCod').focus();}
     document.getElementById('ptPedir').addEventListener('click',function(){
       if(dg().length<10){say('Informe o DDD e o número.');return;}
-      var ss=null;try{ss=JSON.parse(sessionStorage.getItem('tqr_sess')||'null');}catch(e){}
-      var go=function(){
-        rpcP('solicitar_codigo',{p_whatsapp:dg()}).then(function(){codRow.hidden=false;res.hidden=true;say('Pedido enviado. Quando o código chegar no seu WhatsApp, digite acima. Se este número já tem pedidos, você recebe em alguns minutos.');document.getElementById('ptCod').focus();})
-          .catch(function(){say('Muitos pedidos de código. Tente de novo em alguns minutos.');});
-      };
-      if(ss&&ss.w===dg()&&ss.t){consulta(ss.t).catch(go);}else go();
+      var d=window.TQR_DEV.get(dg());
+      if(d){say('');consulta(d.t).catch(pedeCodigo);}else pedeCodigo();
     });
     document.getElementById('ptOk').addEventListener('click',function(){
-      var c=(document.getElementById('ptCod').value||'').trim(); if(c.length!==6){say('Digite os 6 dígitos.');return;}
-      rpcP('verificar_codigo',{p_whatsapp:dg(),p_codigo:c}).then(function(tok){
-        if(!tok){say('Código incorreto ou vencido. Confira ou peça outro.');return;}
-        try{sessionStorage.setItem('tqr_sess',JSON.stringify({w:dg(),t:tok}));}catch(e){}
+      var c=(document.getElementById('ptCod').value||'').trim(); if(c.replace(/[^A-Za-z0-9]/g,'').length<8){say('Digite o código de acesso completo (ex.: TQR-0027-K7F2).');return;}
+      rpcP('entrar_com_codigo',{p_whatsapp:dg(),p_acesso:c}).then(function(tok){
+        if(!tok){say('Código de acesso incorreto. Confira no seu pedido anterior. Depois de várias tentativas erradas é preciso esperar um pouco.');return;}
+        window.TQR_DEV.set(dg(),tok,90);codRow.hidden=true;say('');
         consulta(tok).catch(function(){say('Não consegui consultar agora. Tente de novo.');});
-      }).catch(function(){say('Não consegui confirmar agora. Tente de novo.');});
+      }).catch(function(){say('Não consegui confirmar agora. Confira o código e tente de novo; após várias tentativas erradas é preciso esperar um pouco.');});
     });
+    // aparelho já reconhecido: os pontos aparecem sozinhos quando a seção entra na tela
+    (function(){
+      var d=window.TQR_DEV.get(); if(!d||!('IntersectionObserver' in window))return;
+      var io2=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;io2.disconnect();
+        if(!zap.value)zap.value=d.w; consulta(d.t).catch(function(){});});},{threshold:.3});
+      io2.observe(box);
+    })();
   })();
 
   // ===== CONSENTIMENTO DE COOKIES (LGPD) + carregamento do rastreamento =====

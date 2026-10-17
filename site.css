@@ -824,3 +824,13 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
   .pt-check input{width:100%;min-height:52px;padding:14px 16px;border-radius:14px}
   .pt-check .row .btn{width:100%;min-height:52px;padding:14px 20px}
 }
+
+/* Código de confirmação / endereços salvos no celular: nada pode alargar a página */
+.grid2>*,.addr,.addr>*,.f-group{min-width:0}
+.endcod{flex-wrap:wrap}
+.endcod input{flex:1 1 150px;min-width:0;width:100%;font-size:16px;min-height:50px}
+.endcod .btn{flex:0 0 auto;min-height:50px}
+#btnEnd{max-width:100%;white-space:normal}
+.endrow{flex-wrap:wrap}.endrow span{min-width:0;overflow-wrap:anywhere}
+.hint{overflow-wrap:anywhere}
+@media (max-width:520px){.endcod{flex-direction:column}.endcod input{flex:none}.endcod .btn{width:100%}#btnEnd{width:100%}}

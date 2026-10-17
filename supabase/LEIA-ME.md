@@ -103,3 +103,6 @@ Função pública `acompanhar_pedido(codigo, whatsapp)`: devolve situação, mod
 
 ## 28 · Código de entrega/retirada (`20261104_28_codigo_entrega.sql`)
 `pedidos.codigo_entrega` (PIN de 4 dígitos, gerado por padrão) e `entrega_codigo_ok`. `acompanhar_pedido` devolve o código só enquanto o status é `saiu_entrega`. `admin_concluir_entrega(pedido, codigo)` marca "entregue" conferindo o código (opcional); com `exigir_codigo_entrega = true` (Configurações) o gatilho `guarda_pedido` bloqueia "entregue" por qualquer outro caminho. Aplicada em produção.
+
+## 29 · Pix com valor (`20261105_29_pix_com_valor.sql`)
+Configurações `pix_chave`, `pix_nome`, `pix_cidade` (Configurações > Funcionamento > Pix da loja) e a função `obter_pix_loja()` (quem muda status de pedido lê). O painel monta o Pix "copia e cola" (BR Code estático, CRC16) com o valor do pedido e o identificador `TQR0007`, no botão "Enviar Pix" do pedido, sem gateway. Não confirma o pagamento sozinho: marque o pedido como pago ao receber. Aplicada em produção.

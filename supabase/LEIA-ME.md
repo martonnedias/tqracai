@@ -115,3 +115,6 @@ Correção: o site envia o WhatsApp sem o 55 e o banco guarda com 55; `acompanha
 
 ## QR Code do Pix
 Sem mudança no banco. O QR é gerado no navegador (biblioteca local `vendor/qrcode.js`, qrcode-generator 1.4.4, MIT) a partir do mesmo copia e cola: na confirmação do site e no popup "Enviar Pix" do painel.
+
+## 32 · Pagamento confirmado antes de "pago" (`20261108_32_confirmar_pagamento.sql`)
+`admin_confirmar_pagamento(pedido)` (quem tem `pedidos.status`) leva pendente/confirmado a "pago". O gatilho `guarda_pedido` passa a bloquear, para edição direta pelo painel (papel `authenticated`), a ida de pendente/confirmado para pago, saiu_entrega ou entregue (`pagamento_nao_confirmado`); gateway, webhook e funções internas continuam livres. Pedidos > Kanban/lista mostram "Confirmar pagamento" (leva a Pagamentos). Aplicada em produção.

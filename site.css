@@ -764,3 +764,4 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
 .p-pix p{margin:0;font-size:.88rem;color:#cdb9d8;line-height:1.5}
 .p-pix textarea{width:100%;border-radius:14px;border:1.5px solid #4a2b66;background:var(--bg);color:#fff;padding:10px 12px;font:inherit;font-size:.78rem;word-break:break-all;resize:none}
 .p-pix small{font-size:.78rem;color:#a995b8}
+.pix-qr{display:block;justify-self:center;width:200px;max-width:100%;height:auto;background:#fff;border-radius:14px;padding:4px}

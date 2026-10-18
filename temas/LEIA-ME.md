@@ -37,3 +37,6 @@ Os temas `hamburgueria` e `pizzaria` usam os blocos genéricos de `_comum/` e s�
 - O teste `test44` (suíte de testes) exige que o tema `acai` gere **exatamente** o `index.html`, `pedido.html` e `tema.css` publicados.
 - Textos que citam fatos (números de clientes, prêmios, história) não entram nos temas genéricos: só frases que valem para qualquer loja do segmento.
 - Blog e políticas ainda são do açaí (geradores próprios); os textos deles precisam ser adaptados por cliente.
+
+## Etapas do pedido
+`pedido.html` mostra o pedido em 3 abas (Pedido, Entrega e dados, Pagamento) com botões Continuar/Voltar; o resumo fica sempre visível. As abas são montadas por `site.js` sobre os painéis `#pnl1..3` do modelo; sem JavaScript os três painéis aparecem juntos. Ao enviar com algum campo vazio, o site abre a etapa do campo e foca nele.

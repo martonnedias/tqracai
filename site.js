@@ -925,17 +925,54 @@ window.TQR_DEV=(function(){
     function clearErr(el){var w=el.closest('.fld');if(!w)return;w.classList.remove('err');var m=w.querySelector('.msg');if(m)m.remove();var ip=w.querySelector('input,select');if(ip){ip.removeAttribute('aria-invalid');ip.removeAttribute('aria-describedby');}}
     var errSeq=0;new MutationObserver(function(ms){ms.forEach(function(r){r.addedNodes.forEach(function(n){if(n.nodeType===1&&n.classList&&n.classList.contains('msg')){var w=n.closest('.fld'),ip=w&&w.querySelector('input,select');if(ip){n.id='err'+(++errSeq);n.setAttribute('role','alert');ip.setAttribute('aria-invalid','true');ip.setAttribute('aria-describedby',n.id);}}});});}).observe(f,{childList:true,subtree:true});
     f.querySelectorAll('.fld input').forEach(function(i){i.addEventListener('input',function(){clearErr(i);});});
+    // ===== Etapas do pedido (abas): 1 Pedido, 2 Entrega e dados, 3 Pagamento. Sem JS tudo aparece de uma vez. =====
+    var PS=document.getElementById('pSteps'), PN=[1,2,3].map(function(n){return document.getElementById('pnl'+n);}), PT=[1,2,3].map(function(n){return document.getElementById('stp'+n);}), passo=0, cbBtn=document.querySelector('#cartBar a');
+    function obrig(scope){var first=null;scope.querySelectorAll('input[required],select[required]').forEach(function(i){clearErr(i);if(!i.value.trim()){var w=i.closest('.fld');w.classList.add('err');var m=document.createElement('span');m.className='msg';m.textContent=i.tagName==='SELECT'?'Escolha uma opção':'Preencha este campo';w.appendChild(m);first=first||i;}});return first;}
+    function errDados(){
+      var dg=digits();
+      if(dg.length<10||dg.length>13){var ww=wf.closest('.fld');ww.classList.add('err');var mm=document.createElement('span');mm.className='msg';mm.textContent='Informe o DDD e o número';ww.appendChild(mm);return wf;}
+      if(!known&&f.elements.nome.value.trim().length<3){var nw=f.elements.nome.closest('.fld');nw.classList.add('err');var nmm=document.createElement('span');nmm.className='msg';nmm.textContent='Informe seu nome';nw.appendChild(nmm);return f.elements.nome;}
+      return null;
+    }
+    function mostraPasso(n,rola){
+      if(!PS||PS.hidden)return;
+      passo=n;f.classList.add('tabs-on');
+      PN.forEach(function(p,i){p.hidden=i!==n;});
+      PT.forEach(function(t,i){t.setAttribute('aria-selected',i===n?'true':'false');t.tabIndex=i===n?0:-1;t.classList.toggle('on',i===n);t.classList.toggle('done',i<n);});
+      if(cbBtn)cbBtn.innerHTML=(n<2?'Continuar':'Finalizar')+' <span aria-hidden="true">→</span>';
+      if(rola)PS.scrollIntoView({block:'start'});
+    }
+    function ir(el){var p=el&&el.closest&&el.closest('.p-panel');if(p&&PS&&!PS.hidden)mostraPasso(PN.indexOf(p));}
+    function proximo(){
+      if(passo===0){
+        if(CARRINHO&&!unidades()){var ch=document.getElementById('cardHint');ch.textContent='Adicione ao menos um item ao pedido.';ch.hidden=false;return;}
+        var em=montErro();if(em){var hh=document.getElementById('qtyHint');hh.textContent=em;return;}
+        mostraPasso(1,true);
+      }else if(passo===1){
+        var bad=obrig(PN[1])||errDados();if(bad){bad.focus();return;}
+        mostraPasso(2,true);
+      }
+    }
+    if(PS&&PN.every(Boolean)){
+      PS.hidden=false;
+      PT.forEach(function(t,i){
+        t.addEventListener('click',function(){if(i>passo){var k=passo;while(k<i&&passo===k){proximo();k++;}}else mostraPasso(i,true);});
+        t.addEventListener('keydown',function(e){var d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(!d)return;var j=(i+d+3)%3;mostraPasso(j);PT[j].focus();e.preventDefault();});
+      });
+      f.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-next],[data-prev]');if(!b)return;if(b.hasAttribute('data-next'))proximo();else mostraPasso(passo-1,true);});
+      if(cbBtn)cbBtn.addEventListener('click',function(e){if(passo<2){e.preventDefault();proximo();}});
+      mostraPasso(0);
+    }
     f.addEventListener('submit',function(e){
       e.preventDefault(); var c=update(), ok=true, first=null;
-      f.querySelectorAll('input[required],select[required]').forEach(function(i){clearErr(i);if(!i.value.trim()){ok=false;var w=i.closest('.fld');w.classList.add('err');var m=document.createElement('span');m.className='msg';m.textContent=i.tagName==='SELECT'?'Escolha uma opção':'Preencha este campo';w.appendChild(m);first=first||i;}});
-      if(!ok){first.focus();return;}
+      first=obrig(f);ok=!first;
+      if(!ok){ir(first);first.focus();return;}
       var v=function(k){return (f.elements[k].value||'').trim();}, q=CARRINHO?unidades():+qty.value, mod=modalidade(), ent=mod!=='retirada';
-      if(CARRINHO&&!q){var ch=document.getElementById('cardHint');ch.textContent='Adicione ao menos um item ao pedido.';ch.hidden=false;ch.scrollIntoView({block:'center'});return;}
+      if(CARRINHO&&!q){var ch=document.getElementById('cardHint');ch.textContent='Adicione ao menos um item ao pedido.';ch.hidden=false;ir(ch);ch.scrollIntoView({block:'center'});return;}
       try{if(f.elements.lembrar.checked){localStorage.setItem(KEY,JSON.stringify({whats:v('whats'),nome:known?(JSON.parse(localStorage.getItem(KEY)||'{}').nome||''):v('nome'),rua:v('rua'),bairro:v('bairro'),comp:v('comp'),ref:v('ref'),bs:bsel()}));}else{localStorage.removeItem(KEY);}}catch(e){}
-      var em=montErro();if(em){var hh=document.getElementById('qtyHint');hh.textContent=em;hh.scrollIntoView({block:'center'});return;}
+      var em=montErro();if(em){var hh=document.getElementById('qtyHint');hh.textContent=em;ir(hh);hh.scrollIntoView({block:'center'});return;}
       var dg=digits(), nm=known?'':v('nome');
-      if(dg.length<10||dg.length>13){ok=false;var ww=wf.closest('.fld');ww.classList.add('err');var mm=document.createElement('span');mm.className='msg';mm.textContent='Informe o DDD e o número';ww.appendChild(mm);wf.focus();return;}
-      if(!known&&nm.length<3){var nw=f.elements.nome.closest('.fld');nw.classList.add('err');var nmm=document.createElement('span');nmm.className='msg';nmm.textContent='Informe seu nome';nw.appendChild(nmm);f.elements.nome.focus();return;}
+      var bad=errDados();if(bad){ir(bad);bad.focus();return;}
       var pagi=f.querySelector('input[name=pag]:checked'), pagv=pagi.value, pagn=pagi.dataset.nome||pagi.value, btn=f.querySelector('button[type=submit]'), lbl=btn.innerHTML;
       btn.disabled=true; btn.textContent='Registrando pedido…';
       var it=itens(), bn=bairroNome();

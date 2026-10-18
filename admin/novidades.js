@@ -3,6 +3,7 @@
    O selo some sozinho depois de N dias (Configurações > Novidades), quando o usuário abre a aba,
    ou quando o dono desliga o item. SEMPRE que lançar algo novo, acrescente uma linha aqui. */
 window.TQR_NOVIDADES = [
+  { id: 'aba:config',   rot: 'Licença do sistema', desde: '2026-10-18' },
   { id: 'aba:produtos', rot: 'Categorias e modo carrinho', desde: '2026-10-17' },
   { id: 'aba:pedidos',  rot: 'Código de entrega e Pix com valor', desde: '2026-10-17' },
   { id: 'aba:prova',   rot: 'Prova social',      desde: '2026-10-15' },

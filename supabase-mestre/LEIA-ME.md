@@ -35,3 +35,7 @@ A loja chama `POST {URL do mestre}/rest/v1/rpc/licenca` com `{"p_chave":"tqrk_..
 - Quanto tempo a loja funciona sem confirmar com o mestre, e se contrato suspenso bloqueia ou só avisa.
 - A ligação da loja ao mestre (função na loja que chama `licenca` e atualiza `instancia_modulos` com `origem = 'licenca'`).
 - Planos e preços reais (hoje: Essencial, Profissional e Completo, com valor R$ 0 no cadastro).
+
+## Ligar uma loja ao mestre
+1. No painel mestre, abra a assinatura da loja e gere a chave (aparece uma única vez).
+2. Na loja: Central > Configurações > **Licença** > cole a chave > Salvar chave. A loja confirma sozinha a cada 5 minutos (use "Verificar agora" para testar).

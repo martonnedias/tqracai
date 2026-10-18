@@ -54,6 +54,7 @@ main{padding:22px 0 60px;display:grid;gap:16px}
 .vazio{color:var(--mut);padding:6px 0}
 .qr{width:200px;height:200px;background:#fff;padding:6px;border-radius:10px;border:1px solid var(--line)}
 code{background:#eee8f6;padding:1px 6px;border-radius:4px;word-break:break-all}
+.links{display:flex;gap:8px 14px;flex-wrap:wrap;align-items:center;padding:6px 4px 0}.lojalinks{display:inline-flex;gap:8px 12px;flex-wrap:wrap;align-items:center}.lnk{color:var(--brand);font-weight:600;font-size:.875rem;text-decoration:underline;min-height:32px;display:inline-flex;align-items:center}.linha-item{display:grid;gap:2px}
 </style>
 </head>
 <body>
@@ -188,7 +189,19 @@ code{background:#eee8f6;padding:1px 6px;border-radius:4px;word-break:break-all}
 
       <div class="card sec"><h2>Histórico</h2><div id="hist" class="hist"></div></div>
     </section>
-  </main>
+  
+    <details class="card sec" id="ajudaMestre">
+      <summary><b>Ajuda do painel mestre</b></summary>
+      <div style="display:grid;gap:10px;margin-top:10px;font-size:.92rem">
+        <p><b>Cadastrar um cliente.</b> "+ Novo assinante" (nome, segmento, situação). Na ficha, preencha contatos, escolha o plano no contrato e adicione a loja com o endereço do site (https://…) e o código do projeto do banco (20 letras minúsculas).</p>
+        <p><b>Links de acesso.</b> Cada assinante mostra, na lista e na ficha, os links Site, Fazer pedido, Painel da loja (/admin/) e Banco (Supabase). "Copiar link do painel" copia o endereço para enviar ao cliente.</p>
+        <p><b>Ligar a loja ao mestre.</b> Na loja, clique em "Gerar chave" (ela aparece uma só vez). O cliente cola a chave em Configurações > Licença do painel dele. A loja confirma sozinha a cada 5 minutos; "Último contato" mostra a última confirmação.</p>
+        <p><b>Módulos.</b> O plano do contrato define os módulos; as caixas marcadas à mão são exceções. "Voltar tudo ao padrão do plano" remove as exceções. O núcleo nunca desliga.</p>
+        <p><b>Suspender ou cancelar.</b> Mude a situação do contrato. A loja bloqueia os módulos pagos e avisa o dono; o site e os pedidos continuam funcionando. Sem contato com o mestre por mais de 10 dias o efeito é o mesmo.</p>
+        <p><b>Segurança.</b> O acesso exige senha e o código do autenticador. Mantenha desligado o cadastro público de usuários no Supabase do mestre.</p>
+      </div>
+    </details>
+</main>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
@@ -257,10 +270,23 @@ code{background:#eee8f6;padding:1px 6px;border-radius:4px;word-break:break-all}
     });
   }
   function carregaLista(){
-    sb.from('assinantes').select('*, assinante_contratos(plano,situacao), assinante_instancias(id,ultimo_contato)').order('nome').then(function(r){
+    sb.from('assinantes').select('*, assinante_contratos(plano,situacao), assinante_instancias(id,nome,url_site,supabase_ref,ultimo_contato)').order('nome').then(function(r){
       if(r.error){msg('#aviso','Não foi possível carregar os assinantes.','err');return;}
       ASS=r.data||[];desenhaLista();
     });
+  }
+  function base(u){return (u||'').replace(/\/+$/,'');}
+  function linksDe(i,out){
+    var u=base(i.url_site),L=[];
+    if(u){L.push(['Site',u+'/']);L.push(['Fazer pedido',u+'/pedido.html']);L.push(['Painel da loja',u+'/admin/']);}
+    if(i.supabase_ref)L.push(['Banco (Supabase)','https://supabase.com/dashboard/project/'+i.supabase_ref]);
+    L.forEach(function(x){
+      var a=el('a','lnk',x[0]);a.href=x[1];a.target='_blank';a.rel='noopener noreferrer';out.appendChild(a);
+    });
+    if(u){var cp=el('button','btn sm','Copiar link do painel');cp.type='button';
+      cp.addEventListener('click',function(e){e.stopPropagation();try{navigator.clipboard.writeText(u+'/admin/').then(function(){cp.textContent='Copiado';},function(){cp.textContent='Selecione e copie';});}catch(x){cp.textContent='Selecione e copie';}});
+      out.appendChild(cp);}
+    return L.length;
   }
   function planoDe(a){var c=(a.assinante_contratos||[]).filter(function(x){return x.situacao==='ativo';})[0];if(!c)return '—';var p=CAT.planos.filter(function(x){return x.codigo===c.plano;})[0];return p?p.nome:c.plano;}
   function desenhaLista(){
@@ -275,7 +301,11 @@ code{background:#eee8f6;padding:1px 6px;border-radius:4px;word-break:break-all}
       var ult=(a.assinante_instancias||[]).map(function(i){return i.ultimo_contato;}).filter(Boolean).sort().pop();
       l.appendChild(el('small',null,(NOMES[a.segmento]||a.segmento)+' · plano '+planoDe(a)+' · '+(a.assinante_instancias||[]).length+' loja(s) · último contato '+data(ult)));
       b.appendChild(l);b.appendChild(el('span','pill '+a.situacao,a.situacao));
-      b.addEventListener('click',function(){abreFicha(a.id);});box.appendChild(b);
+      b.addEventListener('click',function(){abreFicha(a.id);});
+      var w=el('div','linha-item');w.appendChild(b);
+      var lk=el('div','links');(a.assinante_instancias||[]).forEach(function(i){var g=el('span','lojalinks');if((a.assinante_instancias||[]).length>1)g.appendChild(el('small',null,i.nome+': '));linksDe(i,g);lk.appendChild(g);});
+      if(!lk.childNodes.length||!lk.textContent)lk.appendChild(el('small',null,'Sem endereço cadastrado. Abra o assinante e preencha o endereço da loja.'));
+      w.appendChild(lk);box.appendChild(w);
     });
   }
   ['#fBusca','#fSit','#fSeg'].forEach(function(s){$(s).addEventListener('input',desenhaLista);});
@@ -384,6 +414,7 @@ code{background:#eee8f6;padding:1px 6px;border-radius:4px;word-break:break-all}
       var ba=el('button','btn sm',i.ativo?'Desativar':'Ativar');ba.type='button';
       ba.addEventListener('click',function(){sb.from('assinante_instancias').update({ativo:!i.ativo}).eq('id',i.id).then(function(){abreFicha(atual);});});
       acts.appendChild(bk);acts.appendChild(ba);topo.appendChild(t);topo.appendChild(acts);c.appendChild(topo);
+      var lkf=el('div','links');if(!linksDe(i,lkf))lkf.appendChild(el('small',null,'Preencha o endereço do site e o código do banco para ver os links de acesso.'));c.appendChild(lkf);
       var mods=el('div','mods');
       var mine=over.filter(function(o){return o.instancia_id===i.id;});
       CAT.modulos.forEach(function(m){

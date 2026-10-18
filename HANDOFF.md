@@ -2,6 +2,38 @@
 
 Documento para uma nova sessão que não viu a conversa anterior. Leia tudo antes de agir. Data deste handoff: 11/10/2026. Dono do projeto: Martonne (martonnedias@gmail.com). Idioma de trabalho: português do Brasil.
 
+## 0. Checklist de lançamento (atualizado em 18/10/2026)
+
+Este quadro substitui as listas antigas das seções 5.x onde houver conflito. `[x]` = feito e no ar; `[ ]` = falta.
+
+**Sistema (feito)**
+- [x] Cardápio configurável (categorias, tipo de grupo Adicional/Retirar, modo Garrafa ou Carrinho).
+- [x] Marca do painel e do site (nome, logo, cores) em Personalização.
+- [x] Temas do site: açaí, hamburgueria, pizzaria (`temas/gerar_site.py`).
+- [x] Painel mestre `/mestre/` (assinantes, contratos, planos, módulos, chaves, links de acesso por loja, ajuda) com banco próprio e MFA obrigatório.
+- [x] Licença da loja (migração 37): sincroniza a cada 5 min, 10 dias de tolerância, suspenso/cancelado bloqueia módulos pagos.
+- [x] Ajuda e Novidades do painel da loja e ajuda do painel mestre atualizadas.
+- [x] Administrador do mestre autorizado (martonnedias@gmail.com).
+
+**Ações do dono (faltam)**
+- [ ] Cadastrar o autenticador (TOTP) no `/mestre/` e conferir que o cadastro público de usuários está desligado nos dois projetos Supabase (mestre e loja).
+- [ ] Cadastrar o assinante "TQR Açaí" no mestre, com o endereço do site e o código do banco da loja; gerar a chave e colar em Configurações > Licença do painel da loja.
+- [ ] Definir planos e preços reais (hoje R$ 0).
+- [ ] Políticas: preencher os campos [PREENCHER] (razão social, endereço, e-mail, encarregado LGPD) e revisão jurídica.
+- [ ] Chave Pix real e WhatsApp real (hoje o site envia para o número de teste).
+- [ ] GA4, Meta Pixel e Turnstile (IDs reais); feed do Instagram.
+- [ ] Domínio próprio e ajuste das URLs (sitemap, canonical).
+- [ ] Testes ponta a ponta em Android e iPhone (pedido, WhatsApp, painel).
+- [ ] Preços e bairros de entrega reais; fotos reais dos produtos.
+- [ ] MFA do dono na loja; backups do Supabase (conferir plano); decisão sobre pagamento na entrega.
+- [ ] Limpar os dados de teste (pedidos, clientes, caixa avulso, estoque) somente quando o dono disser "pode zerar": antes, fazer cópia e contagem.
+
+**Evolução do produto (faltam)**
+- [ ] Fase 3: assistente de implantação (gera o site do tema, aplica as migrações no banco do cliente, atualiza todos os clientes).
+- [ ] Fotos dos temas hamburgueria e pizzaria (hoje emoji); blog e políticas por cliente (hoje de açaí).
+- [ ] Escolher o tema por botão no painel (hoje é feito na instalação).
+- [ ] Auditoria das funções legadas do banco; Etapa 8 (custos e extras), se mantida.
+
 ## 1. O que é o projeto
 
 "#TQR Açaí" vende açaí tradicional de 300 ml em garrafa, pronto para tomar, em Teresina (PI). O pedido é feito pelo WhatsApp e o pagamento é confirmado manualmente. O projeto tem três partes: (a) uma landing page estática de venda, (b) um painel do dono para acompanhar pedidos, (c) um banco no Supabase que liga as duas. Um programa de fidelidade (pontos) e o controle financeiro e de custos são as próximas fases.

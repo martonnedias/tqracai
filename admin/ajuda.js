@@ -196,6 +196,8 @@ window.TQR_AJUDA = {
     'WhatsApp que recebe os pedidos': 'Número da loja (só dígitos, com 55 e DDD). Os pedidos do site abrem a conversa com ele.',
     'Abre às': 'Início do atendimento. Fora do horário, o site avisa o cliente.',
     'Fecha às': 'Fim do atendimento. Pode passar da meia-noite (ex.: 02:00).',
+    'Modo do cardápio': 'Garrafa: o site mostra o produto principal e a quantidade. Carrinho: o site mostra o cardápio por categoria, com várias opções por produto.',
+    'Chave de licença': 'Código que você recebe ao contratar (começa com tqrk_). Cole e salve; ela não aparece de novo. Peça uma nova no painel mestre se perder.',
     'Aviso no topo do site': 'Faixa de aviso no topo do site (ex.: hoje fechamos às 22h). Só aparece se "Mostrar o aviso" estiver marcado.',
     'Mostrar o aviso no site': 'Liga ou desliga a faixa de aviso do topo do site.',
     'Mínimo de garrafas por pedido': 'Menor quantidade de garrafas aceita num pedido.',

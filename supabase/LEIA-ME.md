@@ -142,3 +142,6 @@ No site, `marca-site.js` (carregado antes de `site.js`) aplica nome, logo e core
 
 ## Temas do site (sem migração)
 Gerador em `temas/gerar_site.py`, com temas `acai`, `hamburgueria` e `pizzaria` (ver `temas/LEIA-ME.md`). `index.html`, `pedido.html` e `tema.css` passam a ser **gerados**; o tema `acai` reproduz exatamente o site atual.
+
+## 37 · Licença (`20261113_37_licenca.sql`)
+Liga a loja ao painel mestre (projeto `supabase-mestre/`). A chave `tqrk_…` fica no vault (`licenca_chave`); a cada 5 min o `pg_cron` chama `app_private.sincronizar_licenca()`, que consulta a RPC pública `licenca(p_chave)` do mestre e grava plano/módulos (`instancia_modulos.origem='licenca'`). **Sem chave nada muda.** Com chave: contrato suspenso/cancelado, ou mais de 10 dias sem confirmar, bloqueia os módulos pagos (`modulo_ativo` só libera o núcleo); site e pedidos seguem funcionando e o painel avisa o dono (faixa no topo + Configurações > Licença). RPCs: `licenca_status()` (admin), `admin_definir_licenca(chave)` e `admin_sincronizar_agora()` (dono).

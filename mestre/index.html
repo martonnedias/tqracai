@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Painel mestre</title>
+<style>
+:root{--bg:#f4f1f9;--card:#fff;--ink:#1d1726;--mut:#6a617a;--line:#ddd5ea;--brand:#59298a;--brand2:#491f73;--gold:#c8902e;--ok:#17695e;--warn:#9a3412;--bad:#b42318;--r:12px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+[hidden]{display:none!important}
+h1,h2,h3{margin:0;line-height:1.2}
+button,input,select,textarea{font:inherit;color:inherit}
+input,select,textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:#fff;min-height:40px}
+textarea{min-height:70px;resize:vertical}
+label.f{display:grid;gap:4px;font-size:.85rem;color:var(--mut);font-weight:600}
+.btn{min-height:40px;padding:8px 16px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;font-weight:600}
+.btn.go{background:var(--brand);border-color:var(--brand);color:#fff}.btn.go:hover{background:var(--brand2)}
+.btn.sm{min-height:34px;padding:4px 12px;font-size:.85rem}
+.btn.bad{color:var(--bad);border-color:var(--bad)}
+.btn:disabled{opacity:.55;cursor:default}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px}
+.wrap{max-width:1000px;margin:0 auto;padding:0 16px}
+.topo{background:#1a0a2b;color:#fff;padding:12px 0}
+.topo .wrap{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.topo b{font-size:1.1rem}.topo small{color:#cdb9d8;display:block}
+.topo .btn{background:transparent;color:#fff;border-color:#59298a}
+main{padding:22px 0 60px;display:grid;gap:16px}
+.msg{padding:10px 14px;border-radius:8px;font-size:.9rem}
+.msg.err{background:#fdecea;color:var(--bad)}.msg.ok{background:#e6f4f1;color:var(--ok)}
+.login{max-width:380px;margin:12vh auto;display:grid;gap:12px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:640px){.row2,.row3{grid-template-columns:1fr}}
+.filtros{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:end}
+@media(max-width:720px){.filtros{grid-template-columns:1fr 1fr}}
+.lista{display:grid;gap:8px}
+.item{display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 16px;cursor:pointer;text-align:left;width:100%}
+.item:hover{border-color:var(--brand)}
+.item small{color:var(--mut)}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.75rem;font-weight:700;border:1px solid var(--line);background:#fff}
+.pill.ativo{color:var(--ok);border-color:var(--ok)}.pill.teste{color:var(--gold);border-color:var(--gold)}.pill.suspenso{color:var(--warn);border-color:var(--warn)}.pill.cancelado,.pill.encerrado{color:var(--bad);border-color:var(--bad)}
+.sec{display:grid;gap:12px}
+.sec>h2{font-size:1rem;color:var(--brand)}
+.lin{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line)}
+.lin:first-of-type{border-top:0}
+.mods{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px}
+.mod{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.mod input{width:auto;min-height:0;margin-top:4px}
+.mod small{color:var(--mut);display:block}.mod .exc{color:var(--gold);font-weight:700}
+.chave{font-family:ui-monospace,monospace;word-break:break-all;background:#fff8e6;border:1px solid var(--gold);padding:10px 12px;border-radius:8px}
+.hist{font-size:.85rem;color:var(--mut);display:grid;gap:4px;max-height:240px;overflow:auto}
+.vazio{color:var(--mut);padding:6px 0}
+.qr{width:200px;height:200px;background:#fff;padding:6px;border-radius:10px;border:1px solid var(--line)}
+code{background:#eee8f6;padding:1px 6px;border-radius:4px;word-break:break-all}
+</style>
+</head>
+<body>
+
+<section id="vLogin" class="login card" hidden>
+  <h1>Painel mestre</h1>
+  <p style="color:var(--mut);margin:0">Acesso só do dono, com verificação em duas etapas.</p>
+  <form id="fLogin" style="display:grid;gap:12px" autocomplete="on">
+    <label class="f">E-mail<input id="lEmail" type="email" autocomplete="username" required></label>
+    <label class="f">Senha<input id="lSenha" type="password" autocomplete="current-password" required></label>
+    <button class="btn go" type="submit" id="lGo">Entrar</button>
+  </form>
+  <div id="lMsg" class="msg err" role="alert" hidden></div>
+</section>
+
+<section id="vMfa" class="login card" hidden>
+  <h1>Verificação em duas etapas</h1>
+  <div id="mfaCadastro" hidden style="display:grid;gap:10px">
+    <p style="margin:0">Escaneie o código no aplicativo autenticador (Google Authenticator, Authy…) e digite o código de 6 dígitos.</p>
+    <img id="mfaQr" class="qr" alt="Código QR para o aplicativo autenticador" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" hidden>
+    <p style="margin:0;font-size:.85rem;color:var(--mut)">Sem câmera? Chave manual: <code id="mfaSegredo"></code></p>
+  </div>
+  <p id="mfaPede" style="margin:0" hidden>Digite o código de 6 dígitos do seu aplicativo autenticador.</p>
+  <form id="fMfa" style="display:grid;gap:12px">
+    <label class="f">Código<input id="mfaCod" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" required></label>
+    <button class="btn go" type="submit">Confirmar</button>
+  </form>
+  <div id="mfaMsg" class="msg err" role="alert" hidden></div>
+  <button class="btn sm" type="button" id="mfaSair">Sair</button>
+</section>
+
+<div id="vApp" hidden>
+  <header class="topo"><div class="wrap">
+    <div><h1 style="font-size:1.1rem">Painel mestre</h1><small id="quem"></small></div>
+    <button class="btn sm" type="button" id="bSair">Sair</button>
+  </div></header>
+  <main class="wrap">
+    <div id="aviso" class="msg err" role="alert" hidden></div>
+
+    <section id="vLista" style="display:grid;gap:14px">
+      <div class="card" style="display:grid;gap:12px">
+        <div class="filtros">
+          <label class="f">Buscar<input id="fBusca" type="search" placeholder="Nome do assinante"></label>
+          <label class="f">Situação<select id="fSit"><option value="">Todas</option><option value="ativo">Ativo</option><option value="teste">Teste</option><option value="suspenso">Suspenso</option><option value="cancelado">Cancelado</option></select></label>
+          <label class="f">Segmento<select id="fSeg"><option value="">Todos</option><option value="acai">Açaí</option><option value="hamburgueria">Hamburgueria</option><option value="pizzaria">Pizzaria</option><option value="restaurante">Restaurante</option><option value="outro">Outro</option></select></label>
+          <button class="btn go" type="button" id="bNovo">+ Novo assinante</button>
+        </div>
+        <div id="resumo" style="color:var(--mut);font-size:.9rem"></div>
+      </div>
+      <div id="lista" class="lista"></div>
+    </section>
+
+    <section id="vNovo" class="card sec" hidden>
+      <h2>Novo assinante</h2>
+      <form id="fNovo" style="display:grid;gap:12px">
+        <div class="row2">
+          <label class="f">Nome<input id="nNome" required minlength="2" maxlength="120"></label>
+          <label class="f">CNPJ ou CPF <small>(opcional)</small><input id="nDoc" maxlength="18" inputmode="numeric"></label>
+        </div>
+        <div class="row2">
+          <label class="f">Segmento<select id="nSeg"><option value="acai">Açaí</option><option value="hamburgueria">Hamburgueria</option><option value="pizzaria">Pizzaria</option><option value="restaurante">Restaurante</option><option value="outro" selected>Outro</option></select></label>
+          <label class="f">Situação<select id="nSit"><option value="teste" selected>Teste</option><option value="ativo">Ativo</option></select></label>
+        </div>
+        <div style="display:flex;gap:8px"><button class="btn go" type="submit">Criar assinante</button><button class="btn" type="button" id="nCancela">Cancelar</button></div>
+      </form>
+    </section>
+
+    <section id="vFicha" hidden style="display:grid;gap:14px">
+      <div><button class="btn sm" type="button" id="fVolta">← Voltar à lista</button></div>
+      <div class="card sec"><h2>Dados do assinante</h2>
+        <form id="fDados" style="display:grid;gap:12px">
+          <div class="row2">
+            <label class="f">Nome<input id="dNome" required minlength="2" maxlength="120"></label>
+            <label class="f">CNPJ ou CPF<input id="dDoc" maxlength="18" inputmode="numeric"></label>
+          </div>
+          <div class="row2">
+            <label class="f">Segmento<select id="dSeg"><option value="acai">Açaí</option><option value="hamburgueria">Hamburgueria</option><option value="pizzaria">Pizzaria</option><option value="restaurante">Restaurante</option><option value="outro">Outro</option></select></label>
+            <label class="f">Situação<select id="dSit"><option value="teste">Teste</option><option value="ativo">Ativo</option><option value="suspenso">Suspenso</option><option value="cancelado">Cancelado</option></select></label>
+          </div>
+          <label class="f">Observações <small>(não vão para o histórico)</small><textarea id="dObs" maxlength="2000"></textarea></label>
+          <div><button class="btn go" type="submit">Salvar dados</button></div>
+        </form>
+      </div>
+
+      <div class="card sec"><h2>Contrato</h2>
+        <div id="cAtual" class="vazio"></div>
+        <form id="fContrato" style="display:grid;gap:12px">
+          <div class="row3">
+            <label class="f">Plano<select id="cPlano"></select></label>
+            <label class="f">Valor mensal (R$)<input id="cValor" type="number" min="0" step="0.01" value="0"></label>
+            <label class="f">Dia do vencimento<input id="cVenc" type="number" min="1" max="28" placeholder="1 a 28"></label>
+          </div>
+          <div class="row2">
+            <label class="f">Forma de pagamento<input id="cForma" maxlength="40" placeholder="Pix, boleto…"></label>
+            <label class="f">Situação<select id="cSit"><option value="ativo">Ativo</option><option value="suspenso">Suspenso</option><option value="encerrado">Encerrado</option></select></label>
+          </div>
+          <div><button class="btn go" type="submit" id="cGo">Salvar contrato</button></div>
+        </form>
+      </div>
+
+      <div class="card sec"><h2>Contatos</h2>
+        <div id="listaContatos"></div>
+        <form id="fContato" style="display:grid;gap:12px">
+          <div class="row3">
+            <label class="f">Nome<input id="ctNome" required minlength="2" maxlength="120"></label>
+            <label class="f">E-mail<input id="ctEmail" type="email"></label>
+            <label class="f">WhatsApp <small>(só números, com DDD)</small><input id="ctZap" inputmode="numeric" maxlength="20"></label>
+          </div>
+          <div class="row2">
+            <label class="f">Cargo<input id="ctCargo" maxlength="60"></label>
+            <label class="f" style="align-content:end"><span><input id="ctPrinc" type="checkbox" style="width:auto;min-height:0"> Contato principal</span></label>
+          </div>
+          <div><button class="btn" type="submit">+ Adicionar contato</button></div>
+        </form>
+      </div>
+
+      <div class="card sec"><h2>Lojas (instâncias) e módulos</h2>
+        <div id="listaInst"></div>
+        <form id="fInst" style="display:grid;gap:12px">
+          <div class="row2">
+            <label class="f">Nome da loja<input id="iNome" required minlength="2" maxlength="80"></label>
+            <label class="f">Endereço do site<input id="iUrl" type="url" placeholder="https://..."></label>
+          </div>
+          <div class="row3">
+            <label class="f">Projeto do banco <small>(20 letras)</small><input id="iRef" maxlength="20"></label>
+            <label class="f">Tema<input id="iTema" maxlength="40" placeholder="acai, hamburgueria…"></label>
+            <label class="f">Versão<input id="iVer" maxlength="40"></label>
+          </div>
+          <div><button class="btn" type="submit">+ Adicionar loja</button></div>
+        </form>
+      </div>
+
+      <div class="card sec"><h2>Histórico</h2><div id="hist" class="hist"></div></div>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
+<script>
+(function(){
+  var sb=window.supabase.createClient('https://brhvzfipycswhpwkfqdg.supabase.co','sb_publishable_sLySnv5DxnrD7ujCeirbZw_vR_kf9KN');
+  function $(s){return document.querySelector(s);}
+  function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e;}
+  function show(id){['vLogin','vMfa','vApp'].forEach(function(v){$('#'+v).hidden=v!==id;});}
+  function msg(sel,t,tipo){var m=$(sel);m.textContent=t||'';m.hidden=!t;if(tipo)m.className='msg '+tipo;}
+  function data(s){if(!s)return '—';try{return new Date(s).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});}catch(e){return '—';}}
+  function brl(c){return 'R$ '+(c/100).toFixed(2).replace('.',',');}
+  var NOMES={acai:'Açaí',hamburgueria:'Hamburgueria',pizzaria:'Pizzaria',restaurante:'Restaurante',outro:'Outro'};
+  var CAT={modulos:[],planos:[],plano_modulos:[]}, ASS=[], atual=null, FATOR=null, CONTRATO=null;
+
+  // ===== entrada: senha + verificação em duas etapas =====
+  function entrou(){
+    sb.auth.mfa.getAuthenticatorAssuranceLevel().then(function(a){
+      var d=a.data||{};
+      if(d.currentLevel==='aal2'){abreApp();return;}
+      show('vMfa');
+      if(d.nextLevel==='aal2'){$('#mfaCadastro').hidden=true;$('#mfaPede').hidden=false;$('#mfaCod').focus();return;}
+      // ainda sem aplicativo autenticador: cadastra
+      $('#mfaPede').hidden=true;$('#mfaCadastro').hidden=false;
+      sb.auth.mfa.enroll({factorType:'totp',friendlyName:'Celular '+Date.now()}).then(function(r){
+        if(r.error||!r.data){msg('#mfaMsg','Não foi possível iniciar o cadastro. Saia e entre de novo.','err');return;}
+        FATOR=r.data.id;var q=$('#mfaQr');q.src=r.data.totp.qr_code;q.hidden=false;$('#mfaSegredo').textContent=r.data.totp.secret;
+      });
+    });
+  }
+  $('#fLogin').addEventListener('submit',function(e){
+    e.preventDefault();msg('#lMsg','');var b=$('#lGo');b.disabled=true;
+    sb.auth.signInWithPassword({email:$('#lEmail').value.trim(),password:$('#lSenha').value}).then(function(r){
+      b.disabled=false;
+      if(r.error){msg('#lMsg','E-mail ou senha incorretos.','err');return;}
+      entrou();
+    });
+  });
+  $('#fMfa').addEventListener('submit',function(e){
+    e.preventDefault();msg('#mfaMsg','');
+    var cod=$('#mfaCod').value.trim();
+    var pronto=FATOR?Promise.resolve(FATOR):sb.auth.mfa.listFactors().then(function(r){var f=r.data&&r.data.totp&&r.data.totp[0];return f&&f.id;});
+    pronto.then(function(id){
+      if(!id){msg('#mfaMsg','Nenhum autenticador cadastrado.','err');return;}
+      return sb.auth.mfa.challengeAndVerify({factorId:id,code:cod}).then(function(r){
+        if(r.error){msg('#mfaMsg','Código incorreto. Confira a hora do celular e tente de novo.','err');return;}
+        $('#mfaCod').value='';FATOR=null;abreApp();
+      });
+    });
+  });
+  function sair(){sb.auth.signOut().then(function(){location.reload();});}
+  $('#mfaSair').addEventListener('click',sair);$('#bSair').addEventListener('click',sair);
+
+  // ===== aplicativo =====
+  function abreApp(){
+    show('vApp');
+    sb.rpc('eh_admin_mestre').then(function(r){
+      if(!r.data){msg('#aviso','Seu usuário ainda não foi autorizado como administrador do painel mestre. Peça a quem configurou o projeto para liberar o seu acesso.','err');return;}
+      msg('#aviso','');
+      sb.auth.getUser().then(function(u){$('#quem').textContent=(u.data&&u.data.user&&u.data.user.email)||'';});
+      Promise.all([sb.from('modulos').select('*').order('ordem'),sb.from('planos').select('*').order('ordem'),sb.from('plano_modulos').select('*')]).then(function(rs){
+        CAT.modulos=rs[0].data||[];CAT.planos=rs[1].data||[];CAT.plano_modulos=rs[2].data||[];
+        var sel=$('#cPlano');sel.textContent='';CAT.planos.forEach(function(p){var o=el('option',null,p.nome);o.value=p.codigo;sel.appendChild(o);});
+        carregaLista();
+      });
+    });
+  }
+  function carregaLista(){
+    sb.from('assinantes').select('*, assinante_contratos(plano,situacao), assinante_instancias(id,ultimo_contato)').order('nome').then(function(r){
+      if(r.error){msg('#aviso','Não foi possível carregar os assinantes.','err');return;}
+      ASS=r.data||[];desenhaLista();
+    });
+  }
+  function planoDe(a){var c=(a.assinante_contratos||[]).filter(function(x){return x.situacao==='ativo';})[0];if(!c)return '—';var p=CAT.planos.filter(function(x){return x.codigo===c.plano;})[0];return p?p.nome:c.plano;}
+  function desenhaLista(){
+    var q=$('#fBusca').value.trim().toLowerCase(),s=$('#fSit').value,g=$('#fSeg').value,box=$('#lista');box.textContent='';
+    var f=ASS.filter(function(a){return (!q||a.nome.toLowerCase().indexOf(q)>=0)&&(!s||a.situacao===s)&&(!g||a.segmento===g);});
+    var cont={};ASS.forEach(function(a){cont[a.situacao]=(cont[a.situacao]||0)+1;});
+    $('#resumo').textContent=ASS.length+' assinante(s): '+['ativo','teste','suspenso','cancelado'].map(function(k){return (cont[k]||0)+' '+k;}).join(' · ');
+    if(!f.length){box.appendChild(el('p','vazio',ASS.length?'Nenhum assinante com esses filtros.':'Nenhum assinante ainda. Use "+ Novo assinante".'));return;}
+    f.forEach(function(a){
+      var b=el('button','item');b.type='button';
+      var l=el('div');l.appendChild(el('b',null,a.nome));l.appendChild(el('br'));
+      var ult=(a.assinante_instancias||[]).map(function(i){return i.ultimo_contato;}).filter(Boolean).sort().pop();
+      l.appendChild(el('small',null,(NOMES[a.segmento]||a.segmento)+' · plano '+planoDe(a)+' · '+(a.assinante_instancias||[]).length+' loja(s) · último contato '+data(ult)));
+      b.appendChild(l);b.appendChild(el('span','pill '+a.situacao,a.situacao));
+      b.addEventListener('click',function(){abreFicha(a.id);});box.appendChild(b);
+    });
+  }
+  ['#fBusca','#fSit','#fSeg'].forEach(function(s){$(s).addEventListener('input',desenhaLista);});
+  function tela(t){$('#vLista').hidden=t!=='lista';$('#vNovo').hidden=t!=='novo';$('#vFicha').hidden=t!=='ficha';}
+  $('#bNovo').addEventListener('click',function(){tela('novo');$('#nNome').focus();});
+  $('#nCancela').addEventListener('click',function(){tela('lista');});
+  $('#fVolta').addEventListener('click',function(){atual=null;tela('lista');carregaLista();});
+  $('#fNovo').addEventListener('submit',function(e){
+    e.preventDefault();
+    var d=$('#nDoc').value.trim();
+    sb.from('assinantes').insert({nome:$('#nNome').value.trim(),documento:d||null,segmento:$('#nSeg').value,situacao:$('#nSit').value}).select('id').single().then(function(r){
+      if(r.error){msg('#aviso',/duplicate|unique/i.test(r.error.message||'')?'Já existe um assinante com esse documento.':'Não foi possível criar o assinante. Confira os campos.','err');return;}
+      msg('#aviso','');$('#fNovo').reset();abreFicha(r.data.id);
+    });
+  });
+
+  // ===== ficha =====
+  function abreFicha(id){
+    atual=id;tela('ficha');
+    Promise.all([
+      sb.from('assinantes').select('*').eq('id',id).single(),
+      sb.from('assinante_contatos').select('*').eq('assinante_id',id).order('criado_em'),
+      sb.from('assinante_contratos').select('*').eq('assinante_id',id).order('criado_em',{ascending:false}),
+      sb.from('assinante_instancias').select('*').eq('assinante_id',id).order('criado_em'),
+      sb.from('assinante_eventos').select('tipo,em,detalhe').eq('assinante_id',id).order('em',{ascending:false}).limit(30)
+    ]).then(function(rs){
+      if(rs[0].error||!rs[0].data){msg('#aviso','Não foi possível abrir o assinante.','err');tela('lista');return;}
+      var a=rs[0].data,insts=rs[3].data||[];
+      $('#dNome').value=a.nome;$('#dDoc').value=a.documento||'';$('#dSeg').value=a.segmento;$('#dSit').value=a.situacao;$('#dObs').value=a.observacoes||'';
+      desenhaContatos(rs[1].data||[]);desenhaContrato(rs[2].data||[]);desenhaHist(rs[4].data||[]);
+      var ids=insts.map(function(i){return i.id;});
+      (ids.length?sb.from('instancia_modulos').select('*').in('instancia_id',ids):Promise.resolve({data:[]})).then(function(m){desenhaInst(insts,m.data||[]);});
+    });
+  }
+  $('#fDados').addEventListener('submit',function(e){
+    e.preventDefault();var d=$('#dDoc').value.trim();
+    sb.from('assinantes').update({nome:$('#dNome').value.trim(),documento:d||null,segmento:$('#dSeg').value,situacao:$('#dSit').value,observacoes:$('#dObs').value.trim()||null}).eq('id',atual).then(function(r){
+      msg('#aviso',r.error?(/duplicate|unique/i.test(r.error.message||'')?'Já existe outro assinante com esse documento.':'Não foi possível salvar os dados.'):'Dados salvos.',r.error?'err':'ok');
+      if(!r.error)abreFicha(atual);
+    });
+  });
+  function desenhaContatos(ls){
+    var box=$('#listaContatos');box.textContent='';
+    if(!ls.length)box.appendChild(el('p','vazio','Nenhum contato ainda.'));
+    ls.forEach(function(c){
+      var l=el('div','lin'),t=el('div');t.appendChild(el('b',null,c.nome+(c.principal?' (principal)':'')));t.appendChild(el('br'));
+      t.appendChild(el('small',null,[c.cargo,c.email,c.whatsapp].filter(Boolean).join(' · ')||'sem dados de contato'));
+      var b=el('button','btn sm bad','Remover');b.type='button';
+      b.addEventListener('click',function(){sb.from('assinante_contatos').delete().eq('id',c.id).then(function(){abreFicha(atual);});});
+      l.appendChild(t);l.appendChild(b);box.appendChild(l);
+    });
+  }
+  $('#fContato').addEventListener('submit',function(e){
+    e.preventDefault();
+    var princ=$('#ctPrinc').checked;
+    var novo={assinante_id:atual,nome:$('#ctNome').value.trim(),cargo:$('#ctCargo').value.trim()||null,email:$('#ctEmail').value.trim()||null,whatsapp:$('#ctZap').value.replace(/\D/g,'')||null,principal:princ};
+    var passo=princ?sb.from('assinante_contatos').update({principal:false}).eq('assinante_id',atual):Promise.resolve({});
+    Promise.resolve(passo).then(function(){return sb.from('assinante_contatos').insert(novo);}).then(function(r){
+      if(r.error){msg('#aviso','Não foi possível adicionar o contato. Confira o e-mail e o WhatsApp.','err');return;}
+      $('#fContato').reset();abreFicha(atual);
+    });
+  });
+  function desenhaContrato(ls){
+    var ativo=ls.filter(function(c){return c.situacao==='ativo';})[0]||ls[0]||null;CONTRATO=ativo;
+    var box=$('#cAtual');box.textContent='';
+    if(!ativo){box.textContent='Sem contrato ainda. Preencha abaixo para criar o primeiro.';$('#cValor').value='0';$('#cVenc').value='';$('#cForma').value='';$('#cSit').value='ativo';return;}
+    $('#cPlano').value=ativo.plano;$('#cValor').value=(ativo.valor_centavos/100).toFixed(2);$('#cVenc').value=ativo.vencimento_dia||'';$('#cForma').value=ativo.forma_pagamento||'';$('#cSit').value=ativo.situacao;
+    box.appendChild(document.createTextNode('Contrato atual: '));box.appendChild(el('span','pill '+ativo.situacao,ativo.situacao));
+    box.appendChild(document.createTextNode(' · '+brl(ativo.valor_centavos)+'/mês · desde '+ativo.inicio.split('-').reverse().join('/')+(ls.length>1?' · '+(ls.length-1)+' contrato(s) anterior(es)':'')));
+  }
+  $('#fContrato').addEventListener('submit',function(e){
+    e.preventDefault();
+    var v=Math.round((parseFloat($('#cValor').value)||0)*100),venc=parseInt($('#cVenc').value,10)||null;
+    var campos={plano:$('#cPlano').value,valor_centavos:v,vencimento_dia:venc,forma_pagamento:$('#cForma').value.trim()||null,situacao:$('#cSit').value};
+    var p=CONTRATO?sb.from('assinante_contratos').update(campos).eq('id',CONTRATO.id):sb.from('assinante_contratos').insert(Object.assign({assinante_id:atual},campos));
+    p.then(function(r){
+      msg('#aviso',r.error?(/assinante_contrato_ativo_uq|duplicate/i.test(r.error.message||'')?'Este assinante já tem outro contrato ativo. Encerre-o antes.':'Não foi possível salvar o contrato.'):'Contrato salvo.',r.error?'err':'ok');
+      if(!r.error)abreFicha(atual);
+    });
+  });
+
+  // ===== lojas e módulos =====
+  function modulosDoPlano(plano){return CAT.plano_modulos.filter(function(x){return x.plano===plano;}).map(function(x){return x.modulo;});}
+  function desenhaInst(insts,over){
+    var box=$('#listaInst');box.textContent='';
+    if(!insts.length)box.appendChild(el('p','vazio','Nenhuma loja cadastrada para este assinante.'));
+    var plano=CONTRATO&&CONTRATO.situacao==='ativo'?CONTRATO.plano:null,base=plano?modulosDoPlano(plano):[];
+    insts.forEach(function(i){
+      var c=el('div','card sec');c.style.background='#faf8fd';
+      var topo=el('div','lin');var t=el('div');t.appendChild(el('b',null,i.nome+(i.ativo?'':' (desativada)')));t.appendChild(el('br'));
+      t.appendChild(el('small',null,[i.url_site,i.supabase_ref&&('banco '+i.supabase_ref),i.tema&&('tema '+i.tema),i.versao,'último contato '+data(i.ultimo_contato),i.chave_prefixo?('chave '+i.chave_prefixo+'…'):'sem chave'].filter(Boolean).join(' · ')));
+      var acts=el('div');acts.style.cssText='display:flex;gap:6px;flex-wrap:wrap';
+      var bk=el('button','btn sm',i.chave_prefixo?'Gerar nova chave':'Gerar chave');bk.type='button';var pede=false;
+      bk.addEventListener('click',function(){
+        if(i.chave_prefixo&&!pede){pede=true;bk.textContent='Confirmar: a chave atual deixa de valer';return;}
+        bk.disabled=true;
+        sb.rpc('admin_gerar_chave',{p_instancia:i.id}).then(function(r){
+          if(r.error||!r.data){msg('#aviso','Não foi possível gerar a chave.','err');bk.disabled=false;return;}
+          var k=el('div','chave');k.appendChild(el('div',null,'Chave da loja (aparece só agora; guarde-a na configuração da loja):'));k.appendChild(el('b',null,r.data));
+          var cp=el('button','btn sm','Copiar');cp.type='button';cp.style.marginTop='8px';
+          cp.addEventListener('click',function(){try{navigator.clipboard.writeText(r.data).then(function(){cp.textContent='Copiado';},function(){cp.textContent='Selecione e copie';});}catch(x){cp.textContent='Selecione e copie';}});
+          k.appendChild(el('br'));k.appendChild(cp);c.insertBefore(k,topo.nextSibling);
+          bk.textContent='Chave gerada';
+        });
+      });
+      var ba=el('button','btn sm',i.ativo?'Desativar':'Ativar');ba.type='button';
+      ba.addEventListener('click',function(){sb.from('assinante_instancias').update({ativo:!i.ativo}).eq('id',i.id).then(function(){abreFicha(atual);});});
+      acts.appendChild(bk);acts.appendChild(ba);topo.appendChild(t);topo.appendChild(acts);c.appendChild(topo);
+      var mods=el('div','mods');
+      var mine=over.filter(function(o){return o.instancia_id===i.id;});
+      CAT.modulos.forEach(function(m){
+        var ov=mine.filter(function(o){return o.modulo===m.codigo;})[0],doPlano=base.indexOf(m.codigo)>=0;
+        var ligado=m.obrigatorio?true:(ov?ov.ativo&&(!ov.ate||new Date(ov.ate)>new Date()):doPlano);
+        var w=el('label','mod'),cb=document.createElement('input');cb.type='checkbox';cb.checked=ligado;cb.disabled=!!m.obrigatorio;cb.id='m_'+i.id+'_'+m.codigo;
+        var tx=el('span');tx.appendChild(el('b',null,m.nome));
+        var st=m.obrigatorio?'sempre ligado':(ov?'exceção do plano':(doPlano?'pelo plano':'fora do plano'));
+        tx.appendChild(el('small',ov?'exc':null,st));w.appendChild(cb);w.appendChild(tx);
+        cb.addEventListener('change',function(){
+          cb.disabled=true;
+          sb.from('instancia_modulos').upsert({instancia_id:i.id,modulo:m.codigo,ativo:cb.checked,ate:null}).then(function(r){
+            if(r.error){msg('#aviso','Não foi possível mudar o módulo.','err');}
+            abreFicha(atual);
+          });
+        });
+        mods.appendChild(w);
+      });
+      c.appendChild(mods);
+      if(mine.length){var rs=el('button','btn sm','Voltar tudo ao padrão do plano');rs.type='button';rs.addEventListener('click',function(){sb.from('instancia_modulos').delete().eq('instancia_id',i.id).then(function(){abreFicha(atual);});});c.appendChild(rs);}
+      if(!plano)c.appendChild(el('p','vazio','Sem contrato ativo: só o núcleo vale, além das exceções marcadas.'));
+      box.appendChild(c);
+    });
+  }
+  $('#fInst').addEventListener('submit',function(e){
+    e.preventDefault();
+    var campos={assinante_id:atual,nome:$('#iNome').value.trim(),url_site:$('#iUrl').value.trim()||null,supabase_ref:$('#iRef').value.trim()||null,tema:$('#iTema').value.trim()||null,versao:$('#iVer').value.trim()||null};
+    sb.from('assinante_instancias').insert(campos).then(function(r){
+      if(r.error){msg('#aviso','Não foi possível adicionar a loja. O endereço precisa começar com https:// e o projeto do banco tem 20 letras minúsculas.','err');return;}
+      $('#fInst').reset();abreFicha(atual);
+    });
+  });
+  function desenhaHist(ev){
+    var box=$('#hist');box.textContent='';
+    if(!ev.length)box.appendChild(el('span','vazio','Sem registros.'));
+    ev.forEach(function(x){box.appendChild(el('div',null,data(x.em)+' · '+x.tipo.replace('.',' › ')));});
+  }
+
+  // ===== partida =====
+  tela('lista');
+  sb.auth.getSession().then(function(r){if(r.data&&r.data.session)entrou();else show('vLogin');});
+})();
+</script>
+</body>
+</html>

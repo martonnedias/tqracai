@@ -728,6 +728,7 @@ dialog .da .btn{min-width:110px}
 
 <div id="app" hidden>
   <div class="novaversao" id="novaVersao" role="status" hidden><span>Há uma nova versão do painel disponível.</span><button class="btn sm go" type="button" id="novaVersaoGo">Atualizar agora</button></div>
+  <div class="novaversao" id="licBanner" role="alert" hidden><span id="licBannerTxt"></span><button class="btn sm go" type="button" id="licBannerGo">Ver licença</button></div>
   <header class="top"><div class="bar">
     <span class="brand"><img src="../img/rotulo.webp" alt="" data-marca="logo"><span class="bname"><b class="script-h" data-marca="nome">Central TQR</b><small data-marca="subtitulo">Gestão do #TQR Açaí</small></span></span>
     <div class="hact" role="toolbar" aria-label="Ações rápidas">
@@ -1191,6 +1192,7 @@ dialog .da .btn{min-width:110px}
         <button class="btn sm" type="button" data-cfg="pagamento">Pagamento</button>
         <button class="btn sm" type="button" data-cfg="entrega">Entrega</button>
         <button class="btn sm" type="button" data-cfg="novidades">Novidades</button>
+        <button class="btn sm" type="button" data-cfg="licenca">Licença</button>
       </div>
       <form class="card cfg-card cfgform" id="formCfg" autocomplete="off" novalidate>
         <div class="cfg-pane" data-pane="loja">
@@ -1263,6 +1265,13 @@ dialog .da .btn{min-width:110px}
         </div>
         <div class="cfg-bar" id="cfgBar"><span class="muted">As alterações valem para o site e para o painel assim que você salvar.</span><button class="btn go" type="submit" id="cfgGo">Salvar configurações</button></div>
       </form>
+      <div class="cfg-pane cfg-out" data-pane="licenca" hidden>
+        <b>Licença do sistema</b>
+        <p class="muted">A licença define o plano e os módulos desta loja. Ela é confirmada sozinha, a cada 5 minutos, com o painel mestre. Se a assinatura estiver suspensa, ou ficar mais de 10 dias sem confirmar, os módulos pagos ficam bloqueados e o painel avisa. O site e os pedidos dos clientes continuam funcionando.</p>
+        <div class="banner" id="licInfo"></div>
+        <label class="fld">Chave de licença <small>(fornecida ao contratar; fica guardada com segurança e não aparece de novo)</small><input id="licChave" type="password" autocomplete="off" placeholder="tqrk_…" maxlength="60"></label>
+        <div class="acts"><button class="btn go" type="button" id="licSalvar">Salvar chave</button><button class="btn" type="button" id="licAgora">Verificar agora</button></div>
+      </div>
       <div class="cfg-pane cfg-out" data-pane="pagamento" hidden>
         <p class="muted">Formas de pagamento oferecidas no site, com a taxa que o painel usa para calcular o lucro.</p>
         <div class="list" id="listPag"></div>
@@ -1592,7 +1601,7 @@ dialog .da .btn{min-width:110px}
       show('app');clearInterval(timer);
       var primeira=document.querySelector('#tabs button:not([hidden])');
       if(primeira)abrirAba(primeira.dataset.tab);
-      loadAll();loadNovos();timer=setInterval(function(){if(can('pedidos.ver'))loadPedidos();},30000);
+      loadAll();loadNovos();loadLicenca();timer=setInterval(function(){if(can('pedidos.ver'))loadPedidos();},30000);
       mfaStatus().then(function(on){$('#mfaBanner').hidden=on;});
     });
   }
@@ -2479,8 +2488,37 @@ dialog .da .btn{min-width:110px}
       });
     });
     sb.rpc('obter_contador').then(function(r){$('#cntAtual').textContent=r.data==null?'—':Number(r.data).toLocaleString('pt-BR');});
-    loadPagamentos();loadBairros();loadNovos();
+    loadPagamentos();loadBairros();loadNovos();loadLicenca();
   }
+  // ===== Licença: estado, aviso no topo, chave e verificação =====
+  function licData(x){if(!x)return 'nunca';try{return new Date(x).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});}catch(e){return '—';}}
+  function licRender(st){
+    var bn=$('#licBanner');
+    if(st&&st.aviso){$('#licBannerTxt').textContent=st.aviso;bn.hidden=false;bn.style.background=st.nivel==='bloqueado'?'#b42318':'#b45309';bn.style.color='#fff';}
+    else bn.hidden=true;
+    var box=$('#licInfo');if(!box)return;box.textContent='';
+    if(!st||!st.ativa){box.appendChild(el('span',null,'Licença não ativada: esta loja funciona com todos os módulos do plano atual, sem verificação. Cole abaixo a chave que você recebeu para ativar.'));return;}
+    var t=el('span');
+    t.appendChild(document.createTextNode('Situação: '+(st.situacao||'aguardando a primeira confirmação')+(st.plano?' · plano '+st.plano:'')+' · última confirmação: '+licData(st.verificado_em)));
+    if(st.erro)t.appendChild(document.createTextNode(' · última tentativa falhou ('+(st.erro==='chave_recusada'?'chave recusada pelo painel mestre':st.erro)+')'));
+    box.appendChild(t);
+  }
+  function loadLicenca(){sb.rpc('licenca_status').then(function(r){if(!r.error)licRender(r.data);});}
+  function licErro(e){var m=(e&&e.message)||'';return /chave_invalida/.test(m)?'Chave inválida. Confira se copiou a chave inteira.':/nao_autorizado/.test(m)?'Só o dono pode mudar a licença.':'Não foi possível concluir. Tente de novo.';}
+  $('#licSalvar').addEventListener('click',function(){
+    var k=$('#licChave').value.trim();if(!k){toast('Cole a chave de licença.',true);return;}
+    var b=$('#licSalvar');b.disabled=true;
+    sb.rpc('admin_definir_licenca',{p_chave:k}).then(function(r){b.disabled=false;
+      if(r.error){toast(licErro(r.error),true);return;}
+      $('#licChave').value='';licRender(r.data);toast(r.data&&r.data.erro?'Chave salva, mas o painel mestre ainda não confirmou. Tente "Verificar agora".':'Licença confirmada.',!!(r.data&&r.data.erro));});
+  });
+  $('#licAgora').addEventListener('click',function(){
+    var b=$('#licAgora');b.disabled=true;
+    sb.rpc('admin_sincronizar_agora').then(function(r){b.disabled=false;
+      if(r.error){toast(licErro(r.error),true);return;}
+      licRender(r.data);toast(r.data&&r.data.erro?'Não foi possível confirmar agora.':'Licença verificada.',!!(r.data&&r.data.erro));});
+  });
+  $('#licBannerGo').addEventListener('click',function(){abrirAba('config');showCfg('licenca');});
   var CFG_FORM=['loja','pedidos','empresa','novidades'];
   function showCfg(k){
     document.querySelectorAll('#cfgSeg button').forEach(function(b){b.classList.toggle('on',b.dataset.cfg===k);});

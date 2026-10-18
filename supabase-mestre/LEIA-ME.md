@@ -39,3 +39,6 @@ A loja chama `POST {URL do mestre}/rest/v1/rpc/licenca` com `{"p_chave":"tqrk_..
 ## Ligar uma loja ao mestre
 1. No painel mestre, abra a assinatura da loja e gere a chave (aparece uma única vez).
 2. Na loja: Central > Configurações > **Licença** > cole a chave > Salvar chave. A loja confirma sozinha a cada 5 minutos (use "Verificar agora" para testar).
+
+## Links de acesso
+Na lista e na ficha de cada assinante o painel mestre mostra: Site, Fazer pedido, Painel da loja (`/admin/`) e Banco (Supabase). Eles saem do endereço do site (`url_site`) e do código do banco (`supabase_ref`) cadastrados na loja.

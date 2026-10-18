@@ -429,6 +429,7 @@ footer a{color:var(--gold2);text-decoration:none;display:inline-block;padding:9p
 .xrow .xn{font-weight:600;font-size:.92rem}.xrow small{display:block;color:var(--muted);font-weight:400}
 .xrow .xs{display:flex;align-items:center;gap:8px}.xrow .xs button{width:34px;height:34px;border-radius:50%;border:1px solid var(--gold);background:transparent;color:var(--gold2);font-size:1.1rem;cursor:pointer}
 .xrow .xs b{min-width:1.6em;text-align:center}
+.upsell{margin-top:18px}.upsell .p-sub{margin-bottom:8px}.xrow .up-add{min-height:40px;padding:8px 16px;font-size:.9rem;white-space:nowrap}
 .mont{margin-top:12px}
 .mont-card{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px;display:grid;gap:10px}
 .mont-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:space-between}

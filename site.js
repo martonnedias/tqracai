@@ -77,7 +77,7 @@ window.TQR_DEV=(function(){
   (function(){
     if(document.getElementById('orderForm')) return;
     var SB={url:'https://elaczoriyaejkixkubxn.supabase.co',key:'sb_publishable_NscsoGdrovVNuBol72Rh3Q_ov8i8lGv'};
-    var UN=16.99, COMBO={q:3,preco:42}, FAIXA={min:5,preco:14,frete:true}, QMIN=1, QMAX=99;
+    var UN=16.99, COMBO={q:3,preco:45}, FAIXA={min:5,preco:14,frete:true}, QMIN=1, QMAX=99;
     function rpc(fn,args,ms){
       var ac=window.AbortController?new AbortController():null, t=ac&&setTimeout(function(){ac.abort();},ms||7000);
       return fetch(SB.url+'/rest/v1/rpc/'+fn,{method:'POST',headers:{apikey:SB.key,'Content-Type':'application/json'},body:JSON.stringify(args),signal:ac?ac.signal:undefined})
@@ -170,6 +170,9 @@ window.TQR_DEV=(function(){
         if(x.tipo==='combo'&&r.itens&&r.itens.length===1&&r.itens[0].produto_id===MAIN.id){var c={q:r.itens[0].qtd,preco:+r.preco};if(!COMBO||c.preco/c.q<COMBO.preco/COMBO.q)COMBO=c;}
         if(x.tipo==='faixa_quantidade'&&r.produto_id===MAIN.id){var fx={min:+r.min,preco:+r.preco_unit,frete:!!x.frete_gratis};if(!FAIXA||fx.preco<FAIXA.preco)FAIXA=fx;}
       });
+      document.querySelectorAll('[data-v]').forEach(function(e){var k=e.dataset.v,v=null;
+        if(k==='combo-total'&&COMBO)v=rs(COMBO.preco);else if(k==='combo-un'&&COMBO)v=rs(COMBO.preco/COMBO.q);else if(k==='faixa-un'&&FAIXA)v=rs(FAIXA.preco);
+        if(v)e.textContent=v;});
       var plans=document.querySelector('#ofertas .plans');
       if(plans){plans.textContent='';ofertasDe(V).forEach(function(o){plans.appendChild(cardOferta(o));});}
       var qt=document.querySelector('.q-head .q-tab');
@@ -194,7 +197,7 @@ window.TQR_DEV=(function(){
   (function(){
     var f=document.getElementById('orderForm'); if(!f) return;
     // Valores padrão (prévia local) usados só se o servidor não responder. O total oficial vem de simular_pedido.
-    var UN=16.99, QMIN=1, QMAX=99, COMBO={q:3,preco:42}, FAIXA={min:5,preco:14,frete:true};
+    var UN=16.99, QMIN=1, QMAX=99, COMBO={q:3,preco:45}, FAIXA={min:5,preco:14,frete:true};
     var PRODS=[], MAIN=null, EXTRA={}, BAIRROS=[], SIM=null, simTmr=null, simCache={}, GRUPOS=[], MONT=[];
     // Modo "carrinho" (cardápio por categoria, vários produtos, cada um com as suas opções). O padrão é "garrafa".
     var CARRINHO=false, CART=[], VIT=null, CATSEL=null;

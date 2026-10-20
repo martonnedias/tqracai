@@ -2348,6 +2348,9 @@ dialog .da .btn{min-width:110px}
           function grava(url){
             var campos={nome:nm[1].value.trim(),preco:novo,volume_ml:parseInt(vol[1].value,10)||null,ordem:parseInt(ord[1].value,10)||0,categoria:catNome(cat[1].value),categoria_id:cat[1].value||null,descricao:ds[1].value.trim()||null,ativo:cb.checked,sugerir_venda:cb2.checked,controla_pronto:cb3.checked,familia:fam[1].value.trim()||null,ncm:nc[1].value.trim()||'21069090',cfop:cf[1].value.trim()||'5102',csosn:cs[1].value.trim()||'102',origem_mercadoria:og[1].value.trim()||'0'};
             if(url)campos.foto_url=url;
+            // só grava o que mudou nesta tela: uma tela aberta há tempo não desfaz alterações feitas em outro lugar
+            Object.keys(campos).forEach(function(k){if(k!=='foto_url'&&String(campos[k]==null?'':campos[k])===String(p[k]==null?'':p[k]))delete campos[k];});
+            if(!Object.keys(campos).length){toast('Nada mudou neste produto.');return;}
             sb.from('produtos').update(campos).eq('id',p.id).then(function(x){if(x.error){toast('Não consegui salvar o produto.',true);return;}toast('Produto salvo.');loadProdutos();});
           }
           function com(url){

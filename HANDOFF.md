@@ -16,11 +16,12 @@ Este quadro substitui as listas antigas das seções 5.x onde houver conflito. `
 - [x] Administrador do mestre autorizado (martonnedias@gmail.com).
 - [x] Pedido em 3 abas (Pedido, Entrega, Pagamento) com Continuar/Voltar.
 - [x] Oferta extra no pedido ("Que tal levar também?") e exclusão de opções, grupos e categorias.
-- [x] Novos sabores: seção na página inicial e escolha de sabor com foto no pedido (Combo 3 e 5+ valem para qualquer mistura).
+- [x] Novos sabores como produtos de verdade (família `acai-300`): seção na página inicial e cartões de sabor com foto no pedido; Combo 3 e 5+ valem para qualquer mistura.
 - [x] Estoque de garrafas prontas por sabor (Estoque > Garrafas prontas), com bloqueio de venda no site. **Desligado**: para ativar, marque "Controlar estoque de garrafas prontas" no produto e registre a produção.
 - [x] Venda de balcão (Novo pedido), já paga e entregue; WhatsApp opcional.
 
 **Ações do dono (faltam)**
+- [ ] Ficha técnica (receita e custo) dos sabores Tropical e Tentação, para baixar insumos e calcular margem.
 - [ ] Informação nutricional e alérgenos dos sabores Tropical e Tentação (Nutella: avelã, leite e soja); a seção Ingredientes ainda descreve só o Tradicional.
 - [ ] Ligar o estoque de garrafas prontas quando for começar a controlar (produzir primeiro, ligar depois) e fazer um pedido de teste.
 - [ ] Teste em celular real do pedido com sabores e da mensagem do WhatsApp.

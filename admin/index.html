@@ -1040,7 +1040,7 @@ dialog .da .btn{min-width:110px}
           <label class="fld">Máximo de escolhas<input id="gpMax" type="number" min="1" value="3"></label>
         </div>
         <label class="fld">Escolhas grátis <small>(0 = todas cobram o adicional)</small><input id="gpGratis" type="number" min="0" value="0"></label>
-        <label class="fld">Tipo do grupo<select id="gpTipo" class="sel"><option value="adicional">Adicional (soma preço e baixa estoque)</option><option value="retirar">Retirar ingrediente ("sem cebola": não cobra)</option><option value="sabor">Sabor (cartões com foto; escolha única e obrigatória)</option></select></label>
+        <label class="fld">Tipo do grupo<select id="gpTipo" class="sel"><option value="adicional">Adicional (soma preço e baixa estoque)</option><option value="retirar">Retirar ingrediente ("sem cebola": não cobra)</option></select></label>
         <div class="fld">Vale para <small>(nenhum marcado = todos os produtos)</small><div class="perms" id="gpProdutos"></div></div>
         <button class="btn go" type="submit">Criar grupo</button>
       </form>
@@ -2340,12 +2340,13 @@ dialog .da .btn{min-width:110px}
         var ft=campo('Trocar foto','file',null,{accept:'image/jpeg,image/png,image/webp'});ft[1].value='';ed.appendChild(ft[0]);
         var ck=el('label','chk'),cb=document.createElement('input');cb.type='checkbox';cb.checked=p.ativo;ck.appendChild(cb);ck.appendChild(el('span',null,'Aparece no site'));ed.appendChild(ck);
         var ck2=el('label','chk'),cb2=document.createElement('input');cb2.type='checkbox';cb2.checked=!!p.sugerir_venda;ck2.appendChild(cb2);ck2.appendChild(el('span',null,'Sugerir na hora do pedido ("Que tal levar também?")'));ed.appendChild(ck2);
+        var fam=campo('Família (sabores e promoções)','text',p.familia,{maxlength:40,placeholder:'ex.: acai-300 (igual em todos os sabores)'});ed.appendChild(fam[0]);
         var ck3=el('label','chk'),cb3=document.createElement('input');cb3.type='checkbox';cb3.checked=!!p.controla_pronto;ck3.appendChild(cb3);ck3.appendChild(el('span',null,'Controlar estoque de garrafas prontas (o site só vende o que houver em Estoque > Garrafas prontas)'));ed.appendChild(ck3);
         var ac=el('div','acts'),sv=el('button','btn sm go','Salvar');sv.type='button';
         sv.addEventListener('click',function(){
           var antes=+p.preco,novo=+pr[1].value;
           function grava(url){
-            var campos={nome:nm[1].value.trim(),preco:novo,volume_ml:parseInt(vol[1].value,10)||null,ordem:parseInt(ord[1].value,10)||0,categoria:catNome(cat[1].value),categoria_id:cat[1].value||null,descricao:ds[1].value.trim()||null,ativo:cb.checked,sugerir_venda:cb2.checked,controla_pronto:cb3.checked,ncm:nc[1].value.trim()||'21069090',cfop:cf[1].value.trim()||'5102',csosn:cs[1].value.trim()||'102',origem_mercadoria:og[1].value.trim()||'0'};
+            var campos={nome:nm[1].value.trim(),preco:novo,volume_ml:parseInt(vol[1].value,10)||null,ordem:parseInt(ord[1].value,10)||0,categoria:catNome(cat[1].value),categoria_id:cat[1].value||null,descricao:ds[1].value.trim()||null,ativo:cb.checked,sugerir_venda:cb2.checked,controla_pronto:cb3.checked,familia:fam[1].value.trim()||null,ncm:nc[1].value.trim()||'21069090',cfop:cf[1].value.trim()||'5102',csosn:cs[1].value.trim()||'102',origem_mercadoria:og[1].value.trim()||'0'};
             if(url)campos.foto_url=url;
             sb.from('produtos').update(campos).eq('id',p.id).then(function(x){if(x.error){toast('Não consegui salvar o produto.',true);return;}toast('Produto salvo.');loadProdutos();});
           }
@@ -4052,7 +4053,7 @@ dialog .da .btn{min-width:110px}
       be.addEventListener('click',function(){
         if(!ex.hidden){ex.hidden=true;return;}ex.textContent='';
         var nm=campo('Nome','text',g.nome,{maxlength:60}),mn=campo('Mínimo','number',g.minimo,{min:0}),mx=campo('Máximo','number',g.maximo,{min:1}),gr=campo('Grátis até','number',g.gratis_ate,{min:0}),od=campo('Ordem','number',g.ordem,{step:1});
-        var tl=el('label','fld','Tipo do grupo'),ts=document.createElement('select');ts.className='sel';[['adicional','Adicional (soma preço e baixa estoque)'],['retirar','Retirar ingrediente (não cobra)'],['sabor','Sabor (cartões com foto; escolha única e obrigatória)']].forEach(function(t){var o=document.createElement('option');o.value=t[0];o.textContent=t[1];ts.appendChild(o);});ts.value=g.sabor?'sabor':(g.tipo||'adicional');tl.appendChild(ts);
+        var tl=el('label','fld','Tipo do grupo'),ts=document.createElement('select');ts.className='sel';[['adicional','Adicional (soma preço e baixa estoque)'],['retirar','Retirar ingrediente (não cobra)']].forEach(function(t){var o=document.createElement('option');o.value=t[0];o.textContent=t[1];ts.appendChild(o);});ts.value=g.sabor?'sabor':(g.tipo||'adicional');tl.appendChild(ts);
         var r1=el('div','row2');r1.appendChild(mn[0]);r1.appendChild(mx[0]);var r2=el('div','row2');r2.appendChild(gr[0]);r2.appendChild(od[0]);
         var pb=el('div','perms'),sel=g.produtos||[];prodsMont.forEach(function(p){var l=el('label',null),c=document.createElement('input');c.type='checkbox';c.value=p.id;c.checked=sel.indexOf(p.id)>=0;l.appendChild(c);l.appendChild(el('span',null,' '+p.nome));pb.appendChild(l);});
         ex.appendChild(nm[0]);ex.appendChild(tl);ex.appendChild(r1);ex.appendChild(r2);ex.appendChild(el('span','muted','Produtos (nenhum marcado = todos):'));ex.appendChild(pb);

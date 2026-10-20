@@ -824,8 +824,39 @@ dialog .da .btn{min-width:110px}
     </section>
 
     <section id="tab-novo" hidden>
-      <div class="phead"><h2>Novo pedido manual</h2><span class="muted">Para pedidos que chegam por telefone, mensagem ou balcão</span></div>
-      <form class="np" id="formNovo" autocomplete="off">
+      <div class="phead"><h2>Novo pedido</h2><span class="muted">Venda de balcão (paga na hora) ou pedido manual de telefone e mensagem</span></div>
+      <div class="subabas" id="nModo" role="tablist" aria-label="Tipo de lançamento">
+        <button type="button" role="tab" aria-selected="true" data-m="balcao">Venda de balcão</button>
+        <button type="button" role="tab" aria-selected="false" data-m="manual">Pedido manual (entrega ou telefone)</button>
+      </div>
+      <form class="np" id="formBalcao" autocomplete="off">
+        <div class="np-grid">
+          <div class="np-main">
+            <section class="np-card">
+              <h3><span class="np-n">1</span>Produtos e sabores</h3>
+              <div id="bItens" class="np-prods"></div>
+            </section>
+            <section class="np-card">
+              <h3><span class="np-n">2</span>Pagamento e cliente</h3>
+              <div class="grid2">
+                <label class="fld">Forma de pagamento<select id="bPag" required></select></label>
+                <label class="fld">Cupom <small>(opcional)</small><input id="bCupom" type="text" maxlength="30" autocomplete="off"></label>
+                <label class="fld">WhatsApp do cliente <small>(opcional: soma pontos)</small><input id="bWhats" type="tel" inputmode="tel" placeholder="(86) 99999-9999"></label>
+                <label class="fld">Nome <small>(só se o cliente for novo)</small><input id="bNome" type="text" placeholder="Nome do cliente"></label>
+              </div>
+            </section>
+          </div>
+          <aside class="np-side">
+            <div class="np-sum">
+              <h3>Resumo da venda</h3>
+              <div class="banner" id="bResumo"><span>Escolha os produtos para ver o total.</span></div>
+              <p class="muted" style="font-size:.85rem">A venda já entra como paga e entregue, no caixa, e baixa o estoque pronto.</p>
+              <button class="btn go np-go" type="submit" id="bGo">Lançar venda</button>
+            </div>
+          </aside>
+        </div>
+      </form>
+      <form class="np" id="formNovo" autocomplete="off" hidden>
         <div class="np-grid">
           <div class="np-main">
             <section class="np-card">
@@ -2127,7 +2158,7 @@ dialog .da .btn{min-width:110px}
     NMONT.push({pid:p.id,q:1,sel:{}});nRender();simNovo();
   });
   function carregaGruposNovo(){
-    sb.rpc('obter_vitrine').then(function(r){NG=(r&&r.data&&r.data.personalizacao||[]).filter(function(g){return g.opcoes&&g.opcoes.length;});NMONT=[];nRender();});
+    sb.rpc('obter_vitrine').then(function(r){NG=(r&&r.data&&r.data.personalizacao||[]).filter(function(g){return g.opcoes&&g.opcoes.length;});NMONT=[];nRender();montaBalcao();});
   }
   function simNovo(){
     clearTimeout(simNovoTmr);
@@ -2163,6 +2194,71 @@ dialog .da .btn{min-width:110px}
       if(r.error){var mg=r.error.message||'';var me=/estoque_insuficiente:([^:]*):(\d+)/.exec(mg);toast(me?('Estoque pronto insuficiente: só há '+me[2]+' de '+me[1]+'.'):mg.indexOf('sabor_obrigatorio')>=0?'Escolha o sabor de cada garrafa (use + Montagem).':mg.indexOf('nome_obrigatorio')>=0?'Cliente novo: informe o nome.':(mg.indexOf('whatsapp_invalido')>=0?'WhatsApp inválido.':(mg.indexOf('quantidade_invalida')>=0?'Quantidade fora do permitido.':'Não consegui criar o pedido.')),true);return;}
       var row=r.data&&r.data[0];toast('Pedido '+(row?row.pedido_codigo+' criado: '+brl(row.pedido_total):'criado'));
       $('#formNovo').reset();montaNovo();loadAll();
+    });
+  });
+
+  // ===== Venda de balcão: lançamento rápido, já pago e entregue =====
+  var BQ={},simBalTmr=null;
+  function setNovoModo(m){
+    $('#formBalcao').hidden=m!=='balcao';$('#formNovo').hidden=m!=='manual';
+    document.querySelectorAll('#nModo button').forEach(function(b){b.setAttribute('aria-selected',b.dataset.m===m?'true':'false');});
+  }
+  $('#nModo').addEventListener('click',function(e){var b=e.target.closest('button[data-m]');if(b)setNovoModo(b.dataset.m);});
+  function bSaborDe(pid){return NG.filter(function(g){return g.sabor&&(!g.produtos||g.produtos.indexOf(pid)>=0);})[0]||null;}
+  function bLinhas(){
+    var L=[];catalogo.produtos.filter(function(p){return p.ativo&&p.preco!=null;}).forEach(function(p){
+      var g=bSaborDe(p.id);
+      if(g)g.opcoes.filter(function(o){return !o.esgotado;}).forEach(function(o){L.push({k:p.id+'|'+o.id,pid:p.id,oid:o.id,nome:p.nome+' · '+o.nome,preco:+p.preco+(+o.preco||0)});});
+      else L.push({k:p.id+'|',pid:p.id,oid:null,nome:p.nome,preco:+p.preco});});
+    return L;
+  }
+  function bItensMont(){
+    var por={},mont=[];bLinhas().forEach(function(l){var q=BQ[l.k]||0;if(q<=0)return;por[l.pid]=(por[l.pid]||0)+q;if(l.oid)mont.push({produto_id:l.pid,quantidade:q,opcoes:[l.oid]});});
+    return {itens:Object.keys(por).map(function(id){return {produto_id:id,quantidade:por[id]};}),montagens:mont};
+  }
+  function montaBalcao(){
+    var box=$('#bItens');box.textContent='';
+    bLinhas().forEach(function(l){
+      var r=el('div','np-prod'),inp=document.createElement('input');inp.type='number';inp.min=0;inp.max=100;inp.value=BQ[l.k]||0;inp.setAttribute('aria-label','Quantidade de '+l.nome);
+      var st=el('div','np-st'),mn=el('button','np-b','−'),pl=el('button','np-b','+');mn.type=pl.type='button';mn.setAttribute('aria-label','Diminuir '+l.nome);pl.setAttribute('aria-label','Aumentar '+l.nome);
+      function sync(){BQ[l.k]=Math.max(0,Math.min(100,parseInt(inp.value,10)||0));r.classList.toggle('sel',BQ[l.k]>0);simBalcao();}
+      mn.addEventListener('click',function(){inp.value=Math.max(0,(+inp.value||0)-1);sync();});
+      pl.addEventListener('click',function(){inp.value=Math.min(100,(+inp.value||0)+1);sync();});
+      inp.addEventListener('input',sync);r.classList.toggle('sel',(BQ[l.k]||0)>0);
+      r.appendChild(el('span','np-nm',l.nome));r.appendChild(el('span','np-pr',brl(l.preco)));st.appendChild(mn);st.appendChild(inp);st.appendChild(pl);r.appendChild(st);box.appendChild(r);
+    });
+    var pg=$('#bPag'),atual=pg.value;pg.textContent='';
+    catalogo.formas.forEach(function(f){var o=el('option',null,f.nome);o.value=f.id;pg.appendChild(o);});
+    if(atual)pg.value=atual;else if(catalogo.formas.some(function(f){return f.id==='dinheiro';}))pg.value='dinheiro';
+    simBalcao();
+  }
+  function simBalcao(){
+    clearTimeout(simBalTmr);
+    simBalTmr=setTimeout(function(){
+      var x=bItensMont(),box=$('#bResumo');
+      if(!x.itens.length){box.textContent='';box.appendChild(el('span',null,'Escolha os produtos para ver o total.'));return;}
+      var args={p_itens:x.itens,p_cupom:$('#bCupom').value.trim()||null,p_modalidade:'retirada',p_forma:$('#bPag').value||null};
+      if(NG.length)args.p_montagens=x.montagens;
+      sb.rpc(NG.length?'simular_pedido_v3':'simular_pedido',args).then(function(r){
+        box.textContent='';
+        if(r.error||!r.data){box.appendChild(el('span',null,'Não consegui calcular. Confira os dados.'));return;}
+        var d=r.data;
+        box.appendChild(el('span',null,'Itens '+brl(d.subtotal)+(+d.desconto>0?' − desconto '+brl(d.desconto):'')+(d.promocao?' · '+d.promocao.nome:'')+(d.cupom_status==='invalido'?' · cupom inválido':'')));
+        box.appendChild(el('b',null,'Total '+brl(d.total)));
+      });
+    },250);
+  }
+  ['bPag'].forEach(function(id){$('#'+id).addEventListener('change',simBalcao);});$('#bCupom').addEventListener('input',simBalcao);
+  $('#formBalcao').addEventListener('submit',function(e){
+    e.preventDefault();var x=bItensMont();
+    if(!x.itens.length){toast('Escolha ao menos um produto.',true);return;}
+    if(!$('#bPag').value){toast('Escolha a forma de pagamento.',true);return;}
+    var b=$('#bGo');b.disabled=true;
+    sb.rpc('admin_venda_balcao',{p_itens:x.itens,p_forma:$('#bPag').value,p_whatsapp:$('#bWhats').value.trim()||null,p_nome:$('#bNome').value.trim()||null,p_montagens:NG.length?x.montagens:undefined,p_cupom:$('#bCupom').value.trim()||null}).then(function(r){
+      b.disabled=false;
+      if(r.error){var mg=r.error.message||'',me=/estoque_insuficiente:([^:]*):(\d+)/.exec(mg);toast(me?('Estoque pronto insuficiente: só há '+me[2]+' de '+me[1]+'.'):/nome_obrigatorio/.test(mg)?'Cliente novo: informe o nome.':/whatsapp_invalido/.test(mg)?'WhatsApp inválido.':/nao_autorizado|sem_permissao/.test(mg)?'Sem permissão para lançar venda.':'Não consegui lançar a venda.',true);return;}
+      var row=r.data&&r.data[0];toast('Venda '+(row?row.pedido_codigo+' lançada: '+brl(row.pedido_total):'lançada')+'.');
+      BQ={};$('#formBalcao').reset();montaBalcao();loadAll();
     });
   });
 

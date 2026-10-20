@@ -1060,6 +1060,11 @@ dialog .da .btn{min-width:110px}
     </section>
 
     <section id="tab-estoque" hidden>
+      <div class="subabas" id="estModo" role="tablist" aria-label="Tipo de estoque">
+        <button type="button" role="tab" aria-selected="true" data-m="insumos">Insumos</button>
+        <button type="button" role="tab" aria-selected="false" data-m="prontos">Garrafas prontas</button>
+      </div>
+      <div id="estInsumos">
       <h2>Estoque de insumos</h2>
       <p class="muted">O estoque sobe com as compras e desce sozinho quando um pedido é pago (pela ficha técnica de cada produto); cancelar devolve. Use contagem, perda e ajuste para acertar com a prateleira.</p>
       <div class="cards" id="estCards"></div>
@@ -1067,6 +1072,15 @@ dialog .da .btn{min-width:110px}
       <div class="filters"><input type="search" id="estBusca" placeholder="Buscar insumo" aria-label="Buscar insumo"></div>
       <div class="subabas" id="estChips" role="tablist" aria-label="Filtrar estoque"></div>
       <div class="list" id="listEstoque"></div>
+      </div>
+      <div id="estProntos" hidden>
+        <h2>Garrafas prontas para vender</h2>
+        <p class="muted">Quantas garrafas prontas você tem de cada sabor. O site só vende o que está aqui, e o saldo desce sozinho a cada pedido (e volta se o pedido for cancelado). Registre cada fornada em "Produzi".</p>
+        <div class="banner" id="prAviso" hidden></div>
+        <div class="list" id="listProntos"></div>
+        <h3 style="margin-top:18px">Últimas movimentações</h3>
+        <div class="list lcompact" id="histProntos"></div>
+      </div>
     </section>
 
     <section id="tab-mensagens" hidden>
@@ -2146,7 +2160,7 @@ dialog .da .btn{min-width:110px}
       p_modalidade:m,p_cupom:$('#nCupom').value.trim()||null,p_observacao:$('#nObs').value.trim()||null})
     .then(function(r){
       b.disabled=false;
-      if(r.error){var mg=r.error.message||'';toast(mg.indexOf('nome_obrigatorio')>=0?'Cliente novo: informe o nome.':(mg.indexOf('whatsapp_invalido')>=0?'WhatsApp inválido.':(mg.indexOf('quantidade_invalida')>=0?'Quantidade fora do permitido.':'Não consegui criar o pedido.')),true);return;}
+      if(r.error){var mg=r.error.message||'';var me=/estoque_insuficiente:([^:]*):(\d+)/.exec(mg);toast(me?('Estoque pronto insuficiente: só há '+me[2]+' de '+me[1]+'.'):mg.indexOf('sabor_obrigatorio')>=0?'Escolha o sabor de cada garrafa (use + Montagem).':mg.indexOf('nome_obrigatorio')>=0?'Cliente novo: informe o nome.':(mg.indexOf('whatsapp_invalido')>=0?'WhatsApp inválido.':(mg.indexOf('quantidade_invalida')>=0?'Quantidade fora do permitido.':'Não consegui criar o pedido.')),true);return;}
       var row=r.data&&r.data[0];toast('Pedido '+(row?row.pedido_codigo+' criado: '+brl(row.pedido_total):'criado'));
       $('#formNovo').reset();montaNovo();loadAll();
     });
@@ -2230,11 +2244,12 @@ dialog .da .btn{min-width:110px}
         var ft=campo('Trocar foto','file',null,{accept:'image/jpeg,image/png,image/webp'});ft[1].value='';ed.appendChild(ft[0]);
         var ck=el('label','chk'),cb=document.createElement('input');cb.type='checkbox';cb.checked=p.ativo;ck.appendChild(cb);ck.appendChild(el('span',null,'Aparece no site'));ed.appendChild(ck);
         var ck2=el('label','chk'),cb2=document.createElement('input');cb2.type='checkbox';cb2.checked=!!p.sugerir_venda;ck2.appendChild(cb2);ck2.appendChild(el('span',null,'Sugerir na hora do pedido ("Que tal levar também?")'));ed.appendChild(ck2);
+        var ck3=el('label','chk'),cb3=document.createElement('input');cb3.type='checkbox';cb3.checked=!!p.controla_pronto;ck3.appendChild(cb3);ck3.appendChild(el('span',null,'Controlar estoque de garrafas prontas (o site só vende o que houver em Estoque > Garrafas prontas)'));ed.appendChild(ck3);
         var ac=el('div','acts'),sv=el('button','btn sm go','Salvar');sv.type='button';
         sv.addEventListener('click',function(){
           var antes=+p.preco,novo=+pr[1].value;
           function grava(url){
-            var campos={nome:nm[1].value.trim(),preco:novo,volume_ml:parseInt(vol[1].value,10)||null,ordem:parseInt(ord[1].value,10)||0,categoria:catNome(cat[1].value),categoria_id:cat[1].value||null,descricao:ds[1].value.trim()||null,ativo:cb.checked,sugerir_venda:cb2.checked,ncm:nc[1].value.trim()||'21069090',cfop:cf[1].value.trim()||'5102',csosn:cs[1].value.trim()||'102',origem_mercadoria:og[1].value.trim()||'0'};
+            var campos={nome:nm[1].value.trim(),preco:novo,volume_ml:parseInt(vol[1].value,10)||null,ordem:parseInt(ord[1].value,10)||0,categoria:catNome(cat[1].value),categoria_id:cat[1].value||null,descricao:ds[1].value.trim()||null,ativo:cb.checked,sugerir_venda:cb2.checked,controla_pronto:cb3.checked,ncm:nc[1].value.trim()||'21069090',cfop:cf[1].value.trim()||'5102',csosn:cs[1].value.trim()||'102',origem_mercadoria:og[1].value.trim()||'0'};
             if(url)campos.foto_url=url;
             sb.from('produtos').update(campos).eq('id',p.id).then(function(x){if(x.error){toast('Não consegui salvar o produto.',true);return;}toast('Produto salvo.');loadProdutos();});
           }
@@ -3433,6 +3448,55 @@ dialog .da .btn{min-width:110px}
     sb.from('insumos').select('*').order('nome').then(function(r){
       if(r.error){toast('Não consegui carregar o estoque.',true);return;}
       insumos=r.data||[];renderEstoque();});
+  }
+
+  // ===== Estoque de garrafas prontas =====
+  var PR_ROT={producao:'Produção',perda:'Perda',inventario:'Contagem',venda:'Venda',estorno_venda:'Pedido cancelado'};
+  function msgPronto(er){var m=String(er&&er.message||'');if(/saldo_insuficiente/.test(m))return 'A perda é maior que o saldo.';if(/produto_sem_controle/.test(m))return 'Ligue o controle deste produto em Produtos.';if(/nao_autorizado/.test(m))return 'Sem permissão.';return 'Não consegui registrar.';}
+  function setEstModo(m){
+    $('#estInsumos').hidden=m!=='insumos';$('#estProntos').hidden=m!=='prontos';
+    document.querySelectorAll('#estModo button').forEach(function(b){b.setAttribute('aria-selected',b.dataset.m===m?'true':'false');});
+    if(m==='prontos')loadProntos();
+  }
+  $('#estModo').addEventListener('click',function(e){var b=e.target.closest('button[data-m]');if(b)setEstModo(b.dataset.m);});
+  function loadProntos(){
+    sb.rpc('pronto_saldos').then(function(r){
+      if(r.error){toast('Não consegui carregar as garrafas prontas.',true);return;}
+      renderProntos(r.data||[]);});
+    sb.rpc('pronto_historico',{p_limite:20}).then(function(r){
+      var h=$('#histProntos');h.textContent='';if(r.error)return;
+      if(!(r.data||[]).length){h.appendChild(el('p','empty','Sem movimentações ainda.'));return;}
+      (r.data||[]).forEach(function(m){var t=dh(m.criado_em)+' · '+m.produto_nome+(m.opcao_nome?' · '+m.opcao_nome:'')+' · '+(PR_ROT[m.tipo]||m.tipo)+' '+(+m.quantidade>0?'+':'')+m.quantidade+(m.motivo&&m.tipo!=='venda'?' · '+m.motivo:'');h.appendChild(el('span',null,t));});});
+  }
+  function renderProntos(L){
+    var box=$('#listProntos');box.textContent='';var av=$('#prAviso');av.hidden=true;av.textContent='';
+    if(!L.length){box.appendChild(vazioAcao('Nenhum produto com controle ligado. Em Produtos, edite o produto e marque "Controlar estoque de garrafas prontas".','Ir para Produtos','produtos'));return;}
+    var zer=L.filter(function(x){return +x.saldo<=0;});
+    if(zer.length){av.hidden=false;av.appendChild(el('b',null,'Sem estoque (não vende no site): '));av.appendChild(el('span',null,zer.map(function(x){return x.produto_nome+(x.opcao_nome?' '+x.opcao_nome:'');}).join(' · ')));}
+    L.forEach(function(x){
+      var n=el('article','ped'),top=el('div','top');
+      top.appendChild(el('b',null,x.produto_nome+(x.opcao_nome?' · '+x.opcao_nome:'')));
+      top.appendChild(el('span','tag '+(+x.saldo<=0?'cancelado':+x.saldo<=5?'pendente':'pago'),+x.saldo<=0?'Esgotado':+x.saldo<=5?'Pouco':'Ok'));n.appendChild(top);
+      var big=el('div',null);big.style.cssText='font-size:1.6rem;font-weight:800;margin:4px 0';big.appendChild(document.createTextNode(String(x.saldo)));big.appendChild(el('small','muted',' pronta(s) · vendidas hoje: '+x.vendido_hoje));n.appendChild(big);
+      if(can('estoque.gerir')){
+        var ac=el('div','acts'),f=el('div','row');f.hidden=true;
+        function abre(tipo,rot){
+          f.textContent='';var q=campo(rot,'number','',{min:0,step:1,inputmode:'numeric'}),mo=campo('Observação (opcional)','text','',{maxlength:120}),ok=el('button','btn sm go','Registrar');ok.type='button';
+          ok.addEventListener('click',function(){
+            var v=parseInt(q[1].value,10);if(isNaN(v)||v<0){toast('Informe a quantidade.',true);return;}
+            ok.disabled=true;
+            sb.rpc('registrar_movimento_pronto',{p_produto:x.produto_id,p_opcao:x.opcao_id||null,p_tipo:tipo,p_quantidade:v,p_motivo:mo[1].value.trim()||null}).then(function(r){
+              if(r.error){toast(msgPronto(r.error),true);ok.disabled=false;return;}toast('Registrado. Saldo: '+r.data+'.');loadProntos();});});
+          f.appendChild(q[0]);f.appendChild(mo[0]);f.appendChild(ok);f.hidden=false;q[1].focus();
+        }
+        var b1=el('button','btn sm go','+ Produzi'),b2=el('button','btn sm','Contagem'),b3=el('button','btn sm','Perda');b1.type=b2.type=b3.type='button';
+        b1.addEventListener('click',function(){abre('producao','Garrafas produzidas');});
+        b2.addEventListener('click',function(){abre('inventario','Quantas garrafas prontas existem agora');});
+        b3.addEventListener('click',function(){abre('perda','Garrafas perdidas');});
+        ac.appendChild(b1);ac.appendChild(b2);ac.appendChild(b3);n.appendChild(ac);n.appendChild(f);
+      }
+      box.appendChild(n);
+    });
   }
   var estFiltro='todos';
   $('#estBusca').addEventListener('input',function(){renderEstoque();});

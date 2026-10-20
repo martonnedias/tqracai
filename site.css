@@ -131,6 +131,8 @@ h2{font-size:clamp(1.8rem,4.6vw,2.7rem);margin-bottom:14px}
 .moments{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:40px}
 .moment{border-radius:var(--r);padding:26px 20px;background:linear-gradient(160deg,var(--pu4),var(--bg2));border:1px solid rgba(var(--gold-rgb),.15);min-height:190px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden}
 .moment .emoji{position:absolute;top:18px;right:18px;font-size:2.2rem;opacity:.9}
+.moment .ico{position:absolute;top:18px;right:18px;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;color:var(--gold);background:rgba(var(--gold-rgb),.1);border:1px solid rgba(var(--gold-rgb),.25)}
+.moment .ico svg{width:24px;height:24px}
 .moment h3{font-size:1.1rem;margin-bottom:4px}
 .moment p{font-size:.88rem;color:var(--muted)}
 
@@ -312,7 +314,7 @@ footer a{color:var(--gold2);text-decoration:none;display:inline-block;padding:9p
   .trust b{font-size:.84rem}
   .trust .ico{width:34px;height:34px}.trust .ico svg{width:17px;height:17px}
   .benefit h3{font-size:.92rem}
-  .moment h3{font-size:.95rem}.moment p{font-size:.8rem}.moment .emoji{font-size:1.7rem;top:12px;right:12px}
+  .moment h3{font-size:.95rem}.moment p{font-size:.8rem}.moment .emoji{font-size:1.7rem;top:12px;right:12px}.moment .ico{width:36px;height:36px;top:12px;right:12px;border-radius:11px}.moment .ico svg{width:20px;height:20px}
   .ingr-item{padding:14px}.ingr-item b{font-size:1.35rem}
   .nutri{padding:16px 14px;font-size:.8rem}
   .nutri td:nth-child(2){padding-right:8px}
@@ -906,3 +908,16 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
 .mont .btn{width:100%;white-space:normal;text-align:center}
 
 .hint-warn{color:#ffd9a0}
+
+/* apresentação: sabores, indicação no topo e fotos de produto com fundo claro */
+.sab-card{transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}
+.sab-card:hover{transform:translateY(-4px);border-color:rgba(var(--gold-rgb),.55);box-shadow:0 26px 50px -24px rgba(0,0,0,.8),0 0 0 1px rgba(var(--gold-rgb),.2)}
+.sab-card img{transition:transform .5s ease}.sab-card:hover img{transform:scale(1.03)}.sab-card{isolation:isolate}
+.sab-card:nth-child(2) .sab-body{background:linear-gradient(180deg,rgba(232,190,98,.07),transparent)}
+.sab-card:nth-child(3) .sab-body{background:linear-gradient(180deg,rgba(150,92,60,.14),transparent)}
+.sab-hint{display:inline-flex;align-items:center;gap:10px;margin:14px 0 0;padding:8px 14px;border-radius:999px;border:1px solid rgba(var(--gold-rgb),.3);background:rgba(var(--gold-rgb),.07);color:var(--gold2);font-size:.88rem;font-weight:600;text-decoration:none}
+.sab-hint:hover{border-color:rgba(var(--gold-rgb),.6)}
+.sab-hint .dots{display:inline-flex;gap:4px}.sab-hint .dots i{width:9px;height:9px;border-radius:50%;background:#7a3fa8}.sab-hint .dots i:nth-child(2){background:#e8be62}.sab-hint .dots i:nth-child(3){background:#8a5a3a}
+.plan .pimg img[src*="kit5"]{filter:brightness(.88) contrast(1.1) saturate(1.15)}
+.plan .pimg{background:var(--bg3)}
+@media (prefers-reduced-motion:reduce){.sab-card,.sab-card img{transition:none}.sab-card:hover,.sab-card:hover img{transform:none}}

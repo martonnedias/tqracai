@@ -4,6 +4,7 @@
    ou quando o dono desliga o item. SEMPRE que lançar algo novo, acrescente uma linha aqui. */
 window.TQR_NOVIDADES = [
   { id: 'aba:config',   rot: 'Licença do sistema', desde: '2026-10-18' },
+  { id: 'aba:montagem', rot: 'Escolha de sabor com foto', desde: '2026-10-20' },
   { id: 'aba:novo',     rot: 'Venda de balcão', desde: '2026-10-20' },
   { id: 'aba:estoque',  rot: 'Garrafas prontas por sabor', desde: '2026-10-20' },
   { id: 'aba:produtos', rot: 'Sabores com foto, sugestão de venda e exclusões', desde: '2026-10-20' },

@@ -28,7 +28,7 @@ Pedido pelo formulário da página, que monta a mensagem para o WhatsApp (86) 99
 
 ## Capabilities and Constraints
 
-- Produto único: Tradicional 300 ml, R$ 16,99 a unidade.
+- Três sabores em garrafa de 300 ml, todos a R$ 16,99 a unidade: Tradicional (leite condensado, leite em pó e açaí), TQR Tropical (creme de maracujá e açaí) e TQR Tentação (Nutella, leite em pó e açaí). Combo 3 e 5+ valem para qualquer mistura de sabores. Informação nutricional e alérgenos dos sabores novos ainda pendentes.
 - Combo 3 por R$ 42; 5 ou mais garrafas a R$ 14 cada, com entrega grátis.
 - Pedido mínimo: 1 garrafa.
 - Terminologia: "pronto na garrafa", "chega gelado e no ponto". Não usar "descongelar" nem "congelado" para o consumidor.

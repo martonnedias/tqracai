@@ -27,7 +27,7 @@ window.TQR_FONE='{{loja.whatsapp}}';
 /* Proteção contra robôs (Cloudflare Turnstile). Vazio = desligado e o pedido vai direto ao banco.
    Preencher só depois de publicar a função supabase/functions/criar-pedido (veja o README dela). */
 window.TQR_TURNSTILE='';</script>
-<link rel="stylesheet" href="site.css?v=22">
+<link rel="stylesheet" href="site.css?v=24">
 <link rel="stylesheet" href="tema.css">
 </head>
 <body class="pedido-pg">
@@ -66,6 +66,7 @@ window.TQR_TURNSTILE='';</script>
         <fieldset class="f-group">
           <legend>{{tema.pedido_legenda}}</legend>
           {{tema.pedido_prod}}
+          <div class="sab-pick" id="saborBox" hidden><h3 class="p-sub">Escolha os sabores</h3><div id="saborList"></div></div>
           <div class="qty-row">
             <button type="button" class="qbtn" data-step="-1" aria-label="Diminuir">−</button>
             <input type="number" id="qty" name="qty" min="1" max="99" value="3" inputmode="numeric" aria-label="Quantidade de garrafas">
@@ -216,7 +217,7 @@ window.TQR_TURNSTILE='';</script>
 </div>
 
 <script src="marca-site.js?v=1" defer></script>
-<script src="site.js?v=16" defer></script>
+<script src="site.js?v=17" defer></script>
 <script src="efeitos.js?v=1" defer></script>
 <dialog id="optDlg" class="opt-dlg" aria-label="Escolha as opções"></dialog>
 <dialog id="pixDlg" style="max-width:380px;width:92vw;border:1px solid var(--line);border-radius:18px;background:var(--bg2);color:var(--text);padding:22px">

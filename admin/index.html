@@ -1009,7 +1009,7 @@ dialog .da .btn{min-width:110px}
           <label class="fld">Máximo de escolhas<input id="gpMax" type="number" min="1" value="3"></label>
         </div>
         <label class="fld">Escolhas grátis <small>(0 = todas cobram o adicional)</small><input id="gpGratis" type="number" min="0" value="0"></label>
-        <label class="fld">Tipo do grupo<select id="gpTipo" class="sel"><option value="adicional">Adicional (soma preço e baixa estoque)</option><option value="retirar">Retirar ingrediente ("sem cebola": não cobra)</option></select></label>
+        <label class="fld">Tipo do grupo<select id="gpTipo" class="sel"><option value="adicional">Adicional (soma preço e baixa estoque)</option><option value="retirar">Retirar ingrediente ("sem cebola": não cobra)</option><option value="sabor">Sabor (cartões com foto; escolha única e obrigatória)</option></select></label>
         <div class="fld">Vale para <small>(nenhum marcado = todos os produtos)</small><div class="perms" id="gpProdutos"></div></div>
         <button class="btn go" type="submit">Criar grupo</button>
       </form>
@@ -3882,7 +3882,7 @@ dialog .da .btn{min-width:110px}
     if(novo){if(!grupos.length)box.appendChild(el('p','empty','Nenhum grupo ainda. Crie o primeiro abaixo (por exemplo "Complementos").'));return;}
     grupos.filter(function(g){return g.id===grpSel;}).forEach(function(g){
       var n=el('article','ped gr-card'),top=el('div','top');top.appendChild(el('b',null,g.nome));top.appendChild(el('span','tag '+(g.ativo?'pago':'cancelado'),g.ativo?'No site':'Oculto'));n.appendChild(top);
-      n.appendChild(el('span','muted',(g.tipo==='retirar'?'Retirar ingrediente · ':'')+(g.minimo>0?'Escolha de '+g.minimo+' a '+g.maximo:'Até '+g.maximo+' escolhas')+(g.gratis_ate>0?' · '+g.gratis_ate+' grátis':'')+' · vale para '+nomesProdutos(g.produtos)));
+      n.appendChild(el('span','muted',(g.sabor?'Escolha de sabor (cartões com foto) · ':'')+(g.tipo==='retirar'?'Retirar ingrediente · ':'')+(g.minimo>0?'Escolha de '+g.minimo+' a '+g.maximo:'Até '+g.maximo+' escolhas')+(g.gratis_ate>0?' · '+g.gratis_ate+' grátis':'')+' · vale para '+nomesProdutos(g.produtos)));
       var lista=el('div','perms');
       opcoesAll.filter(function(o){return o.grupo_id===g.id;}).forEach(function(o){lista.appendChild(linhaOpcao(o));});
       n.appendChild(lista);
@@ -3892,25 +3892,30 @@ dialog .da .btn{min-width:110px}
       be.addEventListener('click',function(){
         if(!ex.hidden){ex.hidden=true;return;}ex.textContent='';
         var nm=campo('Nome','text',g.nome,{maxlength:60}),mn=campo('Mínimo','number',g.minimo,{min:0}),mx=campo('Máximo','number',g.maximo,{min:1}),gr=campo('Grátis até','number',g.gratis_ate,{min:0}),od=campo('Ordem','number',g.ordem,{step:1});
-        var tl=el('label','fld','Tipo do grupo'),ts=document.createElement('select');ts.className='sel';[['adicional','Adicional (soma preço e baixa estoque)'],['retirar','Retirar ingrediente (não cobra)']].forEach(function(t){var o=document.createElement('option');o.value=t[0];o.textContent=t[1];ts.appendChild(o);});ts.value=g.tipo||'adicional';tl.appendChild(ts);
+        var tl=el('label','fld','Tipo do grupo'),ts=document.createElement('select');ts.className='sel';[['adicional','Adicional (soma preço e baixa estoque)'],['retirar','Retirar ingrediente (não cobra)'],['sabor','Sabor (cartões com foto; escolha única e obrigatória)']].forEach(function(t){var o=document.createElement('option');o.value=t[0];o.textContent=t[1];ts.appendChild(o);});ts.value=g.sabor?'sabor':(g.tipo||'adicional');tl.appendChild(ts);
         var r1=el('div','row2');r1.appendChild(mn[0]);r1.appendChild(mx[0]);var r2=el('div','row2');r2.appendChild(gr[0]);r2.appendChild(od[0]);
         var pb=el('div','perms'),sel=g.produtos||[];prodsMont.forEach(function(p){var l=el('label',null),c=document.createElement('input');c.type='checkbox';c.value=p.id;c.checked=sel.indexOf(p.id)>=0;l.appendChild(c);l.appendChild(el('span',null,' '+p.nome));pb.appendChild(l);});
         ex.appendChild(nm[0]);ex.appendChild(tl);ex.appendChild(r1);ex.appendChild(r2);ex.appendChild(el('span','muted','Produtos (nenhum marcado = todos):'));ex.appendChild(pb);
         var sv=el('button','btn sm go','Salvar grupo');sv.type='button';
         sv.addEventListener('click',function(){
           var ids=[].slice.call(pb.querySelectorAll('input:checked')).map(function(c){return c.value;});
-          sb.from('grupos_opcao').update({tipo:ts.value,nome:nm[1].value.trim(),minimo:+mn[1].value||0,maximo:+mx[1].value||1,gratis_ate:+gr[1].value||0,ordem:+od[1].value||0,produtos:ids.length?ids:null}).eq('id',g.id).then(function(x){
+          sb.from('grupos_opcao').update(Object.assign(grpTipo(ts.value),ts.value==='sabor'?{minimo:1,maximo:1,gratis_ate:1}:{minimo:+mn[1].value||0,maximo:+mx[1].value||1,gratis_ate:+gr[1].value||0},{nome:nm[1].value.trim(),ordem:+od[1].value||0,produtos:ids.length?ids:null})).eq('id',g.id).then(function(x){
             if(x.error){toast(msgMont(x.error),true);return;}toast('Grupo salvo.');loadMontagem();});});
         ex.appendChild(sv);ex.hidden=false;
       });
       bo.addEventListener('click',function(){
         if(!ex.hidden){ex.hidden=true;return;}ex.textContent='';
-        var nm=campo('Nome da opção','text','',{maxlength:60}),pr=campo('Preço adicional R$','number',0,{min:0,step:'0.01'});
-        ex.appendChild(nm[0]);ex.appendChild(pr[0]);var sv=el('button','btn sm go','Adicionar opção');sv.type='button';
+        var nm=campo('Nome da opção','text','',{maxlength:60}),pr=campo('Preço adicional R$','number',0,{min:0,step:'0.01'}),
+            ds=campo('Descrição curta (ingredientes)','text','',{maxlength:120}),ft=campo('Foto do sabor','file',null,{accept:'image/jpeg,image/png,image/webp'});
+        ex.appendChild(nm[0]);ex.appendChild(pr[0]);if(g.sabor){ft[1].value='';ex.appendChild(ds[0]);ex.appendChild(ft[0]);}
+        var sv=el('button','btn sm go','Adicionar opção');sv.type='button';
         sv.addEventListener('click',function(){
           if(!nm[1].value.trim()){toast('Informe o nome.',true);return;}
-          sb.from('opcoes').insert({grupo_id:g.id,nome:nm[1].value.trim(),preco_adicional:+pr[1].value||0,ordem:opcoesAll.filter(function(o){return o.grupo_id===g.id;}).length+1}).then(function(x){
-            if(x.error){toast(msgMont(x.error),true);return;}toast('Opção adicionada.');loadMontagem();});});
+          function grava(url){
+            var d={grupo_id:g.id,nome:nm[1].value.trim(),preco_adicional:+pr[1].value||0,ordem:opcoesAll.filter(function(o){return o.grupo_id===g.id;}).length+1};
+            if(g.sabor){d.descricao=ds[1].value.trim()||null;if(url)d.foto_url=url;}
+            sb.from('opcoes').insert(d).then(function(x){if(x.error){toast(msgMont(x.error),true);return;}toast('Opção adicionada.');loadMontagem();});}
+          if(g.sabor&&ft[1].files&&ft[1].files[0])enviarFoto(ft[1].files[0],'sabores').then(grava).catch(function(e){toast(msgFoto(e),true);});else grava(null);});
         ex.appendChild(sv);ex.hidden=false;
       });
       var bx=el('button','btn sm danger','Excluir grupo');bx.type='button';
@@ -3920,6 +3925,7 @@ dialog .da .btn{min-width:110px}
       ac.appendChild(bo);ac.appendChild(be);ac.appendChild(bt);ac.appendChild(bx);n.appendChild(ac);n.appendChild(ex);box.appendChild(n);
     });
   }
+  function grpTipo(v){return v==='sabor'?{tipo:'adicional',sabor:true}:{tipo:v,sabor:false};}
   function linhaOpcao(o){
     var w=el('div',null),r=el('div','row'),c=custoOp[o.id],pre=+o.preco_adicional;
     var t=o.nome+' · '+(pre>0?'+'+brl(pre):'sem adicional')+(o.esgotado?' · ESGOTADO':'')+(o.ativo?'':' · oculta');
@@ -3932,9 +3938,13 @@ dialog .da .btn{min-width:110px}
     bf.addEventListener('click',function(){
       if(!ed.hidden){ed.hidden=true;return;}ed.textContent='';
       var pr=campo('Preço adicional R$','number',o.preco_adicional,{min:0,step:'0.01'}),od=campo('Ordem','number',o.ordem,{step:1});
-      ed.appendChild(pr[0]);ed.appendChild(od[0]);
+      var gr0=grupos.filter(function(x){return x.id===o.grupo_id;})[0],eSab=!!(gr0&&gr0.sabor),ds=campo('Descrição curta (ingredientes)','text',o.descricao,{maxlength:120}),ft=campo('Trocar foto do sabor','file',null,{accept:'image/jpeg,image/png,image/webp'});
+      ed.appendChild(pr[0]);ed.appendChild(od[0]);if(eSab){ft[1].value='';ed.appendChild(ds[0]);ed.appendChild(ft[0]);}
       var ac=el('div','acts'),sv=el('button','btn sm go','Salvar preço'),at=el('button','btn sm',o.ativo?'Ocultar opção':'Mostrar opção');sv.type=at.type='button';
-      sv.addEventListener('click',function(){sb.from('opcoes').update({preco_adicional:+pr[1].value||0,ordem:+od[1].value||0}).eq('id',o.id).then(function(x){if(x.error){toast(msgMont(x.error),true);return;}toast('Opção salva.');loadMontagem();});});
+      sv.addEventListener('click',function(){
+        function grava(url){var d={preco_adicional:+pr[1].value||0,ordem:+od[1].value||0};if(eSab){d.descricao=ds[1].value.trim()||null;if(url)d.foto_url=url;}
+          sb.from('opcoes').update(d).eq('id',o.id).then(function(x){if(x.error){toast(msgMont(x.error),true);return;}toast('Opção salva.');loadMontagem();});}
+        if(eSab&&ft[1].files&&ft[1].files[0])enviarFoto(ft[1].files[0],'sabores').then(grava).catch(function(e){toast(msgFoto(e),true);});else grava(null);});
       at.addEventListener('click',function(){sb.from('opcoes').update({ativo:!o.ativo}).eq('id',o.id).then(function(x){if(x.error){toast(msgMont(x.error),true);return;}loadMontagem();});});
       var ex=el('button','btn sm danger','Excluir opção');ex.type='button';
       ex.addEventListener('click',function(){confirmar('Excluir esta opção?',[o.nome,'Some do cardápio e das fichas. Pedidos antigos não mudam. Para só tirar do ar por hoje, use "Acabou hoje".'],'Sim, excluir',true).then(function(y){if(!y)return;
@@ -3972,7 +3982,7 @@ dialog .da .btn{min-width:110px}
   $('#formGrupo').addEventListener('submit',function(e){
     e.preventDefault();
     var ids=[].slice.call($('#gpProdutos').querySelectorAll('input:checked')).map(function(c){return c.value;});
-    sb.from('grupos_opcao').insert({tipo:$('#gpTipo').value,nome:$('#gpNome').value.trim(),minimo:+$('#gpMin').value||0,maximo:+$('#gpMax').value||1,gratis_ate:+$('#gpGratis').value||0,ordem:grupos.length+1,produtos:ids.length?ids:null}).then(function(r){
+    sb.from('grupos_opcao').insert(Object.assign(grpTipo($('#gpTipo').value),$('#gpTipo').value==='sabor'?{minimo:1,maximo:1,gratis_ate:1}:{minimo:+$('#gpMin').value||0,maximo:+$('#gpMax').value||1,gratis_ate:+$('#gpGratis').value||0},{nome:$('#gpNome').value.trim(),ordem:grupos.length+1,produtos:ids.length?ids:null})).then(function(r){
       if(r.error){toast(msgMont(r.error),true);return;}toast('Grupo criado. Adicione as opções nele.');$('#formGrupo').reset();grpSel='__ultimo';loadMontagem();});
   });
 

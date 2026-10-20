@@ -2189,7 +2189,11 @@ dialog .da .btn{min-width:110px}
           if(x.error){toast(/duplicate|unique/i.test(x.error.message||'')?'Já existe uma categoria com esse nome.':'Não consegui salvar a categoria.',true);return;}
           toast('Categoria salva.');loadProdutos();});
       });
-      ac.appendChild(sv);ed.appendChild(ac);n.appendChild(ed);box.appendChild(n);
+      var dl=el('button','btn sm danger','Excluir categoria');dl.type='button';
+      dl.addEventListener('click',function(){var np=catalogo.produtos.filter(function(p){return p.categoria_id===c.id;}).length;
+        confirmar('Excluir a categoria "'+c.nome+'"?',[np?np+' produto(s) ficam sem categoria (não são apagados).':'Nenhum produto usa esta categoria.','Para só esconder do site, desmarque "Aparece no site".'],'Sim, excluir',true).then(function(y){if(!y)return;
+          sb.rpc('admin_excluir_categoria',{p_id:c.id}).then(function(x){if(x.error){toast('Não consegui excluir a categoria.',true);return;}toast('Categoria excluída.');loadProdutos();});});});
+      ac.appendChild(sv);ac.appendChild(dl);ed.appendChild(ac);n.appendChild(ed);box.appendChild(n);
     });
   }
   $('#formCat').addEventListener('submit',function(e){
@@ -2225,11 +2229,12 @@ dialog .da .btn{min-width:110px}
         var g2=el('div','row2');g2.appendChild(ord[0]);g2.appendChild(cat[0]);ed.appendChild(g2);ed.appendChild(ds[0]);
         var ft=campo('Trocar foto','file',null,{accept:'image/jpeg,image/png,image/webp'});ft[1].value='';ed.appendChild(ft[0]);
         var ck=el('label','chk'),cb=document.createElement('input');cb.type='checkbox';cb.checked=p.ativo;ck.appendChild(cb);ck.appendChild(el('span',null,'Aparece no site'));ed.appendChild(ck);
+        var ck2=el('label','chk'),cb2=document.createElement('input');cb2.type='checkbox';cb2.checked=!!p.sugerir_venda;ck2.appendChild(cb2);ck2.appendChild(el('span',null,'Sugerir na hora do pedido ("Que tal levar também?")'));ed.appendChild(ck2);
         var ac=el('div','acts'),sv=el('button','btn sm go','Salvar');sv.type='button';
         sv.addEventListener('click',function(){
           var antes=+p.preco,novo=+pr[1].value;
           function grava(url){
-            var campos={nome:nm[1].value.trim(),preco:novo,volume_ml:parseInt(vol[1].value,10)||null,ordem:parseInt(ord[1].value,10)||0,categoria:catNome(cat[1].value),categoria_id:cat[1].value||null,descricao:ds[1].value.trim()||null,ativo:cb.checked,ncm:nc[1].value.trim()||'21069090',cfop:cf[1].value.trim()||'5102',csosn:cs[1].value.trim()||'102',origem_mercadoria:og[1].value.trim()||'0'};
+            var campos={nome:nm[1].value.trim(),preco:novo,volume_ml:parseInt(vol[1].value,10)||null,ordem:parseInt(ord[1].value,10)||0,categoria:catNome(cat[1].value),categoria_id:cat[1].value||null,descricao:ds[1].value.trim()||null,ativo:cb.checked,sugerir_venda:cb2.checked,ncm:nc[1].value.trim()||'21069090',cfop:cf[1].value.trim()||'5102',csosn:cs[1].value.trim()||'102',origem_mercadoria:og[1].value.trim()||'0'};
             if(url)campos.foto_url=url;
             sb.from('produtos').update(campos).eq('id',p.id).then(function(x){if(x.error){toast('Não consegui salvar o produto.',true);return;}toast('Produto salvo.');loadProdutos();});
           }
@@ -3908,7 +3913,11 @@ dialog .da .btn{min-width:110px}
             if(x.error){toast(msgMont(x.error),true);return;}toast('Opção adicionada.');loadMontagem();});});
         ex.appendChild(sv);ex.hidden=false;
       });
-      ac.appendChild(bo);ac.appendChild(be);ac.appendChild(bt);n.appendChild(ac);n.appendChild(ex);box.appendChild(n);
+      var bx=el('button','btn sm danger','Excluir grupo');bx.type='button';
+      bx.addEventListener('click',function(){var qo=opcoesAll.filter(function(o){return o.grupo_id===g.id;}).length;
+        confirmar('Excluir o grupo "'+g.nome+'"?',[qo+' opção(ões) serão excluídas junto.','Pedidos antigos não mudam. Para só esconder do site, use "Ocultar".'],'Sim, excluir grupo',true).then(function(y){if(!y)return;
+          sb.rpc('admin_excluir_grupo',{p_id:g.id}).then(function(x){if(x.error){toast('Não consegui excluir o grupo.',true);return;}toast('Grupo excluído.');loadMontagem();});});});
+      ac.appendChild(bo);ac.appendChild(be);ac.appendChild(bt);ac.appendChild(bx);n.appendChild(ac);n.appendChild(ex);box.appendChild(n);
     });
   }
   function linhaOpcao(o){
@@ -3927,7 +3936,10 @@ dialog .da .btn{min-width:110px}
       var ac=el('div','acts'),sv=el('button','btn sm go','Salvar preço'),at=el('button','btn sm',o.ativo?'Ocultar opção':'Mostrar opção');sv.type=at.type='button';
       sv.addEventListener('click',function(){sb.from('opcoes').update({preco_adicional:+pr[1].value||0,ordem:+od[1].value||0}).eq('id',o.id).then(function(x){if(x.error){toast(msgMont(x.error),true);return;}toast('Opção salva.');loadMontagem();});});
       at.addEventListener('click',function(){sb.from('opcoes').update({ativo:!o.ativo}).eq('id',o.id).then(function(x){if(x.error){toast(msgMont(x.error),true);return;}loadMontagem();});});
-      ac.appendChild(sv);ac.appendChild(at);ed.appendChild(ac);
+      var ex=el('button','btn sm danger','Excluir opção');ex.type='button';
+      ex.addEventListener('click',function(){confirmar('Excluir esta opção?',[o.nome,'Some do cardápio e das fichas. Pedidos antigos não mudam. Para só tirar do ar por hoje, use "Acabou hoje".'],'Sim, excluir',true).then(function(y){if(!y)return;
+        sb.rpc('admin_excluir_opcao',{p_id:o.id}).then(function(x){if(x.error){toast('Não consegui excluir a opção.',true);return;}toast('Opção excluída.');loadMontagem();});});});
+      ac.appendChild(sv);ac.appendChild(at);ac.appendChild(ex);ed.appendChild(ac);
       if(can('custos.ver'))fichaOpcao(o,ed);
       ed.hidden=false;
     });

@@ -262,7 +262,7 @@ window.TQR_DEV=(function(){
     }
     function renderMont(){
       var box=document.getElementById('montBox'),list=document.getElementById('montList'),temP=PRODS.some(function(p){return gruposDe(p.id).length;});
-      box.hidden=!(GRUPOS.length&&temP);list.textContent='';
+      box.hidden=!(GRUPOS.length&&temP);list.textContent='';montBtn();
       MONT.forEach(function(m){
         var card=document.createElement('div');card.className='mont-card';
         var top=document.createElement('div');top.className='mont-top';
@@ -296,10 +296,18 @@ window.TQR_DEV=(function(){
         rm.addEventListener('click',function(){MONT=MONT.filter(function(x){return x!==m;});renderMont();update();});card.appendChild(rm);
         list.appendChild(card);});
     }
+    var montRot=document.getElementById('montAdd').textContent;
+    function montBtn(){
+      var b=document.getElementById('montAdd');b.textContent=MONT.length?'+ Montar outra garrafa diferente':montRot;
+    }
     document.getElementById('montAdd').addEventListener('click',function(){
+      var h=document.getElementById('qtyHint');
       var p=PRODS.filter(function(x){return gruposDe(x.id).length&&qtdProduto(x.id)-usadoMont(x.id)>0;})[0];
-      if(!p){var h=document.getElementById('qtyHint');h.textContent='Aumente a quantidade de garrafas para montar mais uma.';return;}
-      MONT.push({pid:p.id,q:1,sel:{}});renderMont();update();
+      if(!p){h.textContent=MONT.length?'Todas as garrafas já estão em uma montagem. Para montar uma diferente, diminua as garrafas de uma montagem acima.':'Aumente a quantidade de garrafas para montar.';return;}
+      h.textContent='';
+      // a montagem nova vale para todas as garrafas que ainda estão sem montagem; reduza para separar
+      MONT.push({pid:p.id,q:qtdProduto(p.id)-usadoMont(p.id),sel:{}});renderMont();update();
+      var cs=document.querySelectorAll('#montList .mont-card'),u=cs[cs.length-1];if(u&&u.scrollIntoView)u.scrollIntoView({block:'nearest'});
     });
     function montTexto(S){
       var ms=(S&&S.montagens)||[],L=[];
@@ -376,6 +384,27 @@ window.TQR_DEV=(function(){
       tf.hidden=!ent||!outro; ti.required=ent&&outro; if(!ent||!outro)ti.dataset.req=1;
       document.getElementById('bairroSel').required=ent&&usaSel;
     }
+    // ===== Oferta extra: "Que tal levar também?" (produtos marcados como sugestão no painel) =====
+    function qtdUpsell(pid){return CARRINHO?CART.filter(function(l){return l.pid===pid;}).reduce(function(a,l){return a+l.q;},0):(EXTRA[pid]||0);}
+    function mudaUpsell(pid,d){
+      if(CARRINHO){var k=pid+'|',l=CART.filter(function(x){return x.k===k;})[0];if(d>0)addLinha(pid,{},1);else if(l){l.q--;if(l.q<=0)CART=CART.filter(function(x){return x!==l;});}}
+      else EXTRA[pid]=Math.max(0,Math.min(QMAX,(EXTRA[pid]||0)+d));
+      update();
+    }
+    function renderUpsell(){
+      var box=document.getElementById('upsellBox'),list=document.getElementById('upsellList');if(!box||!list)return;
+      var L=PRODS.filter(function(p){return p.sugerir&&p!==MAIN&&+p.preco>0&&gruposDe(p.id).every(function(g){return !(g.minimo>0);});});
+      box.hidden=!L.length;list.textContent='';
+      L.forEach(function(p){
+        var r=document.createElement('div'),n=document.createElement('div'),sm=document.createElement('small'),q=qtdUpsell(p.id);
+        r.className='xrow';n.className='xn';n.textContent=p.nome;sm.textContent=rs(+p.preco)+(p.descricao?' · '+p.descricao:' cada');n.appendChild(sm);r.appendChild(n);
+        if(!q){var a=document.createElement('button');a.type='button';a.className='btn btn-ghost up-add';a.textContent='+ Adicionar';a.setAttribute('aria-label','Adicionar '+p.nome);a.addEventListener('click',function(){mudaUpsell(p.id,1);});r.appendChild(a);}
+        else{var st=document.createElement('div'),m=document.createElement('button'),pl=document.createElement('button'),b=document.createElement('b');
+          st.className='xs';m.type=pl.type='button';m.textContent='−';pl.textContent='+';b.textContent=q;m.setAttribute('aria-label','Diminuir '+p.nome);pl.setAttribute('aria-label','Aumentar '+p.nome);
+          m.addEventListener('click',function(){mudaUpsell(p.id,-1);});pl.addEventListener('click',function(){mudaUpsell(p.id,1);});
+          st.appendChild(m);st.appendChild(b);st.appendChild(pl);r.appendChild(st);}
+        list.appendChild(r);});
+    }
     function update(){
       var q=CARRINHO?unidades():Math.max(QMIN,Math.min(QMAX,parseInt(qty.value,10)||QMIN)); if(!CARRINHO)qty.value=q;
       var c=CARRINHO?calcCarrinho():calc(q), ent=tipo()==='entrega';
@@ -390,6 +419,7 @@ window.TQR_DEV=(function(){
       if(SIM&&simKey()===SIM._k){pinta(visaoSim(SIM));}
       agendarSim();
       cartExtra(q,c);
+      renderUpsell();
       return c;
     }
     function setQty(n){qty.value=n;update();var q=document.getElementById('qQty');if(q){q.value=n;document.getElementById('qTotal').textContent=brl(calc(+n).total);}}
@@ -554,7 +584,7 @@ window.TQR_DEV=(function(){
     document.querySelectorAll('a[data-qty]').forEach(function(a){a.addEventListener('click',function(){window.TQR_pedir(+a.dataset.qty);});});
     function renderExtras(){
       var box=document.getElementById('extraProds'); box.textContent='';
-      var outros=PRODS.slice(1); box.hidden=!outros.length; if(!outros.length)return;
+      var outros=PRODS.slice(1).filter(function(p){return !p.sugerir;}); box.hidden=!outros.length; if(!outros.length)return;
       outros.forEach(function(p){
         var r=document.createElement('div'),n=document.createElement('div'),sm=document.createElement('small'),st=document.createElement('div'),m=document.createElement('button'),pl=document.createElement('button'),b=document.createElement('b');
         r.className='xrow';n.className='xn';n.textContent=p.nome;sm.textContent=rs(+p.preco)+' cada';n.appendChild(sm);
@@ -797,7 +827,7 @@ window.TQR_DEV=(function(){
     }
     function aplicaVitrine(V){
       if(!V||!V.produtos||!V.produtos.length){aplicaPendente();return;}
-      PRODS=V.produtos.map(function(p){return {id:p.id,nome:p.nome,preco:+p.preco,descricao:p.descricao,foto_url:p.foto_url,volume_ml:p.volume_ml,categoria_id:p.categoria_id};});
+      PRODS=V.produtos.map(function(p){return {id:p.id,nome:p.nome,preco:+p.preco,descricao:p.descricao,foto_url:p.foto_url,volume_ml:p.volume_ml,categoria_id:p.categoria_id,sugerir:!!p.sugerir};});
       MAIN=PRODS[0];UN=MAIN.preco;COMBO=null;FAIXA=null;
       V.promocoes.forEach(function(x){
         var r=x.regra||{};

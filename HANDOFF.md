@@ -14,8 +14,16 @@ Este quadro substitui as listas antigas das seções 5.x onde houver conflito. `
 - [x] Licença da loja (migração 37): sincroniza a cada 5 min, 10 dias de tolerância, suspenso/cancelado bloqueia módulos pagos.
 - [x] Ajuda e Novidades do painel da loja e ajuda do painel mestre atualizadas.
 - [x] Administrador do mestre autorizado (martonnedias@gmail.com).
+- [x] Pedido em 3 abas (Pedido, Entrega, Pagamento) com Continuar/Voltar.
+- [x] Oferta extra no pedido ("Que tal levar também?") e exclusão de opções, grupos e categorias.
+- [x] Novos sabores: seção na página inicial e escolha de sabor com foto no pedido (Combo 3 e 5+ valem para qualquer mistura).
+- [x] Estoque de garrafas prontas por sabor (Estoque > Garrafas prontas), com bloqueio de venda no site. **Desligado**: para ativar, marque "Controlar estoque de garrafas prontas" no produto e registre a produção.
+- [x] Venda de balcão (Novo pedido), já paga e entregue; WhatsApp opcional.
 
 **Ações do dono (faltam)**
+- [ ] Informação nutricional e alérgenos dos sabores Tropical e Tentação (Nutella: avelã, leite e soja); a seção Ingredientes ainda descreve só o Tradicional.
+- [ ] Ligar o estoque de garrafas prontas quando for começar a controlar (produzir primeiro, ligar depois) e fazer um pedido de teste.
+- [ ] Teste em celular real do pedido com sabores e da mensagem do WhatsApp.
 - [ ] Cadastrar o autenticador (TOTP) no `/mestre/` e conferir que o cadastro público de usuários está desligado nos dois projetos Supabase (mestre e loja).
 - [ ] Cadastrar o assinante "TQR Açaí" no mestre, com o endereço do site e o código do banco da loja; gerar a chave e colar em Configurações > Licença do painel da loja.
 - [ ] Definir planos e preços reais (hoje R$ 0).

@@ -40,3 +40,6 @@ Os temas `hamburgueria` e `pizzaria` usam os blocos genéricos de `_comum/` e s�
 
 ## Etapas do pedido
 `pedido.html` mostra o pedido em 3 abas (Pedido, Entrega e dados, Pagamento) com botões Continuar/Voltar; o resumo fica sempre visível. As abas são montadas por `site.js` sobre os painéis `#pnl1..3` do modelo; sem JavaScript os três painéis aparecem juntos. Ao enviar com algum campo vazio, o site abre a etapa do campo e foca nele.
+
+## Sabores
+O tema `acai` tem o bloco `sabores` (cartões com as fotos em `img/sabor-*.webp`, links `pedido.html?sabor=...`). No pedido, os sabores vêm do banco: um grupo de opções marcado como "Sabor" em Montagem vira cartões com foto e contador; a soma dos sabores é a quantidade. Combo 3 e 5+ valem para qualquer mistura. Para outro cliente, cadastre o grupo "Sabor" com as opções (descrição curta e foto) e troque as imagens do bloco.

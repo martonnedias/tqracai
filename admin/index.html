@@ -2338,8 +2338,8 @@ dialog .da .btn{min-width:110px}
         var gf=el('div','grid2');[nc[0],cf[0],cs[0],og[0]].forEach(function(x){gf.appendChild(x);});var dtf=document.createElement('details');dtf.className='fiscal-det';var smf=document.createElement('summary');smf.textContent='Dados fiscais (nota fiscal)';dtf.appendChild(smf);dtf.appendChild(gf);ed.appendChild(dtf);
         var g2=el('div','row2');g2.appendChild(ord[0]);g2.appendChild(cat[0]);ed.appendChild(g2);ed.appendChild(ds[0]);
         var ft=campo('Trocar foto','file',null,{accept:'image/jpeg,image/png,image/webp'});ft[1].value='';ed.appendChild(ft[0]);
-        var ck=el('label','chk'),cb=document.createElement('input');cb.type='checkbox';cb.checked=p.ativo;ck.appendChild(cb);ck.appendChild(el('span',null,'Aparece no site'));ed.appendChild(ck);
-        var ck2=el('label','chk'),cb2=document.createElement('input');cb2.type='checkbox';cb2.checked=!!p.sugerir_venda;ck2.appendChild(cb2);ck2.appendChild(el('span',null,'Sugerir na hora do pedido ("Que tal levar também?")'));ed.appendChild(ck2);
+        var ck=el('label','chk'),cb=document.createElement('input');cb.type='checkbox';cb.checked=p.ativo;ck.appendChild(cb);ck.appendChild(el('span',null,'Aparece no site (lista e sugestões; desmarcado esconde de tudo)'));ed.appendChild(ck);
+        var ck2=el('label','chk'),cb2=document.createElement('input');cb2.type='checkbox';cb2.checked=!!p.sugerir_venda;ck2.appendChild(cb2);ck2.appendChild(el('span',null,'Sugerir na hora do pedido ("Que tal levar também?"); no modo Garrafa o produto aparece só como sugestão, não na lista'));ed.appendChild(ck2);
         var fam=campo('Família (sabores e promoções)','text',p.familia,{maxlength:40,placeholder:'ex.: acai-300 (igual em todos os sabores)'});ed.appendChild(fam[0]);
         var ck3=el('label','chk'),cb3=document.createElement('input');cb3.type='checkbox';cb3.checked=!!p.controla_pronto;ck3.appendChild(cb3);ck3.appendChild(el('span',null,'Controlar estoque de garrafas prontas (o site só vende o que houver em Estoque > Garrafas prontas)'));ed.appendChild(ck3);
         var ac=el('div','acts'),sv=el('button','btn sm go','Salvar');sv.type='button';
@@ -2354,6 +2354,7 @@ dialog .da .btn{min-width:110px}
             sb.from('produtos').update(campos).eq('id',p.id).then(function(x){if(x.error){toast('Não consegui salvar o produto.',true);return;}toast('Produto salvo.');loadProdutos();});
           }
           function com(url){
+            if(!cb.checked&&cb2.checked&&p.ativo){confirmar('Esconder este produto do site?',[nm[1].value.trim(),'Desmarcar "Aparece no site" tira o produto de tudo, inclusive de "Que tal levar também?".','Para ele aparecer só como sugestão, deixe "Aparece no site" marcado e mantenha "Sugerir na hora do pedido".'],'Esconder mesmo',true).then(function(y){if(y)grava(url);});return;}
             if(antes!==novo){confirmar('Alterar o preço?',[nm[1].value.trim(),brl(antes)+'  →  '+brl(novo),'Vale para os próximos pedidos; promoções são recalculadas.'],'Sim, alterar').then(function(ok){if(ok)grava(url);});}
             else grava(url);
           }

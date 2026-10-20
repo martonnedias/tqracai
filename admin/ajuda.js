@@ -155,7 +155,7 @@ window.TQR_AJUDA = {
     'Ordem': 'Número que define a posição na lista. Menor aparece primeiro; o primeiro produto é o principal do formulário.',
     'Descrição curta': 'Frase curta que aparece no site embaixo do nome do produto.',
     'Trocar foto': 'Imagem do produto: JPG, PNG ou WebP, até 2 MB. Se não escolher, mantém a atual.',
-    'Aparece no site': 'Desmarcado, o produto some do site mas continua nos pedidos antigos.',
+    'Aparece no site': 'Desmarcado, o produto some do site inteiro (lista, pedido e "Que tal levar também?"), mas continua nos pedidos antigos. Para um produto aparecer só como sugestão (ex.: água), deixe marcado e ative "Sugerir na hora do pedido".',
     // Promoções
     'Nome interno': 'Nome só para você se organizar. O cliente não vê.',
     'Código do cupom': 'Palavra que o cliente digita (3 a 30 letras, números, - ou _). Deixe vazio para a promoção ser automática.',

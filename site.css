@@ -904,3 +904,5 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
 @media (max-width:520px){.sab-row{grid-template-columns:64px minmax(0,1fr);gap:10px}.sab-row img{width:64px;height:64px}.sab-row>:last-child{grid-column:1/-1;justify-self:end}.sab-row:not(:has(img)){grid-template-columns:minmax(0,1fr)}}
 
 .mont .btn{width:100%;white-space:normal;text-align:center}
+
+.hint-warn{color:#ffd9a0}

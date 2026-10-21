@@ -9,7 +9,7 @@ python3 temas/gerar_site.py --tema pizzaria              # força outro tema
 python3 temas/gerar_site.py --loja temas/exemplo-loja.json --saida /tmp/prévia   # prévia sem tocar no site
 ```
 
-Escreve `index.html`, `pedido.html` e `tema.css` (cores do tema). Páginas geradas não devem ser editadas à mão: mude o tema ou o `loja.json` e rode de novo.
+Escreve `index.html`, `pedido.html`, as páginas extras do tema (se houver) e `tema.css` (cores do tema). Páginas geradas não devem ser editadas à mão: mude o tema ou o `loja.json` e rode de novo.
 
 ## Temas que existem
 | Tema | Para quê | Cardápio |
@@ -20,6 +20,13 @@ Escreve `index.html`, `pedido.html` e `tema.css` (cores do tema). Páginas gerad
 
 Os temas `hamburgueria` e `pizzaria` usam os blocos genéricos de `_comum/` e só trazem textos em `tema.json`. Sem fotos de produto: o topo usa um emoji
 (`hero_emoji`) e os cartões de categoria também. Para usar fotos, troque o bloco `hero`/`ofertas` do tema por um próprio.
+
+## Páginas extras (`paginas` no `tema.json`)
+Um tema pode tirar seções da página inicial e colocá-las em páginas próprias, para a home ficar curta. Cada entrada de `paginas` tem
+`arquivo` (ex.: `pontos.html`), `secoes` (blocos, na ordem), `titulo` e `descricao` (SEO). O gerador usa o mesmo esqueleto (menu, rodapé, botão de pedir).
+`rodape_links` (HTML) acrescenta links no rodapé. Links antigos como `index.html#pontos` continuam valendo: a home redireciona a âncora para a página nova.
+O tema `acai` usa: home com `hero`, `cardapio`, `como`, `porque`, `faq`, `final`; páginas `pontos.html`, `revenda.html` e `sobre.html` (história, ingredientes e tabela nutricional, fotos reais, Instagram).
+Os temas `hamburgueria` e `pizzaria` não declaram `paginas` e seguem com tudo na página inicial.
 
 ## Como criar um tema novo
 1. `temas/<id>/tema.json`: copie o de `hamburgueria` e troque os textos. Campos principais: `secoes` (ordem), `cores` (`destaque`, `fundo`; o roxo decorativo acompanha o tom do destaque),

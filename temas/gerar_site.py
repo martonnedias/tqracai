@@ -118,26 +118,45 @@ def main():
     tema = carregar_json(os.path.join(pasta, "tema.json"))
     ctx = {"loja": loja, "tema": tema}
 
-    partes = []
-    for s in tema["secoes"]:
-        for base in (pasta, os.path.join(RAIZ, "temas", "_comum")):
-            cam = os.path.join(base, "blocos", s + ".html")
-            if os.path.exists(cam):
-                partes.append(resolve(ler(cam), ctx, f"bloco {s}").rstrip("\n"))
-                break
-        else:
-            sys.exit(f"ERRO: seção '{s}' não existe no tema nem em _comum")
-    pagina = ler(os.path.join(RAIZ, "temas", "base", "index.tpl.html"))
-    pagina = pagina.replace("{{secoes}}", "\n".join(partes))
-    pagina = pagina.replace("{{schema}}", schema(loja, tema))
-    pagina = resolve(pagina, ctx, "esqueleto")
-    sobra = re.findall(r"\{\{[^}]*\}\}", pagina)
-    if sobra:
-        sys.exit("ERRO: variáveis sem resolver na página: " + ", ".join(sorted(set(sobra))))
+    paginas = tema.get("paginas", {})
 
-    os.makedirs(a.saida, exist_ok=True)
-    with open(os.path.join(a.saida, "index.html"), "w", encoding="utf-8", newline="\n") as f:
-        f.write(pagina)
+    def monta(secoes, pag, arquivo):
+        partes = []
+        for s in secoes:
+            for base in (pasta, os.path.join(RAIZ, "temas", "_comum")):
+                cam = os.path.join(base, "blocos", s + ".html")
+                if os.path.exists(cam):
+                    partes.append(resolve(ler(cam), {**ctx, "pag": pag}, f"bloco {s}").rstrip("\n"))
+                    break
+            else:
+                sys.exit(f"ERRO: seção '{s}' não existe no tema nem em _comum")
+        modelo = ler(os.path.join(RAIZ, "temas", "base", "index.tpl.html"))
+        html = modelo.replace("{{secoes}}", "\n".join(partes)).replace("{{schema}}", schema(loja, tema))
+        html = resolve(html, {**ctx, "pag": pag}, f"esqueleto de {arquivo}")
+        sobra = re.findall(r"\{\{[^}]*\}\}", html)
+        if sobra:
+            sys.exit(f"ERRO: variáveis sem resolver em {arquivo}: " + ", ".join(sorted(set(sobra))))
+        os.makedirs(a.saida, exist_ok=True)
+        with open(os.path.join(a.saida, arquivo), "w", encoding="utf-8", newline="\n") as f:
+            f.write(html)
+
+    # Páginas extras do tema (ex.: pontos.html, revenda.html). O que o tema não move para fora continua na página inicial.
+    redir = {"#" + k: v["arquivo"] for k, v in paginas.items()}
+    for k in paginas:
+        for sec in paginas[k]["secoes"]:
+            if sec != "final":
+                redir["#" + sec] = paginas[k]["arquivo"]
+    script_hash = ("<script>(function(){var m=" + json.dumps(redir) + ",d=m[location.hash];if(d)location.replace(d);})();</script>") if redir else ""
+    comum = {"inicio": "#topo", "link_pontos": paginas["pontos"]["arquivo"] if "pontos" in paginas else "#pontos",
+             "rodape_links": tema.get("rodape_links", ""), "classe_main": "", "local": "inicio",
+             "titulo": tema["titulo"], "descricao": tema["descricao"], "og_titulo": tema["og_titulo"],
+             "og_descricao": tema["og_descricao"], "url": loja["url"], "script_hash": script_hash}
+    monta(tema["secoes"], comum, "index.html")
+    for k, pg in paginas.items():
+        pag = {**comum, "inicio": "index.html", "classe_main": "pagina", "local": k, "script_hash": "",
+               "titulo": pg["titulo"], "descricao": pg["descricao"], "og_titulo": pg["titulo"],
+               "og_descricao": pg["descricao"], "url": loja["url"] + pg["arquivo"]}
+        monta(pg["secoes"], pag, pg["arquivo"])
     ped = resolve(ler(os.path.join(RAIZ, "temas", "base", "pedido.tpl.html")), ctx, "pedido")
     sobra = re.findall(r"\{\{[^}]*\}\}", ped)
     if sobra:
@@ -146,7 +165,7 @@ def main():
         f.write(ped)
     with open(os.path.join(a.saida, "tema.css"), "w", encoding="utf-8", newline="\n") as f:
         f.write(css_cores(tema.get("cores")))
-    print(f"Site gerado: tema '{tid}' ({len(tema['secoes'])} seções) -> {a.saida}")
+    print(f"Site gerado: tema '{tid}' ({len(tema['secoes'])} seções, {len(paginas)} páginas extras) -> {a.saida}")
 
 
 if __name__ == "__main__":

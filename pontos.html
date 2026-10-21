@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="pt-BR" data-unid="garrafa" data-unids="garrafas" data-prox="a próxima garrafa grátis" data-resg="minha garrafa grátis" data-prefixo="TQR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Programa de pontos | #TQR Açaí</title>
+<meta name="description" content="Cada pedido pago vira pontos no #TQR Açaí. Junte e troque por garrafa grátis. Consulte seu saldo.">
+<meta name="theme-color" content="#1a0624">
+<!-- Ao trocar para o domínio próprio, atualize BASE nestas 4 linhas e no sitemap.xml/robots.txt -->
+<link rel="canonical" href="https://martonnedias.github.io/tqracai/pontos.html">
+<meta property="og:url" content="https://martonnedias.github.io/tqracai/pontos.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Programa de pontos | #TQR Açaí">
+<meta property="og:description" content="Cada pedido pago vira pontos no #TQR Açaí. Junte e troque por garrafa grátis. Consulte seu saldo.">
+<meta property="og:image" content="https://martonnedias.github.io/tqracai/img/og-image.jpg">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="img/rotulo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- ===== RASTREAMENTO =====
+  Preencha os IDs abaixo. As ferramentas só carregam depois que o visitante aceitar os cookies (LGPD).
+  Ex.: ga4:'G-ABC123XYZ', metaPixel:'123456789012345'  -->
+<script>window.TQR_TRACKING={ga4:'',metaPixel:''};
+/* Número que recebe os pedidos (só dígitos, com 55). TEMPORÁRIO: número de teste. Original: 5586995884770 */
+window.TQR_FONE='5586994144709';
+/* Proteção contra robôs (Cloudflare Turnstile). Vazio = desligado e o pedido vai direto ao banco.
+   Preencher só depois de publicar a função supabase/functions/criar-pedido (veja o README dela). */
+window.TQR_TURNSTILE='';</script>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FoodEstablishment","name":"#TQR Açaí","servesCuisine":"Açaí","telephone":"+55-86-99588-4770","priceRange":"R$ 14–17","address":{"@type":"PostalAddress","addressLocality":"Teresina","addressRegion":"PI","addressCountry":"BR"},"areaServed":"Teresina","openingHours":"Mo-Su 08:00-02:00","paymentAccepted":"Pix, Cartão","taxID":"59.270.529/0001-78","sameAs":["https://instagram.com/tqracai"],"image":"https://martonnedias.github.io/tqracai/img/og-image.jpg"}
+</script>
+
+<link rel="stylesheet" href="site.css?v=29">
+<link rel="stylesheet" href="tema.css">
+
+</head>
+<body>
+<a class="skip" href="#topo">Ir para o conteúdo</a>
+
+<!-- Ícone WhatsApp reutilizável -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="wa" viewBox="0 0 24 24"><path fill="currentColor" d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.39-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35zM12.05 21.5h-.01a9.4 9.4 0 0 1-4.8-1.31l-.34-.2-3.57.94.95-3.48-.22-.36a9.43 9.43 0 0 1-1.45-5.03c0-5.2 4.24-9.44 9.45-9.44 2.52 0 4.89.99 6.67 2.77a9.37 9.37 0 0 1 2.76 6.68c0 5.2-4.24 9.43-9.44 9.43zm8.04-17.47A11.3 11.3 0 0 0 12.05.7C5.79.7.69 5.8.69 12.06c0 2 .52 3.96 1.52 5.68L.6 23.6l6-1.57a11.33 11.33 0 0 0 5.43 1.38h.01c6.26 0 11.36-5.1 11.36-11.36 0-3.03-1.18-5.89-3.32-8.03z"/></symbol>
+  <symbol id="bag" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 7h12l-1 12H7L6 7Z M9 7a3 3 0 0 1 6 0"/></symbol>
+</svg>
+
+<header class="top" id="topbar"><span class="scroll-progress" aria-hidden="true"></span>
+  <div class="wrap">
+    <a href="index.html" class="brand"><img src="img/rotulo.webp" alt="#TQR Açaí" width="44" height="44"><span>#TQR Açaí</span></a>
+    <nav class="nav" aria-label="Menu"><a href="index.html#sabores">Cardápio</a><a href="index.html#como">Como funciona</a><a href="sobre.html">Sobre</a><a class="nav-pts" href="pontos.html"><svg class="i-star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.8l2.7 5.9 6.4.7-4.8 4.3 1.4 6.3L12 16.8 6.3 20l1.4-6.3L2.9 9.4l6.4-.7L12 2.8z"/></svg>Meus pontos</a><a href="pedido.html">Fazer pedido</a><a href="blog/index.html">Blog</a></nav>
+    <a class="top-pts" href="pontos.html" aria-label="Consultar meus pontos"><svg class="i-star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.8l2.7 5.9 6.4.7-4.8 4.3 1.4 6.3L12 16.8 6.3 20l1.4-6.3L2.9 9.4l6.4-.7L12 2.8z"/></svg><span>Pontos</span></a>
+    <a class="btn btn-gold" data-cta="topbar" href="pedido.html" aria-label="Fazer pedido"><svg><use href="#bag"/></svg><span class="t">Fazer pedido</span></a>
+  </div>
+</header>
+
+<main id="topo" class="pagina">
+
+<section class="pts" id="pontos">
+  <div class="wrap center">
+    <span class="eyebrow">Programa de pontos</span>
+    <h2 class="rv">Quanto mais você pede, <span class="gold">mais ganha</span></h2>
+    <p class="lead rv">Cada pedido pago vira pontos. Junte e troque por garrafa grátis.</p>
+    <div class="pt-grid">
+      <div class="pt-card rv"><div class="pn gold" id="ptReal">1 ponto</div><p>a cada <b>R$ 1</b> em pedidos pagos.</p></div>
+      <div class="pt-card rv"><div class="pn gold" id="ptBrinde">170 pontos</div><p>valem <b>1 garrafa grátis</b>. Dá para juntar e resgatar várias.</p></div>
+      <div class="pt-card rv"><div class="pn gold">🎂</div><p>No <b>mês do seu aniversário</b> você ganha pontos de brinde, uma vez por ano. Informe a data de nascimento no cadastro.</p></div>
+    </div>
+    <div class="pt-check" id="ptCheck">
+      <h3>Consulte seus pontos</h3>
+      <p class="hint" style="color:var(--muted)">Neste aparelho, onde você já fez pedido, seus pontos aparecem direto. Em outro aparelho, informe o WhatsApp e o código de acesso de um pedido seu.</p>
+      <div class="row"><input type="tel" id="ptZap" inputmode="tel" autocomplete="tel" placeholder="(86) 99999-9999" aria-label="Seu WhatsApp"><button type="button" class="btn btn-gold" id="ptPedir">Ver meus pontos</button></div>
+      <div class="row" id="ptCodRow" hidden><input type="text" id="ptCod" inputmode="text" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="TQR-0000-XXXX" aria-label="Código de acesso do pedido"><button type="button" class="btn btn-gold" id="ptOk">Confirmar</button></div>
+      <p class="hint" id="ptMsg" role="status" hidden></p>
+      <div id="ptRes" hidden></div>
+    </div>
+    <p class="lead" style="margin:18px auto 0;font-size:.82rem">Os pontos entram quando o pagamento é confirmado. Pedido cancelado após o pagamento tem os pontos estornados.</p>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <img class="logo rv" src="img/rotulo.webp" alt="#TQR Açaí" loading="lazy">
+    <h2 class="rv">Seu açaí está a <span class="script gold">uma mensagem</span> de distância.</h2>
+    <p class="lead rv" style="margin:0 auto">Combo 3 por <span data-v="combo-total">R$ 45</span> ou <span data-v="faixa-un">R$ 14</span> cada a partir de 5 garrafas, com entrega grátis. Atendimento hoje até as 2h.</p>
+    <a class="btn btn-gold rv" href="pedido.html" data-cta="final"><svg><use href="#bag"/></svg>Fazer meu pedido agora</a>
+    <div class="micro" style="justify-content:center"><span>Resposta pelo WhatsApp</span><span>Pix ou cartão</span><span>Toda Teresina</span></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><strong style="color:#fff">#TQR Açaí</strong> · Sabor que refresca e energiza<br>Teresina – PI · Todos os dias, das 8h às 2h
+      <p class="legal"><!-- PREENCHER: dados obrigatórios (Decreto 7.962/2013) -->CNPJ 59.270.529/0001-78 · Teresina – PI</p></div>
+    <div>WhatsApp: <a href="#" data-wa="contato" data-src="rodape">(86) 99588-4770</a><br>Instagram: <a href="https://instagram.com/tqracai" target="_blank" rel="noopener">@tqracai</a><br><a href="blog/index.html">Blog #TQR</a></div>
+  </div>
+  <div class="wrap foot-links"><a href="pontos.html">Consultar meus pontos</a><a href="sobre.html">Sobre a #TQR</a><a href="revenda.html">Revenda</a><a href="politicas/termos.html">Termos de Uso</a><a href="politicas/privacidade.html">Privacidade</a><a href="politicas/cookies.html">Cookies</a><a href="politicas/trocas-e-devolucoes.html">Trocas e devoluções</a><a href="#" id="cookiePrefs">Preferências de cookies</a></div>
+  <div class="wrap copy">© 2026 #TQR Açaí. Fotos ilustrativas; algumas imagens foram produzidas com auxílio de IA.</div>
+</footer>
+
+<div class="cookie" id="cookieBar" role="dialog" aria-live="polite" aria-label="Aviso de cookies" hidden>
+  <p><strong>Cookies 🍪</strong> Usamos cookies para medir visitas e o resultado dos nossos anúncios. Você escolhe. <a href="politicas/cookies.html">Saiba mais</a></p>
+  <div class="cookie-btns"><button type="button" class="cbtn ghost" data-consent="essenciais">Só essenciais</button><button type="button" class="cbtn gold" data-consent="todos">Aceitar todos</button></div>
+</div>
+
+<a class="fab" data-cta="flutuante" href="pedido.html" aria-label="Fazer pedido"><svg><use href="#bag"/></svg></a>
+<div class="mbar" id="mbar"><div class="p">a partir de<b>R$ 14</b></div><a class="btn btn-gold" data-cta="barra-mobile" href="pedido.html"><svg><use href="#bag"/></svg>Fazer pedido</a></div>
+
+<script src="marca-site.js?v=1" defer></script>
+<script src="site.js?v=14" defer></script>
+<script src="efeitos.js?v=1" defer></script>
+<dialog id="pixDlg" style="max-width:380px;width:92vw;border:1px solid var(--line);border-radius:18px;background:var(--bg2);color:var(--text);padding:22px">
+  <h3 style="margin:0 0 6px;font-size:1.2rem">Pague com Pix</h3>
+  <p style="margin:0 0 10px;color:var(--muted)">Pedido <b data-pix="cod"></b> · <b data-pix="valor"></b></p>
+  <p data-pix="teste" hidden style="background:#5a1020;border-radius:10px;padding:8px;font-size:.85rem">PIX DE TESTE – não gera cobrança real.</p>
+  <img data-pix="qr" alt="QR Code do Pix" hidden style="width:200px;height:200px;display:block;margin:8px auto;background:#fff;padding:6px;border-radius:10px">
+  <label style="font-size:.85rem;color:var(--muted)">Pix copia e cola</label>
+  <input data-pix="chave" readonly style="width:100%;margin:4px 0 10px;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text)">
+  <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn btn-gold" data-pix="copiar">Copiar Pix</button><button type="button" class="btn" data-pix="fechar">Fechar</button></div>
+  <p data-pix="status" role="status" style="margin:12px 0 0;font-size:.9rem;color:var(--gold2)"></p>
+</dialog>
+<script src="prova-social.js" data-local="pontos" defer></script>
+</body>
+</html>

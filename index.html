@@ -34,8 +34,9 @@ window.TQR_TURNSTILE='';</script>
 {"@context":"https://schema.org","@type":"FoodEstablishment","name":"#TQR Açaí","servesCuisine":"Açaí","telephone":"+55-86-99588-4770","priceRange":"R$ 14–17","address":{"@type":"PostalAddress","addressLocality":"Teresina","addressRegion":"PI","addressCountry":"BR"},"areaServed":"Teresina","openingHours":"Mo-Su 08:00-02:00","paymentAccepted":"Pix, Cartão","taxID":"59.270.529/0001-78","sameAs":["https://instagram.com/tqracai"],"image":"https://martonnedias.github.io/tqracai/img/og-image.jpg"}
 </script>
 
-<link rel="stylesheet" href="site.css?v=28">
+<link rel="stylesheet" href="site.css?v=29">
 <link rel="stylesheet" href="tema.css">
+<script>(function(){var m={"#pontos": "pontos.html", "#revenda": "revenda.html", "#sobre": "sobre.html", "#historia": "sobre.html", "#ingredientes": "sobre.html", "#galeria": "sobre.html", "#instagram": "sobre.html"},d=m[location.hash];if(d)location.replace(d);})();</script>
 </head>
 <body>
 <a class="skip" href="#topo">Ir para o conteúdo</a>
@@ -49,13 +50,13 @@ window.TQR_TURNSTILE='';</script>
 <header class="top" id="topbar"><span class="scroll-progress" aria-hidden="true"></span>
   <div class="wrap">
     <a href="#topo" class="brand"><img src="img/rotulo.webp" alt="#TQR Açaí" width="44" height="44"><span>#TQR Açaí</span></a>
-    <nav class="nav" aria-label="Menu"><a href="#ofertas">Ofertas</a><a href="#como">Como funciona</a><a class="nav-pts" href="#pontos"><svg class="i-star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.8l2.7 5.9 6.4.7-4.8 4.3 1.4 6.3L12 16.8 6.3 20l1.4-6.3L2.9 9.4l6.4-.7L12 2.8z"/></svg>Meus pontos</a><a href="pedido.html">Fazer pedido</a><a href="blog/index.html">Blog</a></nav>
-    <a class="top-pts" href="#pontos" aria-label="Consultar meus pontos"><svg class="i-star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.8l2.7 5.9 6.4.7-4.8 4.3 1.4 6.3L12 16.8 6.3 20l1.4-6.3L2.9 9.4l6.4-.7L12 2.8z"/></svg><span>Pontos</span></a>
+    <nav class="nav" aria-label="Menu"><a href="index.html#sabores">Cardápio</a><a href="index.html#como">Como funciona</a><a href="sobre.html">Sobre</a><a class="nav-pts" href="pontos.html"><svg class="i-star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.8l2.7 5.9 6.4.7-4.8 4.3 1.4 6.3L12 16.8 6.3 20l1.4-6.3L2.9 9.4l6.4-.7L12 2.8z"/></svg>Meus pontos</a><a href="pedido.html">Fazer pedido</a><a href="blog/index.html">Blog</a></nav>
+    <a class="top-pts" href="pontos.html" aria-label="Consultar meus pontos"><svg class="i-star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.8l2.7 5.9 6.4.7-4.8 4.3 1.4 6.3L12 16.8 6.3 20l1.4-6.3L2.9 9.4l6.4-.7L12 2.8z"/></svg><span>Pontos</span></a>
     <a class="btn btn-gold" data-cta="topbar" href="pedido.html" aria-label="Fazer pedido"><svg><use href="#bag"/></svg><span class="t">Fazer pedido</span></a>
   </div>
 </header>
 
-<main id="topo">
+<main id="topo" class="">
 
 <!-- ================= A — ATENÇÃO ================= -->
 <section class="hero">
@@ -78,7 +79,6 @@ window.TQR_TURNSTILE='';</script>
         <a class="btn btn-gold q-go" href="pedido.html" id="quickGo">Continuar meu pedido <span aria-hidden="true">→</span></a>
       </div>
       <a class="sab-hint" href="#sabores"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>3 sabores: Tradicional, TQR Tropical e TQR Tentação <span aria-hidden="true">→</span></a>
-      <div class="micro"><span>Pedido mínimo: 1 garrafa</span><span>Pix ou cartão</span><span>Delivery ou retirada</span></div>
     </div>
     <div class="hero-visual">
       <div class="core" aria-hidden="true">
@@ -108,9 +108,9 @@ window.TQR_TURNSTILE='';</script>
 
 <section class="sabores" id="sabores">
   <div class="wrap center">
-    <span class="eyebrow">Três sabores</span>
+    <span class="eyebrow">Cardápio</span>
     <h2 class="rv">Escolha o seu <span class="gold">sabor</span></h2>
-    <p class="lead rv">Todos na garrafa de 300 ml, prontos para tomar, gelados e no ponto.</p>
+    <p class="lead rv">Três sabores na garrafa de 300 ml, prontos para tomar, gelados e no ponto.</p>
     <div class="sab-grid">
       <article class="sab-card rv">
         <img src="img/sabor-tradicional.webp" alt="Garrafa #TQR Açaí Tradicional, com leite condensado, leite em pó e açaí" width="800" height="800" loading="lazy">
@@ -130,9 +130,8 @@ window.TQR_TURNSTILE='';</script>
 
 <section class="offers" id="ofertas">
   <div class="wrap center">
-    <span class="eyebrow">Escolha o seu</span>
     <h2 class="rv">Quanto mais garrafas, <span class="gold">menos você paga</span></h2>
-    <p class="lead rv">Escolha uma opção e toque no botão para montar o seu pedido.</p>
+    <p class="lead rv">Misture os sabores como quiser. Toque no botão para montar o seu pedido.</p>
     <div class="plans">
       <div class="plan rv">
         <div class="pimg cover"><img src="img/hf-hero.webp" alt="1 garrafa #TQR Açaí" loading="lazy" style="object-position:50% 40%"></div>
@@ -164,43 +163,6 @@ window.TQR_TURNSTILE='';</script>
   </div>
 </section>
 
-<!-- ================= I — INTERESSE ================= -->
-<section class="problem">
-  <div class="wrap split">
-    <div class="problem-img slider rv" id="lifeSlider" aria-roledescription="carrossel" aria-label="Pessoas tomando #TQR Açaí">
-      <div class="slides" tabindex="0"><figure class="slide"><img src="img/hf-lifestyle.webp" alt="Mão segurando uma garrafa gelada de #TQR Açaí ao ar livre" loading="eager" width="680" height="907"><figcaption>Fim de tarde na praça</figcaption></figure><figure class="slide"><img src="img/sl-amigos.webp" alt="Amigos brindando com garrafas de #TQR Açaí ao pôr do sol" loading="lazy" width="680" height="907"><figcaption>Com a galera</figcaption></figure><figure class="slide"><img src="img/sl-trabalho.webp" alt="Rapaz mostrando a garrafa de #TQR Açaí no escritório" loading="lazy" width="680" height="907"><figcaption>Pausa no trabalho</figcaption></figure><figure class="slide"><img src="img/sl-noite.webp" alt="Moça sorrindo com uma garrafa de #TQR Açaí no sofá" loading="lazy" width="680" height="907"><figcaption>Noite no sofá</figcaption></figure></div>
-      <button type="button" class="sl-nav prev" aria-label="Foto anterior">‹</button>
-      <button type="button" class="sl-nav next" aria-label="Próxima foto">›</button>
-      <div class="sl-dots"><button type="button" aria-label="Foto 1"></button><button type="button" aria-label="Foto 2"></button><button type="button" aria-label="Foto 3"></button><button type="button" aria-label="Foto 4"></button></div>
-      <div class="sl-bar"><i></i></div>
-    </div>
-    <div class="rv">
-      <span class="eyebrow">Por que na garrafa</span>
-      <h2>Bateu a vontade às 11 da noite? <span class="gold">A gente entrega.</span></h2>
-      <p class="lead">O #TQR Açaí chega gelado e no ponto de tomar. Agitou, abriu, tomou. Sem fila, sem copo derretendo no caminho, onde você estiver.</p>
-      <ul class="checks">
-        <li>Grosso e cremoso, com o gosto do açaí tradicional de Teresina</li>
-        <li>Garrafa fechada de 300 ml que cabe na bolsa, na mochila da academia e na lancheira</li>
-        <li>Dá pra fazer estoque: com 3 garrafas, cada uma sai por <span data-v="combo-un">R$ 15</span></li>
-      </ul>
-      <a class="btn btn-gold" data-cta="problema" href="pedido.html"><svg><use href="#bag"/></svg>Pedir minha garrafa</a>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap center">
-    <span class="eyebrow">Sabor que refresca e energiza</span>
-    <h2 class="rv">Mais que um açaí, <span class="script gold">é energia no seu dia.</span></h2>
-    <div class="benefits">
-      <div class="benefit rv"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 19c0-8 6-14 15-14 0 9-6 15-14 15"/><path d="M5 19l8-8"/></svg></div><h3>100% <span>natural</span></h3><p>Açaí de verdade como base da receita, 200 g em cada garrafa.</p></div>
-      <div class="benefit rv"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg></div><h3>Fonte de <span>energia</span></h3><p>372 kcal por garrafa. Bom para o pré ou pós-treino e para o lanche da tarde.</p></div>
-      <div class="benefit rv"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></div><h3>Rico em <span>antioxidantes</span></h3><p>O açaí é conhecido pelas antocianinas, que dão a cor roxa intensa.</p></div>
-      <div class="benefit rv"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20M4.9 6.5l14.2 11M4.9 17.5l14.2-11"/><path d="M9 4l3 2 3-2M9 20l3-2 3 2"/></svg></div><h3>Pronto pra <span>tomar</span></h3><p>Chega no ponto. É só agitar a garrafa e aproveitar gelado.</p></div>
-    </div>
-  </div>
-</section>
-
 <section class="how" id="como">
   <div class="wrap center">
     <span class="eyebrow">Como funciona</span>
@@ -214,165 +176,18 @@ window.TQR_TURNSTILE='';</script>
   </div>
 </section>
 
-<!-- ================= D — DESEJO ================= -->
-<section class="ingr">
-  <div class="wrap split">
-    <div class="rv">
-      <span class="eyebrow">Transparência total</span>
-      <h2>Quatro ingredientes. <span class="gold">Nada escondido.</span></h2>
-      <p class="lead">A receita do tradicional, com as quantidades exatas que vão em cada garrafa de 300 ml.</p>
-      <div class="ingr-list">
-        <div class="ingr-item"><b>200 g</b><span>de açaí</span></div>
-        <div class="ingr-item"><b>75 ml</b><span>de leite</span></div>
-        <div class="ingr-item"><b>40 g</b><span>de leite condensado</span></div>
-        <div class="ingr-item"><b>20 g</b><span>de leite em pó</span></div>
-      </div>
-      <p class="allergen"><strong>ALÉRGICOS: CONTÉM LEITE E DERIVADOS. CONTÉM LACTOSE.</strong></p>
-    </div>
-    <div class="nutri rv" aria-label="Informação nutricional">
-      <h3>INFORMAÇÃO NUTRICIONAL</h3>
-      <div class="portion">Porção de 300 ml (1 garrafa)</div>
-      <table>
-        <tr><th>Quantidade por porção</th><th></th><th>%VD(*)</th></tr>
-        <tr><td>Valor energético</td><td>372 kcal = 1.558 kJ</td><td>19%</td></tr>
-        <tr><td>Carboidratos</td><td>59 g</td><td>20%</td></tr>
-        <tr class="sub"><td>Açúcares totais</td><td>52 g</td><td>–</td></tr>
-        <tr><td>Proteínas</td><td>6,4 g</td><td>13%</td></tr>
-        <tr><td>Gorduras totais</td><td>9,2 g</td><td>14%</td></tr>
-        <tr class="sub"><td>Gorduras saturadas</td><td>5,7 g</td><td>29%</td></tr>
-        <tr class="sub"><td>Gorduras trans</td><td>0 g</td><td>0%</td></tr>
-        <tr><td>Fibras alimentares</td><td>2,7 g</td><td>11%</td></tr>
-        <tr><td>Sódio</td><td>76 mg</td><td>4%</td></tr>
-      </table>
-      <p class="foot">(*) % Valores Diários com base em uma dieta de 2.000 kcal ou 8.400 kJ. Seus valores diários podem ser maiores ou menores dependendo de suas necessidades energéticas.</p>
-    </div>
-  </div>
-</section>
-
-<section style="background:var(--bg2)">
+<section id="porque">
   <div class="wrap center">
-    <span class="eyebrow">Para todo momento</span>
-    <h2 class="rv">Tem hora certa pra tomar? <span class="script gold">Toda hora.</span></h2>
-    <figure class="moment-foto rv"><img src="img/momento-tomando.webp" alt="Mulher sorrindo na rua tomando açaí direto da garrafa #TQR Açaí" loading="lazy" width="1000" height="746"></figure>
-    <div class="moments" style="text-align:left">
-      <div class="moment rv"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9v6M6 7v10M18 7v10M21 9v6M6 12h12"/></svg></span><h3>Pós-treino</h3><p>Leve na mochila e tome na saída da academia.</p></div>
-      <div class="moment rv"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg></span><h3>Calor de Teresina</h3><p>Aquela tarde de 38 graus pede algo gelado e cremoso.</p></div>
-      <div class="moment rv"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v1"/><circle cx="17.5" cy="9.5" r="2.2"/><path d="M17 14.2c2.4.2 4 1.9 4 4.3v1.5"/></svg></span><h3>Lanche da família</h3><p>Uma garrafa pra cada um, sem briga pelo último copo.</p></div>
-      <div class="moment rv"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></span><h3>Fome da madrugada</h3><p>A gente atende até as 2h e entrega no ponto de tomar.</p></div>
+    <span class="eyebrow">Por que #TQR</span>
+    <h2 class="rv">Mais que um açaí, <span class="script gold">é energia no seu dia.</span></h2>
+    <figure class="moment-foto rv"><img src="img/momento-tomando.webp" alt="Mulher sorrindo na rua tomando açaí direto da garrafa #TQR Açaí" loading="lazy" width="1000" height="747"></figure>
+    <div class="benefits">
+      <div class="benefit rv"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 19c0-8 6-14 15-14 0 9-6 15-14 15"/><path d="M5 19l8-8"/></svg></div><h3>100% <span>natural</span></h3><p>Açaí de verdade como base da receita, 200 g em cada garrafa.</p></div>
+      <div class="benefit rv"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg></div><h3>Fonte de <span>energia</span></h3><p>372 kcal por garrafa. Bom para o pré ou pós-treino e para o lanche da tarde.</p></div>
+      <div class="benefit rv"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></div><h3>Rico em <span>antioxidantes</span></h3><p>O açaí é conhecido pelas antocianinas, que dão a cor roxa intensa.</p></div>
+      <div class="benefit rv"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20M4.9 6.5l14.2 11M4.9 17.5l14.2-11"/><path d="M9 4l3 2 3-2M9 20l3-2 3 2"/></svg></div><h3>Pronto pra <span>tomar</span></h3><p>Chega no ponto. É só agitar a garrafa e aproveitar gelado.</p></div>
     </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap center">
-    <span class="eyebrow">Fotos reais</span>
-    <h2 class="rv">O que chega na sua casa é <span class="gold">exatamente isso</span></h2>
-    <div class="gallery">
-      <figure class="rv"><img src="img/foto-ea51.webp" alt="Garrafa #TQR Açaí fotografada no balcão" loading="lazy" width="540" height="960"></figure>
-      <figure class="rv"><img src="img/flyer.webp" alt="Cartaz do #TQR Açaí sabor tradicional com informações nutricionais" loading="lazy" width="720" height="1080"></figure>
-      <figure class="rv"><img src="img/foto-b190.webp" alt="Garrafa #TQR Açaí de 300 ml com rótulo dourado" loading="lazy" width="540" height="960"></figure>
-    </div>
-  </div>
-</section>
-
-<section class="story">
-  <div class="wrap center">
-    <span class="eyebrow">Nossa história</span>
-    <h2 class="story-title rv"><span class="gold">#TQR</span><br><span class="script" style="font-weight:400">Tem Que Respeitar</span></h2>
-    <p class="lead rv">Em Teresina, açaí é coisa séria. Tem que ser grosso, tem que estar gelado e tem que ter açaí de verdade. Foi dessa conversa de calçada que nasceu o nome: <strong style="color:#fff">#TQR, Tem Que Respeitar.</strong> Respeitar a fruta, a receita e quem paga por ela.</p>
-    <div class="divider">✦</div>
-    <div class="pillars">
-      <div class="pillar rv"><div class="k">Respeito à fruta</div><p>200 g de açaí em cada garrafa. Mais da metade do que você toma é açaí.</p></div>
-      <div class="pillar rv"><div class="k">Respeito à receita</div><p>O tradicional com leite e leite condensado, do jeito que o teresinense aprendeu a gostar.</p></div>
-      <div class="pillar rv"><div class="k">Respeito a você</div><p>Preço justo, ingredientes na mesa e atendimento das 8h às 2h, todos os dias.</p></div>
-    </div>
-    <p class="hashtag">Tomou? Posta com <strong>#TQR</strong> e marca <a href="https://instagram.com/tqracai" target="_blank" rel="noopener">@tqracai</a></p>
-  </div>
-</section>
-
-<!-- DEPOIMENTOS DE EXEMPLO — substitua por depoimentos reais antes de publicar/anunciar -->
-<section>
-  <div class="wrap center">
-    <span class="eyebrow">Quem toma, volta</span>
-    <h2 class="rv">Teresina já está <span class="gold">respeitando</span></h2>
-    <div class="stats rv">
-      <div class="stat"><b class="gold" id="statCount">+1.000</b><span>garrafas vendidas</span></div>
-      <div class="stat"><b class="gold">300 ml</b><span>em cada garrafa</span></div>
-      <div class="stat"><b class="gold" data-count="18" data-suffix="h">18h</b><span>de atendimento por dia</span></div>
-    </div>
-    <p class="lead rv" style="margin:26px auto 0">Já provou o #TQR? Conta pra gente no WhatsApp ou poste com <strong>#TQR</strong> marcando <a href="https://instagram.com/tqracai" target="_blank" rel="noopener" style="color:var(--gold2)">@tqracai</a>.</p>
-  </div>
-</section>
-
-
-<!-- ================= INSTAGRAM ================= -->
-<section class="insta" id="instagram">
-  <div class="wrap">
-    <div class="center" style="margin-bottom:28px"><span class="eyebrow">No Instagram</span><h2 class="rv">Acompanhe a <span class="gold">#TQR</span> de perto</h2><p class="lead rv">Novidades, bastidores e promoções primeiro no nosso perfil.</p></div>
-    <div class="insta-head rv">
-      <a class="insta-profile" href="https://instagram.com/tqracai" target="_blank" rel="noopener">
-        <span class="insta-ring"><img id="instaAvatar" src="img/rotulo.webp" alt="" width="64" height="64"></span>
-        <span><b>@tqracai</b><small id="instaBio">Açaí na garrafa · Teresina</small></span>
-      </a>
-      <a class="btn btn-ghost" href="https://instagram.com/tqracai" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>Seguir no Instagram</a>
-    </div>
-    <div class="insta-grid" id="instaGrid">
-      <a href="https://instagram.com/tqracai" target="_blank" rel="noopener" aria-label="Ver foto 1 no Instagram do #TQR Açaí"><img src="img/hf-hero.webp" alt="" loading="lazy"></a>
-      <a href="https://instagram.com/tqracai" target="_blank" rel="noopener" aria-label="Ver foto 2 no Instagram do #TQR Açaí"><img src="img/hf-lifestyle.webp" alt="" loading="lazy"></a>
-      <a href="https://instagram.com/tqracai" target="_blank" rel="noopener" aria-label="Ver foto 3 no Instagram do #TQR Açaí"><img src="img/hf-combo.webp" alt="" loading="lazy"></a>
-      <a href="https://instagram.com/tqracai" target="_blank" rel="noopener" aria-label="Ver foto 4 no Instagram do #TQR Açaí"><img src="img/foto-ea51.webp" alt="" loading="lazy"></a>
-      <a href="https://instagram.com/tqracai" target="_blank" rel="noopener" aria-label="Ver foto 5 no Instagram do #TQR Açaí"><img src="img/flyer.webp" alt="" loading="lazy"></a>
-      <a href="https://instagram.com/tqracai" target="_blank" rel="noopener" aria-label="Ver foto 6 no Instagram do #TQR Açaí"><img src="img/hf-revenda.webp" alt="" loading="lazy"></a>
-    </div>
-  </div>
-</section>
-
-<!-- ================= A — AÇÃO ================= -->
-<!-- ================= FORMULÁRIO DE PEDIDO ================= -->
-<section class="cta-pedido" id="pedido">
-  <div class="wrap center">
-    <span class="eyebrow">Pronto para pedir?</span>
-    <h2 class="rv">Monte o seu pedido <span class="gold">em 1 minuto</span></h2>
-    <p class="lead rv">Escolha a quantidade, o bairro e a forma de pagamento. Entrega em toda Teresina, das 8h às 2h, e nada é cobrado antes de confirmarmos com você.</p>
-    <a class="btn btn-gold btn-lg" href="pedido.html" data-cta="secao-pedido"><svg><use href="#bag"/></svg>Fazer meu pedido</a>
-  </div>
-</section>
-
-<section class="pts" id="pontos">
-  <div class="wrap center">
-    <span class="eyebrow">Programa de pontos</span>
-    <h2 class="rv">Quanto mais você pede, <span class="gold">mais ganha</span></h2>
-    <p class="lead rv">Cada pedido pago vira pontos. Junte e troque por garrafa grátis.</p>
-    <div class="pt-grid">
-      <div class="pt-card rv"><div class="pn gold" id="ptReal">1 ponto</div><p>a cada <b>R$ 1</b> em pedidos pagos.</p></div>
-      <div class="pt-card rv"><div class="pn gold" id="ptBrinde">170 pontos</div><p>valem <b>1 garrafa grátis</b>. Dá para juntar e resgatar várias.</p></div>
-      <div class="pt-card rv"><div class="pn gold">🎂</div><p>No <b>mês do seu aniversário</b> você ganha pontos de brinde, uma vez por ano. Informe a data de nascimento no cadastro.</p></div>
-    </div>
-    <div class="pt-check" id="ptCheck">
-      <h3>Consulte seus pontos</h3>
-      <p class="hint" style="color:var(--muted)">Neste aparelho, onde você já fez pedido, seus pontos aparecem direto. Em outro aparelho, informe o WhatsApp e o código de acesso de um pedido seu.</p>
-      <div class="row"><input type="tel" id="ptZap" inputmode="tel" autocomplete="tel" placeholder="(86) 99999-9999" aria-label="Seu WhatsApp"><button type="button" class="btn btn-gold" id="ptPedir">Ver meus pontos</button></div>
-      <div class="row" id="ptCodRow" hidden><input type="text" id="ptCod" inputmode="text" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="TQR-0000-XXXX" aria-label="Código de acesso do pedido"><button type="button" class="btn btn-gold" id="ptOk">Confirmar</button></div>
-      <p class="hint" id="ptMsg" role="status" hidden></p>
-      <div id="ptRes" hidden></div>
-    </div>
-    <p class="lead" style="margin:18px auto 0;font-size:.82rem">Os pontos entram quando o pagamento é confirmado. Pedido cancelado após o pagamento tem os pontos estornados.</p>
-  </div>
-</section>
-
-
-<section class="resale">
-  <div class="wrap">
-    <div class="resale-box rv">
-      <div>
-        <span class="eyebrow">Para o seu negócio</span>
-        <h2>Revenda #TQR Açaí <span class="gold">no seu ponto</span></h2>
-        <p class="lead">Um produto pronto, de alta saída o dia inteiro. É só manter no freezer e vender. Fale com a gente para conhecer as condições de revenda.</p>
-        <div class="chips"><span class="chip">Lanchonetes</span><span class="chip">Academias</span><span class="chip">Conveniências</span><span class="chip">Mercadinhos</span><span class="chip">Escolas e cantinas</span></div>
-        <a class="btn btn-gold" data-wa="revenda" data-src="revenda" href="#"><svg><use href="#wa"/></svg>Quero revender</a>
-      </div>
-      <div class="resale-photo"><img src="img/hf-revenda.webp" alt="Freezer de conveniência abastecido com garrafas #TQR Açaí" loading="lazy" width="860" height="642"></div>
-    </div>
+    <p class="lead rv" style="margin:28px auto 0">Quer saber o que vai em cada garrafa e como nasceu o nome? <a href="sobre.html" style="color:var(--gold2)">Conheça a nossa história e a receita →</a></p>
   </div>
 </section>
 
@@ -410,7 +225,7 @@ window.TQR_TURNSTILE='';</script>
       <p class="legal"><!-- PREENCHER: dados obrigatórios (Decreto 7.962/2013) -->CNPJ 59.270.529/0001-78 · Teresina – PI</p></div>
     <div>WhatsApp: <a href="#" data-wa="contato" data-src="rodape">(86) 99588-4770</a><br>Instagram: <a href="https://instagram.com/tqracai" target="_blank" rel="noopener">@tqracai</a><br><a href="blog/index.html">Blog #TQR</a></div>
   </div>
-  <div class="wrap foot-links"><a href="#pontos">Consultar meus pontos</a><a href="politicas/termos.html">Termos de Uso</a><a href="politicas/privacidade.html">Privacidade</a><a href="politicas/cookies.html">Cookies</a><a href="politicas/trocas-e-devolucoes.html">Trocas e devoluções</a><a href="#" id="cookiePrefs">Preferências de cookies</a></div>
+  <div class="wrap foot-links"><a href="pontos.html">Consultar meus pontos</a><a href="sobre.html">Sobre a #TQR</a><a href="revenda.html">Revenda</a><a href="politicas/termos.html">Termos de Uso</a><a href="politicas/privacidade.html">Privacidade</a><a href="politicas/cookies.html">Cookies</a><a href="politicas/trocas-e-devolucoes.html">Trocas e devoluções</a><a href="#" id="cookiePrefs">Preferências de cookies</a></div>
   <div class="wrap copy">© 2026 #TQR Açaí. Fotos ilustrativas; algumas imagens foram produzidas com auxílio de IA.</div>
 </footer>
 

@@ -273,7 +273,7 @@ window.TQR_DEV=(function(){
     function iniciaSabor(){
       SAB=null;FL={};FLTOQUE=null;
       if(!CARRINHO&&MAIN&&MAIN.familia){
-        var fam=PRODS.filter(function(p){return p.familia&&p.familia===MAIN.familia;});
+        var fam=PRODS.filter(function(p){return p.noSite&&p.familia&&p.familia===MAIN.familia;});
         if(fam.length>=2){SAB={ids:{},opcoes:fam.map(function(p){return {id:p.id,nome:p.nome,descricao:p.descricao,foto_url:p.foto_url,preco:0,esgotado:false,pr:+p.preco};})};fam.forEach(function(p){SAB.ids[p.id]=true;});}
       }
       f.classList.toggle('modo-sabor',!!SAB);
@@ -712,7 +712,7 @@ window.TQR_DEV=(function(){
       root.hidden=!CARRINHO;
       if(!CARRINHO||!VIT)return;
       COMBO=null;FAIXA=null;
-      var cats=(VIT.categorias||[]).slice(),prods=PRODS.slice(),grupos=[];
+      var cats=(VIT.categorias||[]).slice(),prods=PRODS.filter(function(p){return p.noSite;}),grupos=[];
       cats.forEach(function(c){var ps=prods.filter(function(p){return p.categoria_id===c.id;});if(ps.length)grupos.push({id:c.id,nome:c.nome,ps:ps});});
       var sem=prods.filter(function(p){return !p.categoria_id||!cats.some(function(c){return c.id===p.categoria_id;});});
       if(sem.length)grupos.push({id:'_',nome:grupos.length?'Outros':'Cardápio',ps:sem});
@@ -900,7 +900,9 @@ window.TQR_DEV=(function(){
     }
     function aplicaVitrine(V){
       if(!V||!V.produtos||!V.produtos.length){aplicaPendente();return;}
-      PRODS=V.produtos.map(function(p){return {id:p.id,nome:p.nome,preco:+p.preco,descricao:p.descricao,foto_url:p.foto_url,volume_ml:p.volume_ml,categoria_id:p.categoria_id,sugerir:!!p.sugerir,familia:p.familia||null};});
+      PRODS=V.produtos.map(function(p){return {id:p.id,nome:p.nome,preco:+p.preco,descricao:p.descricao,foto_url:p.foto_url,volume_ml:p.volume_ml,categoria_id:p.categoria_id,sugerir:!!p.sugerir,familia:p.familia||null,noSite:p.no_site!==false};});
+      /* produto fora do site (ex.: água só como sugestão) nunca é o principal e não entra no cardápio */
+      PRODS=PRODS.filter(function(p){return p.noSite;}).concat(PRODS.filter(function(p){return !p.noSite;}));
       MAIN=PRODS[0];UN=MAIN.preco;COMBO=null;FAIXA=null;
       V.promocoes.forEach(function(x){
         var r=x.regra||{};

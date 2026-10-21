@@ -160,3 +160,8 @@ Liga a loja ao painel mestre (projeto `supabase-mestre/`). A chave `tqrk_…` fi
 
 ## 42 · Sabores como produtos (`20261118_42_familia_sabores.sql`)
 Cada sabor é um produto (Açaí tradicional 300 ml, TQR Tropical 300 ml, TQR Tentação 300 ml). `produtos.familia` liga os sabores: `app_private.qtd_produto` soma as linhas de todos os produtos da mesma família e `preco_produto` usa o preço de qualquer linha da família, então Combo 3 e 5+ valem para qualquer mistura (premissa: mesmo preço na família). A vitrine devolve `familia`. No site, os produtos da família do produto principal viram cartões de sabor (soma = quantidade); complementos continuam por montagem de um sabor. Substitui a ideia anterior de sabor como opção (colunas `grupos_opcao.sabor`, `opcoes.foto_url/descricao` ficam sem uso; o grupo "Sabor" foi desativado). Estoque de garrafas prontas, ficha técnica e relatórios passam a ser por sabor. Dados do cliente atual: produtos criados e família `acai-300` aplicada; complementos estendidos aos novos produtos. Fichas técnicas dos sabores novos ainda não cadastradas.
+
+## 43 · Sugestão fora do cardápio (`20261119_43_sugestao_fora_do_site.sql`)
+"Aparece no cardápio do site" (`produtos.ativo`) e "Sugerir na hora do pedido" (`sugerir_venda`) agora são independentes: um produto desmarcado do site continua em "Que tal levar também?" se for sugestão (ex.: água).
+`obter_vitrine` devolve também esses produtos, com `no_site = false`, e o motor de pedido (`motor_pedido`) aceita esses produtos nas linhas. O `site.js` os usa só como sugestão (nunca como produto principal, sabor ou item do cardápio).
+

@@ -12,7 +12,7 @@
  "og_titulo": "{{loja.nome}} · Açaí cremoso pronto na garrafa",
  "og_descricao": "300 ml por R$ 16,99 · Combo 3 por R$ 45 · Delivery em toda {{loja.cidade}} {{loja.horario}}.",
  "fontes_href": "https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Poppins:wght@400;500;600;700;800&display=swap",
- "nav_links": "<a href=\"#ofertas\">Ofertas</a><a href=\"#como\">Como funciona</a>",
+ "nav_links": "<a href=\"index.html#sabores\">Cardápio</a><a href=\"index.html#como\">Como funciona</a><a href=\"sobre.html\">Sobre</a>",
  "slogan_rodape": "· Sabor que refresca e energiza",
  "mbar": "a partir de<b>R$ 14</b>",
  "tipo_schema": "FoodEstablishment",
@@ -21,20 +21,9 @@
  "cores": {},
  "secoes": [
   "hero",
-  "sabores",
-  "ofertas",
-  "problema",
-  "energia",
+  "cardapio",
   "como",
-  "ingredientes",
-  "momentos",
-  "galeria",
-  "historia",
-  "prova",
-  "instagram",
-  "pedido",
-  "pontos",
-  "revenda",
+  "porque",
   "faq",
   "final"
  ],
@@ -50,5 +39,37 @@
  "conf_msg": "Já estamos separando o seu açaí. A mensagem do pedido abre no nosso WhatsApp para confirmarmos valor, taxa e pagamento.",
  "nota_fotos": "Fotos ilustrativas.",
  "pontos_prox": "a próxima garrafa grátis",
- "pontos_resgate": "minha garrafa grátis"
+ "pontos_resgate": "minha garrafa grátis",
+ "rodape_links": "<a href=\"sobre.html\">Sobre a #TQR</a><a href=\"revenda.html\">Revenda</a>",
+ "paginas": {
+  "pontos": {
+   "arquivo": "pontos.html",
+   "secoes": [
+    "pontos",
+    "final"
+   ],
+   "titulo": "Programa de pontos | {{loja.nome}}",
+   "descricao": "Cada pedido pago vira pontos no {{loja.nome}}. Junte e troque por garrafa grátis. Consulte seu saldo."
+  },
+  "revenda": {
+   "arquivo": "revenda.html",
+   "secoes": [
+    "revenda"
+   ],
+   "titulo": "Revenda {{loja.nome}} | Para lanchonetes, academias e conveniências",
+   "descricao": "Revenda {{loja.nome}} no seu ponto: produto pronto, de alta saída, para manter no freezer e vender. Fale com a gente."
+  },
+  "sobre": {
+   "arquivo": "sobre.html",
+   "secoes": [
+    "historia",
+    "ingredientes",
+    "galeria",
+    "instagram",
+    "final"
+   ],
+   "titulo": "Sobre o {{loja.nome}} | História, ingredientes e informação nutricional",
+   "descricao": "Conheça a história do #TQR, os ingredientes de cada garrafa e a tabela nutricional do açaí tradicional."
+  }
+ }
 }

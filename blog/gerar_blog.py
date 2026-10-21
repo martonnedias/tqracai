@@ -134,7 +134,7 @@ def head(title, desc, canonical_rel, img, schema):
 </head><body>
 <header class="top"><div class="wrap">
   <a class="brand" href="../index.html"><img src="../img/rotulo.webp" alt="" width="42" height="42"><span>#TQR Açaí</span></a>
-  <nav class="nav"><a href="../index.html#ofertas">Ofertas</a><a class="nav-pts" href="../index.html#pontos"><svg class="i-star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.8l2.7 5.9 6.4.7-4.8 4.3 1.4 6.3L12 16.8 6.3 20l1.4-6.3L2.9 9.4l6.4-.7L12 2.8z"/></svg>Meus pontos</a><a href="../pedido.html">Fazer pedido</a><a href="index.html">Blog</a></nav>
+  <nav class="nav"><a href="../index.html#ofertas">Ofertas</a><a class="nav-pts" href="../pontos.html"><svg class="i-star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.8l2.7 5.9 6.4.7-4.8 4.3 1.4 6.3L12 16.8 6.3 20l1.4-6.3L2.9 9.4l6.4-.7L12 2.8z"/></svg>Meus pontos</a><a href="../pedido.html">Fazer pedido</a><a href="index.html">Blog</a></nav>
   <a class="btn btn-gold" href="../pedido.html">Fazer pedido</a>
 </div></header>
 """

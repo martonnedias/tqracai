@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{tema.titulo}}</title>
-<meta name="description" content="{{tema.descricao}}">
+<title>{{pag.titulo}}</title>
+<meta name="description" content="{{pag.descricao}}">
 <meta name="theme-color" content="{{tema.cor_tema}}">
 <!-- Ao trocar para o domínio próprio, atualize BASE nestas 4 linhas e no sitemap.xml/robots.txt -->
-<link rel="canonical" href="{{loja.url}}">
-<meta property="og:url" content="{{loja.url}}">
+<link rel="canonical" href="{{pag.url}}">
+<meta property="og:url" content="{{pag.url}}">
 <meta property="og:type" content="website">
-<meta property="og:title" content="{{tema.og_titulo}}">
-<meta property="og:description" content="{{tema.og_descricao}}">
+<meta property="og:title" content="{{pag.og_titulo}}">
+<meta property="og:description" content="{{pag.og_descricao}}">
 <meta property="og:image" content="{{loja.url}}img/og-image.jpg">
 <meta property="og:locale" content="pt_BR">
 <meta name="twitter:card" content="summary_large_image">
@@ -34,8 +34,9 @@ window.TQR_TURNSTILE='';</script>
 {{schema}}
 </script>
 
-<link rel="stylesheet" href="site.css?v=28">
+<link rel="stylesheet" href="site.css?v=29">
 <link rel="stylesheet" href="tema.css">
+{{pag.script_hash}}
 </head>
 <body>
 <a class="skip" href="#topo">Ir para o conteúdo</a>
@@ -48,14 +49,14 @@ window.TQR_TURNSTILE='';</script>
 
 <header class="top" id="topbar"><span class="scroll-progress" aria-hidden="true"></span>
   <div class="wrap">
-    <a href="#topo" class="brand"><img src="{{loja.logo}}" alt="{{loja.nome}}" width="44" height="44"><span>{{loja.nome}}</span></a>
-    <nav class="nav" aria-label="Menu">{{tema.nav_links}}<a class="nav-pts" href="#pontos"><svg class="i-star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.8l2.7 5.9 6.4.7-4.8 4.3 1.4 6.3L12 16.8 6.3 20l1.4-6.3L2.9 9.4l6.4-.7L12 2.8z"/></svg>Meus pontos</a><a href="pedido.html">Fazer pedido</a><a href="blog/index.html">Blog</a></nav>
-    <a class="top-pts" href="#pontos" aria-label="Consultar meus pontos"><svg class="i-star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.8l2.7 5.9 6.4.7-4.8 4.3 1.4 6.3L12 16.8 6.3 20l1.4-6.3L2.9 9.4l6.4-.7L12 2.8z"/></svg><span>Pontos</span></a>
+    <a href="{{pag.inicio}}" class="brand"><img src="{{loja.logo}}" alt="{{loja.nome}}" width="44" height="44"><span>{{loja.nome}}</span></a>
+    <nav class="nav" aria-label="Menu">{{tema.nav_links}}<a class="nav-pts" href="{{pag.link_pontos}}"><svg class="i-star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.8l2.7 5.9 6.4.7-4.8 4.3 1.4 6.3L12 16.8 6.3 20l1.4-6.3L2.9 9.4l6.4-.7L12 2.8z"/></svg>Meus pontos</a><a href="pedido.html">Fazer pedido</a><a href="blog/index.html">Blog</a></nav>
+    <a class="top-pts" href="{{pag.link_pontos}}" aria-label="Consultar meus pontos"><svg class="i-star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.8l2.7 5.9 6.4.7-4.8 4.3 1.4 6.3L12 16.8 6.3 20l1.4-6.3L2.9 9.4l6.4-.7L12 2.8z"/></svg><span>Pontos</span></a>
     <a class="btn btn-gold" data-cta="topbar" href="pedido.html" aria-label="Fazer pedido"><svg><use href="#bag"/></svg><span class="t">Fazer pedido</span></a>
   </div>
 </header>
 
-<main id="topo">
+<main id="topo" class="{{pag.classe_main}}">
 {{secoes}}
 </main>
 
@@ -65,7 +66,7 @@ window.TQR_TURNSTILE='';</script>
       <p class="legal"><!-- PREENCHER: dados obrigatórios (Decreto 7.962/2013) -->CNPJ {{loja.cnpj}} · {{loja.cidade_uf}}</p></div>
     <div>WhatsApp: <a href="#" data-wa="contato" data-src="rodape">{{loja.telefone}}</a><br>Instagram: <a href="{{loja.instagram_url}}" target="_blank" rel="noopener">{{loja.instagram}}</a><br><a href="blog/index.html">Blog {{loja.blog_nome}}</a></div>
   </div>
-  <div class="wrap foot-links"><a href="#pontos">Consultar meus pontos</a><a href="politicas/termos.html">Termos de Uso</a><a href="politicas/privacidade.html">Privacidade</a><a href="politicas/cookies.html">Cookies</a><a href="politicas/trocas-e-devolucoes.html">Trocas e devoluções</a><a href="#" id="cookiePrefs">Preferências de cookies</a></div>
+  <div class="wrap foot-links"><a href="{{pag.link_pontos}}">Consultar meus pontos</a>{{pag.rodape_links}}<a href="politicas/termos.html">Termos de Uso</a><a href="politicas/privacidade.html">Privacidade</a><a href="politicas/cookies.html">Cookies</a><a href="politicas/trocas-e-devolucoes.html">Trocas e devoluções</a><a href="#" id="cookiePrefs">Preferências de cookies</a></div>
   <div class="wrap copy">© 2026 {{loja.nome}}. Fotos ilustrativas; algumas imagens foram produzidas com auxílio de IA.</div>
 </footer>
 
@@ -90,6 +91,6 @@ window.TQR_TURNSTILE='';</script>
   <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn btn-gold" data-pix="copiar">Copiar Pix</button><button type="button" class="btn" data-pix="fechar">Fechar</button></div>
   <p data-pix="status" role="status" style="margin:12px 0 0;font-size:.9rem;color:var(--gold2)"></p>
 </dialog>
-<script src="prova-social.js" data-local="inicio" defer></script>
+<script src="prova-social.js" data-local="{{pag.local}}" defer></script>
 </body>
 </html>

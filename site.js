@@ -120,10 +120,15 @@ window.TQR_DEV=(function(){
       a.addEventListener('click',function(){irPedido(o.qtdSug,o.itensKit);});d.appendChild(a);
       return d;
     }
+    /* produtos do cardápio do site; os outros sabores da mesma família do principal não ganham card próprio (estão em "Escolha o seu sabor") */
+    function vitrineSite(V){
+      var vis=V.produtos.filter(function(p){return p.no_site!==false;}),m=vis[0];
+      return vis.filter(function(p,i){return i===0||!(p.familia&&m.familia&&p.familia===m.familia);});
+    }
     function ofertasDe(V){
       var porId={};V.produtos.forEach(function(p){porId[p.id]=p;});
       var out=[];
-      V.produtos.forEach(function(p,i){
+      vitrineSite(V).forEach(function(p,i){
         out.push({titulo:p.nome,qtd:'1 unidade'+(p.volume_ml?' de '+p.volume_ml+' ml':''),valor:so(p.preco),prefixo:'R$',unidade:p.descricao||'',
           img:p.foto_url||(i===0?'img/hf-hero.webp':''),cta:'Pedir 1',qtdSug:1,itensKit:i===0?null:[{produto_id:p.id,qtd:1}],notas:i===0?['Pedido mínimo de 1 garrafa','Delivery ou retirada']:[]});
       });
@@ -164,7 +169,7 @@ window.TQR_DEV=(function(){
     document.querySelectorAll('a[data-qty]').forEach(function(a){a.addEventListener('click',function(){irPedido(+a.dataset.qty,null);});});
     function aplicaVitrine(V){
       if(!V||!V.produtos||!V.produtos.length)return;
-      var MAIN=V.produtos[0];UN=+MAIN.preco;COMBO=null;FAIXA=null;
+      var MAIN=V.produtos.filter(function(p){return p.no_site!==false;})[0]||V.produtos[0];UN=+MAIN.preco;COMBO=null;FAIXA=null;
       V.promocoes.forEach(function(x){
         var r=x.regra||{};
         if(x.tipo==='combo'&&r.itens&&r.itens.length===1&&r.itens[0].produto_id===MAIN.id){var c={q:r.itens[0].qtd,preco:+r.preco};if(!COMBO||c.preco/c.q<COMBO.preco/COMBO.q)COMBO=c;}
@@ -872,10 +877,15 @@ window.TQR_DEV=(function(){
       a.addEventListener('click',function(){window.TQR_pedir(o.qtdSug,o.itensKit);});d.appendChild(a);
       return d;
     }
+    /* produtos do cardápio do site; os outros sabores da mesma família do principal não ganham card próprio (estão em "Escolha o seu sabor") */
+    function vitrineSite(V){
+      var vis=V.produtos.filter(function(p){return p.no_site!==false;}),m=vis[0];
+      return vis.filter(function(p,i){return i===0||!(p.familia&&m.familia&&p.familia===m.familia);});
+    }
     function ofertasDe(V){
       var porId={};V.produtos.forEach(function(p){porId[p.id]=p;});
       var out=[];
-      V.produtos.forEach(function(p,i){
+      vitrineSite(V).forEach(function(p,i){
         out.push({titulo:p.nome,qtd:'1 unidade'+(p.volume_ml?' de '+p.volume_ml+' ml':''),valor:so(p.preco),prefixo:'R$',unidade:p.descricao||'',
           img:p.foto_url||(i===0?'img/hf-hero.webp':''),cta:'Pedir 1',qtdSug:1,itensKit:i===0?null:[{produto_id:p.id,qtd:1}],notas:i===0?['Pedido mínimo de 1 garrafa','Delivery ou retirada']:[]});
       });

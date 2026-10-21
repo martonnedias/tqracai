@@ -128,6 +128,8 @@ h2{font-size:clamp(1.8rem,4.6vw,2.7rem);margin-bottom:14px}
 .nutri .foot{font-size:.75rem;color:#555;margin-top:8px;line-height:1.4}
 
 /* Momentos */
+.moment-foto{margin:32px auto 0;max-width:720px;border-radius:var(--r);overflow:hidden;border:1px solid rgba(var(--gold-rgb),.2)}
+.moment-foto img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;object-position:50% 35%}
 .moments{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:40px}
 .moment{border-radius:var(--r);padding:26px 20px;background:linear-gradient(160deg,var(--pu4),var(--bg2));border:1px solid rgba(var(--gold-rgb),.15);min-height:190px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden}
 .moment .emoji{position:absolute;top:18px;right:18px;font-size:2.2rem;opacity:.9}

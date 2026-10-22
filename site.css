@@ -827,6 +827,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
 .nav .nav-pts:hover{background:rgba(var(--gold-rgb),.18);color:#fff}
 .i-star{width:15px;height:15px;flex:none}
 .top-pts{display:none;align-items:center;gap:6px;color:var(--gold2);font-weight:700;font-size:.85rem;text-decoration:none;padding:8px 14px;min-height:40px;border:1px solid rgba(var(--gold-rgb),.5);border-radius:999px;background:rgba(var(--gold-rgb),.1)}
+@media (min-width:901px){.top-pts{display:inline-flex;margin-right:10px;padding:0;width:40px;justify-content:center;background:transparent;border-color:rgba(var(--gold-rgb),.28);color:var(--muted)}.top-pts:hover,.top-pts:focus-visible{color:var(--gold2);border-color:rgba(var(--gold-rgb),.6);background:rgba(var(--gold-rgb),.1)}.top-pts span{display:none}.top-pts .i-star{width:17px;height:17px}}
 @media (max-width:900px){.top-pts{display:inline-flex;margin-left:auto;margin-right:10px}}
 @media (max-width:380px){.top-pts span{display:none}.top-pts{padding:8px 11px}}
 .p-right{display:flex;align-items:center;gap:14px}

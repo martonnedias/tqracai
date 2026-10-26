@@ -130,6 +130,11 @@ def main():
                     break
             else:
                 sys.exit(f"ERRO: seção '{s}' não existe no tema nem em _comum")
+        if pag.get("classe_main") == "pagina":
+            # página extra: o primeiro título da página vira o h1 (uma página precisa de um h1)
+            corpo = "\n".join(partes)
+            corpo = re.sub(r"<h2(\b[^>]*)>(.*?)</h2>", r'<h1\1>\2</h1>', corpo, count=1, flags=re.S)
+            partes = [corpo]
         modelo = ler(os.path.join(RAIZ, "temas", "base", "index.tpl.html"))
         html = modelo.replace("{{secoes}}", "\n".join(partes)).replace("{{schema}}", schema(loja, tema))
         html = resolve(html, {**ctx, "pag": pag}, f"esqueleto de {arquivo}")

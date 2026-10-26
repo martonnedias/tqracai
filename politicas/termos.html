@@ -8,7 +8,7 @@
 <link rel="icon" href="../img/rotulo.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../blog/blog.css">
+<link rel="stylesheet" href="../blog/blog.css?v=3">
 <style>
 .pol-nav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 6px}
 .pol-nav a{font-size:.82rem;text-decoration:none;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:6px 12px}
@@ -19,8 +19,10 @@ mark.fill{background:#f3cf7f;color:#2a0838;padding:0 4px;border-radius:4px;font-
 </head><body>
 <header class="top"><div class="wrap">
   <a class="brand" href="../index.html"><img src="../img/rotulo.webp" alt="" width="42" height="42"><span>#TQR Açaí</span></a>
-  <nav class="nav"><a href="../index.html#ofertas">Ofertas</a><a class="nav-pts" href="../pontos.html"><svg class="i-star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.8l2.7 5.9 6.4.7-4.8 4.3 1.4 6.3L12 16.8 6.3 20l1.4-6.3L2.9 9.4l6.4-.7L12 2.8z"/></svg>Meus pontos</a><a href="../pedido.html">Fazer pedido</a><a href="../blog/index.html">Blog</a></nav>
-  <a class="btn btn-wa" href="https://wa.me/5586995884770" target="_blank" rel="noopener">WhatsApp</a>
+  <nav class="nav" id="menuNav" aria-label="Menu"><a href="../index.html#sabores">Cardápio</a><a href="../index.html#como">Como funciona</a><a href="../sobre.html">Sobre</a><a href="../blog/index.html">Blog</a><a class="nav-extra" href="../pontos.html">Meus pontos</a></nav>
+  <a class="top-pts" href="../pontos.html" aria-label="Consultar meus pontos" title="Meus pontos"><svg class="i-star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.8l2.7 5.9 6.4.7-4.8 4.3 1.4 6.3L12 16.8 6.3 20l1.4-6.3L2.9 9.4l6.4-.7L12 2.8z"/></svg></a>
+  <a class="btn btn-gold" href="../pedido.html">Fazer pedido</a>
+  <button type="button" class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="menuNav" aria-label="Abrir menu"><span></span><span></span><span></span></button>
 </div></header>
 <main class="narrow">
   <div class="crumbs"><a href="../index.html">Início</a> › Políticas</div>
@@ -88,5 +90,6 @@ mark.fill{background:#f3cf7f;color:#2a0838;padding:0 4px;border-radius:4px;font-
 <div>WhatsApp: <a href="https://wa.me/5586995884770" target="_blank" rel="noopener">(86) 99588-4770</a> · <mark class="fill">[PREENCHER: e-mail de contato]</mark><br><a href="privacidade.html">Política de Privacidade</a> · <a href="cookies.html">Política de Cookies</a> · <a href="termos.html">Termos de Uso e Condições de Venda</a> · <a href="trocas-e-devolucoes.html">Trocas, Devoluções e Reembolso</a></div>
 </div></footer>
 <script src="../marca-site.js?v=1" defer></script>
+<script src="../blog/menu.js" defer></script>
 <script src="../prova-social.js" data-local="politicas" defer></script>
 </body></html>

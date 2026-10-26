@@ -129,13 +129,15 @@ def head(title, desc, canonical_rel, img, schema):
 <link rel="icon" href="../img/rotulo.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="blog.css">
+<link rel="stylesheet" href="blog.css?v=3">
 <script type="application/ld+json">{json.dumps(schema, ensure_ascii=False)}</script>
 </head><body>
 <header class="top"><div class="wrap">
   <a class="brand" href="../index.html"><img src="../img/rotulo.webp" alt="" width="42" height="42"><span>#TQR Açaí</span></a>
-  <nav class="nav"><a href="../index.html#ofertas">Ofertas</a><a class="nav-pts" href="../pontos.html"><svg class="i-star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.8l2.7 5.9 6.4.7-4.8 4.3 1.4 6.3L12 16.8 6.3 20l1.4-6.3L2.9 9.4l6.4-.7L12 2.8z"/></svg>Meus pontos</a><a href="../pedido.html">Fazer pedido</a><a href="index.html">Blog</a></nav>
+  <nav class="nav" id="menuNav" aria-label="Menu"><a href="../index.html#sabores">Cardápio</a><a href="../index.html#como">Como funciona</a><a href="../sobre.html">Sobre</a><a href="index.html">Blog</a><a class="nav-extra" href="../pontos.html">Meus pontos</a></nav>
+  <a class="top-pts" href="../pontos.html" aria-label="Consultar meus pontos" title="Meus pontos"><svg class="i-star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.8l2.7 5.9 6.4.7-4.8 4.3 1.4 6.3L12 16.8 6.3 20l1.4-6.3L2.9 9.4l6.4-.7L12 2.8z"/></svg></a>
   <a class="btn btn-gold" href="../pedido.html">Fazer pedido</a>
+  <button type="button" class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="menuNav" aria-label="Abrir menu"><span></span><span></span><span></span></button>
 </div></header>
 """
 
@@ -144,6 +146,7 @@ FOOT = """<footer><div class="wrap">
 <div>WhatsApp: <a href="{wa}" target="_blank" rel="noopener">(86) 99588-4770</a><br>Instagram: <a href="https://instagram.com/tqracai" target="_blank" rel="noopener">@tqracai</a></div>
 </div><div class="wrap" style="margin-top:16px;font-size:.8rem;gap:8px 18px;justify-content:flex-start"><a href="../politicas/termos.html">Termos de Uso</a><a href="../politicas/privacidade.html">Privacidade</a><a href="../politicas/cookies.html">Cookies</a><a href="../politicas/trocas-e-devolucoes.html">Trocas e devoluções</a></div></footer>
 <script src="../marca-site.js?v=1" defer></script>
+<script src="../blog/menu.js" defer></script>
 <script src="../prova-social.js" data-local="blog" defer></script>
 </body></html>""".format(wa=WA_MSG)
 

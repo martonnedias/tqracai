@@ -960,3 +960,5 @@ body.menu-open .menu-btn span:nth-child(3){transform:translateY(-7px) rotate(-45
 .cart-more{width:100%;margin-bottom:16px}
 .cart-tot{padding:14px;border-top:1px solid rgba(var(--gold-rgb),.2)}
 @media (max-width:520px){.cart-row{grid-template-columns:1fr auto;grid-template-areas:"n n" "s sub";}.cart-row .xn{grid-area:n}.cart-row .xs{grid-area:s}.cart-row .cart-sub{grid-area:sub;align-self:center}.cart-row .cart-x{position:absolute;right:8px;top:8px}.cart-row{position:relative;padding-right:44px}}
+.cart-cupom{margin:0 0 16px}
+.cart-cupom .fld{display:block}

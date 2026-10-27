@@ -27,9 +27,9 @@ window.TQR_FONE='{{loja.whatsapp}}';
 /* Proteção contra robôs (Cloudflare Turnstile). Vazio = desligado e o pedido vai direto ao banco.
    Preencher só depois de publicar a função supabase/functions/criar-pedido (veja o README dela). */
 window.TQR_TURNSTILE='';</script>
-<link rel="stylesheet" href="site.css?v=38">
+<link rel="stylesheet" href="site.css?v={{pag.css_v}}">
 <link rel="stylesheet" href="tema.css">
-<script src="tema.js?v=1"></script>
+<script src="tema.js?v={{pag.tema_v}}"></script>
 </head>
 <body class="pedido-pg">
 <a class="skip" href="#topo">Ir para o conteúdo</a>
@@ -235,8 +235,8 @@ window.TQR_TURNSTILE='';</script>
   <div class="cookie-btns"><button type="button" class="cbtn ghost" data-consent="essenciais">Só essenciais</button><button type="button" class="cbtn gold" data-consent="todos">Aceitar todos</button></div>
 </div>
 
-<script src="marca-site.js?v=1" defer></script>
-<script src="site.js?v=25" defer></script>
+<script src="marca-site.js?v={{pag.marca_v}}" defer></script>
+<script src="site.js?v={{pag.js_v}}" defer></script>
 <script src="efeitos.js?v=1" defer></script>
 <dialog id="optDlg" class="opt-dlg" aria-label="Escolha as opções"></dialog>
 <dialog id="pixDlg" style="max-width:380px;width:92vw;border:1px solid var(--line);border-radius:18px;background:var(--bg2);color:var(--text);padding:22px">

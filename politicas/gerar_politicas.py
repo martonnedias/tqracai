@@ -231,7 +231,7 @@ def page(slug, title, desc, body):
 <link rel="icon" href="../img/rotulo.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../blog/blog.css?v=5">
+<link rel="stylesheet" href="../blog/blog.css?v=6">
 <style>
 .pol-nav{{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 6px}}
 .pol-nav a{{font-size:.82rem;text-decoration:none;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:6px 12px}}
@@ -243,7 +243,7 @@ mark.fill{{background:#f3cf7f;color:#2a0838;padding:0 4px;border-radius:4px;font
 </head><body>
 <header class="top"><div class="wrap">
   <a class="brand" href="../index.html"><img src="../img/rotulo.webp" alt="" width="42" height="42"><span>#TQR Açaí</span></a>
-  <nav class="nav" id="menuNav" aria-label="Menu"><a href="../index.html#sabores">Cardápio</a><a href="../index.html#como">Como funciona</a><a href="../sobre.html">Sobre</a><a href="../blog/index.html">Blog</a><a class="nav-extra" href="../pontos.html">Meus pontos</a><button type="button" class="nav-tema" data-tema-toggle aria-pressed="false"><span class="tema-lbl">Tema claro</span></button></nav>
+  <nav class="nav" id="menuNav" aria-label="Menu"><a href="../index.html#sabores">Cardápio</a><a href="../index.html#como">Como funciona</a><a href="../sobre.html">Sobre</a><a href="../blog/index.html">Blog</a><a class="nav-extra" href="../pontos.html">Meus pontos</a><button type="button" class="nav-tema" data-tema-toggle aria-pressed="false"><span class="tema-lbl">Tema claro</span><span class="tema-sw" aria-hidden="true"><svg class="i-sol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg><svg class="i-lua" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></span></button></nav>
   <button type="button" class="tema-btn top" data-tema-toggle aria-pressed="false" aria-label="Mudar para o tema claro" title="Tema claro"><svg class="i-sol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg><svg class="i-lua" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
   <a class="top-pts" href="../pontos.html" aria-label="Consultar meus pontos" title="Meus pontos"><svg class="i-star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.8l2.7 5.9 6.4.7-4.8 4.3 1.4 6.3L12 16.8 6.3 20l1.4-6.3L2.9 9.4l6.4-.7L12 2.8z"/></svg></a>
   <a class="btn btn-gold" href="../pedido.html">Fazer pedido</a>

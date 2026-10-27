@@ -682,7 +682,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
 /* ===== Página de pedido (pedido.html) ===== */
 .pedido-pg .fab,.pedido-pg .mbar{display:none!important}
 .p-top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px}
-.p-steps{display:flex;align-items:stretch;gap:10px;max-width:640px;margin:0 auto 22px;scroll-margin-top:84px}
+.p-steps{display:flex;align-items:stretch;gap:10px;max-width:720px;margin:0 auto 22px;scroll-margin-top:84px}
 .p-steps[hidden]{display:none}
 .p-steps button{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:8px 12px;border:1px solid rgba(var(--gold-rgb),.2);border-radius:14px;background:var(--card);color:var(--muted);font:inherit;font-size:.92rem;font-weight:600;cursor:pointer;transition:border-color .2s,background .2s,color .2s}
 .p-steps button:hover{border-color:rgba(var(--gold-rgb),.5)}
@@ -696,7 +696,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,.slider .slides:focus
 .p-nav .btn{min-height:50px;flex:1;max-width:260px}
 .p-nav [data-next]{margin-left:auto}
 .order-box:not(.tabs-on) .p-nav{display:none}
-@media (max-width:520px){.p-steps{gap:6px}.p-steps button{padding:8px 4px;gap:6px;font-size:.84rem}.p-nav .btn{max-width:none}}
+@media (max-width:520px){.p-steps{gap:4px}.p-steps button{padding:8px 2px;gap:4px;font-size:.78rem}.p-steps i{width:20px;height:20px;font-size:.7rem}.p-nav .btn{max-width:none}}
 .p-back{color:var(--gold2);text-decoration:none;font-weight:600;font-size:.9rem;white-space:nowrap;display:inline-flex;align-items:center;min-height:44px;min-width:44px;justify-content:center}
 .p-back:hover{text-decoration:underline}
 .p-order{padding:44px 0 90px}
@@ -945,3 +945,18 @@ body.menu-open .menu-btn span:nth-child(3){transform:translateY(-7px) rotate(-45
 .plan .pimg img[src*="kit5"]{filter:brightness(.88) contrast(1.1) saturate(1.15)}
 .plan .pimg{background:var(--bg3)}
 @media (prefers-reduced-motion:reduce){.sab-card,.sab-card img{transition:none}.sab-card:hover,.sab-card:hover img{transform:none}}
+
+/* carrinho (etapa 2 do pedido) */
+.cart-rev{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.cart-row{display:grid;grid-template-columns:1fr auto auto auto;align-items:center;gap:10px;padding:12px 14px;border:1px solid rgba(var(--gold-rgb),.2);border-radius:14px;background:var(--card)}
+.cart-row .xn{display:flex;flex-direction:column;gap:2px;font-weight:600;min-width:0}
+.cart-row small{color:var(--muted);font-weight:400}
+.cart-row .cart-obs{font-size:.78rem}
+.cart-sub{min-width:62px;text-align:right;color:var(--gold2)}
+.cart-x{width:40px;height:40px;border-radius:50%;border:1px solid rgba(var(--gold-rgb),.3);background:transparent;color:var(--muted);font-size:1.1rem;cursor:pointer;line-height:1}
+.cart-x:hover,.cart-x:focus-visible{color:#fff;border-color:var(--gold2)}
+.cart-mont{display:flex;flex-direction:column;gap:4px;padding:12px 14px;border:1px dashed rgba(var(--gold-rgb),.3);border-radius:14px;font-size:.9rem}
+.cart-row .xs{display:flex;align-items:center;gap:8px}.cart-row .xs button{width:40px;height:40px;border-radius:50%;border:1px solid var(--gold);background:transparent;color:var(--gold2);font-size:1.2rem;cursor:pointer}.cart-row .xs b{min-width:1.6em;text-align:center}
+.cart-more{width:100%;margin-bottom:16px}
+.cart-tot{padding:14px;border-top:1px solid rgba(var(--gold-rgb),.2)}
+@media (max-width:520px){.cart-row{grid-template-columns:1fr auto;grid-template-areas:"n n" "s sub";}.cart-row .xn{grid-area:n}.cart-row .xs{grid-area:s}.cart-row .cart-sub{grid-area:sub;align-self:center}.cart-row .cart-x{position:absolute;right:8px;top:8px}.cart-row{position:relative;padding-right:44px}}

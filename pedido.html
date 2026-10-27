@@ -27,7 +27,7 @@ window.TQR_FONE='5586994144709';
 /* Proteção contra robôs (Cloudflare Turnstile). Vazio = desligado e o pedido vai direto ao banco.
    Preencher só depois de publicar a função supabase/functions/criar-pedido (veja o README dela). */
 window.TQR_TURNSTILE='';</script>
-<link rel="stylesheet" href="site.css?v=33">
+<link rel="stylesheet" href="site.css?v=35">
 <link rel="stylesheet" href="tema.css">
 </head>
 <body class="pedido-pg">
@@ -51,14 +51,15 @@ window.TQR_TURNSTILE='';</script>
     <div class="p-last" id="lastOrder" hidden><span>Você tem um pedido em andamento: <b id="lastOrderCod"></b></span><a class="btn btn-gold" id="lastOrderLink" href="#">Acompanhar</a></div>
     <div class="p-head">
       <span class="eyebrow">Cardápio</span>
-      <h1>Monte o seu <span class="script gold">pedido</span></h1>
-      <p class="lead">Escolha a quantidade, diga onde entregar e envie. Leva cerca de 1 minuto, e nada é cobrado agora.</p>
+      <h1>Monte a sua <span class="script gold">sacola</span></h1>
+      <p class="lead">Escolha o que quer, confira no carrinho, diga onde entregar e envie. Leva cerca de 1 minuto, e nada é cobrado agora.</p>
       <p class="hint" id="horaNote" role="status" hidden></p>
     </div>
     <div class="p-steps" id="pSteps" role="tablist" aria-label="Etapas do pedido" hidden>
-      <button type="button" role="tab" id="stp1" aria-controls="pnl1" aria-selected="true"><i>1</i><span>Pedido</span></button>
-      <button type="button" role="tab" id="stp2" aria-controls="pnl2" aria-selected="false" tabindex="-1"><i>2</i><span>Entrega</span></button>
-      <button type="button" role="tab" id="stp3" aria-controls="pnl3" aria-selected="false" tabindex="-1"><i>3</i><span>Pagamento</span></button>
+      <button type="button" role="tab" id="stp1" aria-controls="pnl1" aria-selected="true"><i>1</i><span>Sacola</span></button>
+      <button type="button" role="tab" id="stp2" aria-controls="pnl2" aria-selected="false" tabindex="-1"><i>2</i><span>Carrinho</span></button>
+      <button type="button" role="tab" id="stp3" aria-controls="pnl3" aria-selected="false" tabindex="-1"><i>3</i><span>Entrega</span></button>
+      <button type="button" role="tab" id="stp4" aria-controls="pnl4" aria-selected="false" tabindex="-1"><i>4</i><span>Pagamento</span></button>
     </div>
     <form class="order-box" id="orderForm" novalidate>
       <div class="order-fields">
@@ -91,9 +92,23 @@ window.TQR_TURNSTILE='';</script>
           <p class="hint hint-warn" id="estqMsg" role="alert" hidden></p>
           <div class="upsell" id="upsellBox" hidden><h3 class="p-sub">Que tal levar também?</h3><div class="extra-prods" id="upsellList"></div></div>
         </fieldset>
-        <div class="p-nav"><button type="button" class="btn btn-gold" data-next>Continuar <span aria-hidden="true">→</span></button></div>
+        <div class="p-nav"><button type="button" class="btn btn-gold" data-next>Ir para o carrinho <span aria-hidden="true">→</span></button></div>
       </div>
         <div class="p-panel" id="pnl2" role="tabpanel" aria-labelledby="stp2">
+        <fieldset class="f-group">
+          <legend>Seu carrinho</legend>
+          <div class="cart-rev" id="cartRev" aria-live="polite"></div>
+          <button type="button" class="btn btn-ghost cart-more" data-prev>+ Adicionar mais itens</button>
+          <div class="cart-tot">
+            <div class="sum-line"><span>Subtotal</span><b id="cvSub"></b></div>
+            <div class="sum-line disc" id="cvDiscRow"><span>Desconto</span><b id="cvDisc"></b></div>
+            <div class="sum-line"><span>Entrega</span><b id="cvShip"></b></div>
+            <div class="sum-total"><span>Total</span><b id="cvTotal"></b></div>
+          </div>
+        </fieldset>
+        <div class="p-nav"><button type="button" class="btn btn-ghost" data-prev><span aria-hidden="true">←</span> Voltar</button><button type="button" class="btn btn-gold" data-next>Continuar <span aria-hidden="true">→</span></button></div>
+      </div>
+        <div class="p-panel" id="pnl3" role="tabpanel" aria-labelledby="stp3">
         <fieldset class="f-group">
           <legend>Como você quer receber?</legend>
           <div class="opts">
@@ -139,7 +154,7 @@ window.TQR_TURNSTILE='';</script>
         </fieldset>
         <div class="p-nav"><button type="button" class="btn btn-ghost" data-prev><span aria-hidden="true">←</span> Voltar</button><button type="button" class="btn btn-gold" data-next>Continuar <span aria-hidden="true">→</span></button></div>
       </div>
-        <div class="p-panel" id="pnl3" role="tabpanel" aria-labelledby="stp3">
+        <div class="p-panel" id="pnl4" role="tabpanel" aria-labelledby="stp4">
         <fieldset class="f-group">
           <legend>Pagamento</legend>
           <div class="opts">
@@ -156,7 +171,7 @@ window.TQR_TURNSTILE='';</script>
       </div>
 
       <aside class="order-sum" id="sumBox">
-        <h3>Resumo do pedido</h3>
+        <h3>Sua sacola</h3>
         <div class="sum-line"><span id="sumQty">3 garrafas de 300 ml</span><b id="sumSub">R$ 50,97</b></div>
         <div class="sum-line disc" id="sumDiscRow"><span>Desconto</span><b id="sumDisc">− R$ 8,97</b></div>
         <p class="sum-promo" id="sumPromo" hidden></p>
@@ -218,7 +233,7 @@ window.TQR_TURNSTILE='';</script>
 </div>
 
 <script src="marca-site.js?v=1" defer></script>
-<script src="site.js?v=23" defer></script>
+<script src="site.js?v=25" defer></script>
 <script src="efeitos.js?v=1" defer></script>
 <dialog id="optDlg" class="opt-dlg" aria-label="Escolha as opções"></dialog>
 <dialog id="pixDlg" style="max-width:380px;width:92vw;border:1px solid var(--line);border-radius:18px;background:var(--bg2);color:var(--text);padding:22px">

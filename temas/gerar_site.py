@@ -8,7 +8,7 @@ Uso:  python3 temas/gerar_site.py                  (usa loja.json da raiz; o tem
 Um tema é a pasta temas/<id>/ com tema.json e blocos/<secao>.html. Seção que o tema não traz vem de temas/_comum/blocos/.
 Nos blocos e no esqueleto (temas/base/index.tpl.html), {{loja.x}} e {{tema.x}} viram os valores dos dois JSON.
 """
-import argparse, colorsys, json, os, re, sys
+import argparse, colorsys, hashlib, json, os, re, sys
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VAR = re.compile(r"\{\{([a-z0-9_]+(?:\.[a-z0-9_]+)?)\}\}")
@@ -39,6 +39,11 @@ def resolve(texto, ctx, onde):
             break
         texto = novo
     return texto
+
+
+def versao(nome):
+    """Versão pelo conteúdo do arquivo: mudou o CSS/JS, muda a URL e o navegador baixa de novo (sem cache velho)."""
+    return hashlib.md5(open(os.path.join(RAIZ, nome), "rb").read()).hexdigest()[:8]
 
 
 def hex_ok(c):
@@ -155,14 +160,15 @@ def main():
     comum = {"inicio": "#topo", "link_pontos": paginas["pontos"]["arquivo"] if "pontos" in paginas else "#pontos",
              "rodape_links": tema.get("rodape_links", ""), "classe_main": "", "local": "inicio",
              "titulo": tema["titulo"], "descricao": tema["descricao"], "og_titulo": tema["og_titulo"],
-             "og_descricao": tema["og_descricao"], "url": loja["url"], "script_hash": script_hash}
+             "og_descricao": tema["og_descricao"], "url": loja["url"], "script_hash": script_hash,
+             "css_v": versao("site.css"), "js_v": versao("site.js"), "tema_v": versao("tema.js"), "marca_v": versao("marca-site.js")}
     monta(tema["secoes"], comum, "index.html")
     for k, pg in paginas.items():
         pag = {**comum, "inicio": "index.html", "classe_main": "pagina", "local": k, "script_hash": "",
                "titulo": pg["titulo"], "descricao": pg["descricao"], "og_titulo": pg["titulo"],
                "og_descricao": pg["descricao"], "url": loja["url"] + pg["arquivo"]}
         monta(pg["secoes"], pag, pg["arquivo"])
-    ped = resolve(ler(os.path.join(RAIZ, "temas", "base", "pedido.tpl.html")), ctx, "pedido")
+    ped = resolve(ler(os.path.join(RAIZ, "temas", "base", "pedido.tpl.html")), {**ctx, "pag": comum}, "pedido")
     sobra = re.findall(r"\{\{[^}]*\}\}", ped)
     if sobra:
         sys.exit("ERRO: variáveis sem resolver em pedido.html: " + ", ".join(sorted(set(sobra))))

@@ -27,7 +27,7 @@ window.TQR_FONE='5586994144709';
 /* Proteção contra robôs (Cloudflare Turnstile). Vazio = desligado e o pedido vai direto ao banco.
    Preencher só depois de publicar a função supabase/functions/criar-pedido (veja o README dela). */
 window.TQR_TURNSTILE='';</script>
-<link rel="stylesheet" href="site.css?v=35">
+<link rel="stylesheet" href="site.css?v=36">
 <link rel="stylesheet" href="tema.css">
 </head>
 <body class="pedido-pg">
@@ -99,6 +99,10 @@ window.TQR_TURNSTILE='';</script>
           <legend>Seu carrinho</legend>
           <div class="cart-rev" id="cartRev" aria-live="polite"></div>
           <button type="button" class="btn btn-ghost cart-more" data-prev>+ Adicionar mais itens</button>
+          <div class="cart-cupom">
+          <label class="fld full"><span>Cupom de desconto <small>(opcional)</small></span><input type="text" name="cupom" id="cupom" maxlength="30" autocomplete="off" placeholder="Digite o código"></label>
+            <p class="hint full" id="cupomMsg" role="status" hidden></p>
+          </div>
           <div class="cart-tot">
             <div class="sum-line"><span>Subtotal</span><b id="cvSub"></b></div>
             <div class="sum-line disc" id="cvDiscRow"><span>Desconto</span><b id="cvDisc"></b></div>
@@ -161,8 +165,6 @@ window.TQR_TURNSTILE='';</script>
             <label class="opt"><input type="radio" name="pag" value="pix" data-nome="Pix" checked><span>💠 Pix</span></label>
             <label class="opt"><input type="radio" name="pag" value="cartao" data-nome="Cartão"><span>💳 Cartão</span></label>
           </div>
-          <label class="fld full" style="margin-top:14px"><span>Cupom de desconto <small>(opcional)</small></span><input type="text" name="cupom" id="cupom" maxlength="30" autocomplete="off" placeholder="Digite o código"></label>
-          <p class="hint full" id="cupomMsg" role="status" hidden></p>
           <label class="fld full" style="margin-top:14px"><span>Observações <small>(opcional)</small></span><textarea name="obs" rows="2" placeholder="Ex.: entregar depois das 19h"></textarea></label>
         </fieldset>
         <label class="check"><input type="checkbox" name="lembrar" id="lembrar"><span>Lembrar meus dados neste aparelho para o próximo pedido</span></label>
